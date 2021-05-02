@@ -31,18 +31,16 @@ const config = {
     extensions: [".js", ".jsx", ".ts", ".tsx"]
   },
   optimization: {
-    ...(isProduction
-      && {
-          splitChunks: {
-            cacheGroups: {
-              commons: {
-                name: "vendors",
-                chunks: "all"
-              }
-            }
+    ...(isProduction && {
+      splitChunks: {
+        cacheGroups: {
+          commons: {
+            name: "vendors",
+            chunks: "all"
           }
         }
-      )
+      }
+    })
   },
   devServer: {
     stats: "minimal",
@@ -104,13 +102,27 @@ const config = {
             ? [
                 MiniCssExtractPlugin.loader,
                 {
+                  loader: "css-loader",
+                  modules: true
+                },
+                {
                   loader: "sass-loader",
                   options: {
-                    sourceMap: true
+                    sourceMap: false
                   }
                 }
               ]
             : [
+                {
+                  loader: "style-loader"
+                },
+                {
+                  loader: "css-loader",
+                  options: {
+                    importLoaders: 0,
+                    modules: true
+                  }
+                },
                 {
                   loader: "sass-loader",
                   options: {

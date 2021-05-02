@@ -11,6 +11,7 @@
     "webpack:client:dev": "webpack serve --config webpack.config.client.js --mode development",
     "webpack:server": "webpack --config webpack.config.server.js --mode production",
     "webpack:server:dev": "webpack -w --config webpack.config.server.js --mode development",
+    "lint": "eslint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

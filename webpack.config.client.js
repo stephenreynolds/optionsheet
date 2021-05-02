@@ -105,9 +105,6 @@ const config = {
                 MiniCssExtractPlugin.loader,
                 {
                   loader: "sass-loader",
-                  options: {
-                    sourceMap: true
-                  }
                 }
               ]
             : [

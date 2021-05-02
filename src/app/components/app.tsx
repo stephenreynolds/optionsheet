@@ -1,3 +1,5 @@
-const App = (): JSX.Element => <h1>OptionSheet</h1>;
+import Home from "./home/home";
+
+const App = (): JSX.Element => <Home />;
 
 export default App;

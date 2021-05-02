@@ -32,7 +32,7 @@ const config = {
   },
   optimization: {
     ...(isProduction
-      ? {
+      && {
           splitChunks: {
             cacheGroups: {
               commons: {
@@ -42,7 +42,7 @@ const config = {
             }
           }
         }
-      : {})
+      )
   },
   devServer: {
     stats: "minimal",

@@ -1,6 +1,9 @@
-node_modules
-build
+node_modules/
+build/
+tmp/
+temp/
+.env
 
 # Editor files
-.idea
-.vscode
+.idea/
+.vscode/

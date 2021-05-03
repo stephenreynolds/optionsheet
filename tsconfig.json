@@ -17,6 +17,8 @@
         "esModuleInterop": true,
         "preserveSymlinks": true,
         "resolveJsonModule": true,
-        "noImplicitThis": true
+        "noImplicitThis": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
     }
 }

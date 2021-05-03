@@ -1,37 +1,54 @@
 import { getRepository } from "typeorm";
-import { User } from "../data/entity/user";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import HttpStatus from "http-status-codes";
+import bcrypt from "bcrypt";
+import { User } from "../data/entity/user";
 
-export const getAllUsers = async (request: Request, response: Response) => {
+export const createUser = async (request: Request, response: Response) => {
   const userRepository = getRepository(User);
-  return userRepository.find();
-};
+  const username = request.body.username;
+  const email = request.body.email;
+  const password = request.body.password;
 
-export const getUser = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  const user = await userRepository.findOne(request.params.id);
-
-  if (!user) {
-    response.status(HttpStatus.NOT_FOUND);
+  // Check that the email address is valid.
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    response.status(HttpStatus.BAD_REQUEST).send("Invalid email address");
     return;
   }
 
-  return user;
-};
-
-export const saveUser = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  return userRepository.save(request.body);
-};
-
-export const removeUser = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  const userToRemove = await userRepository.findOne(request.params.id);
-
-  if (userToRemove) {
-    await userRepository.remove(userToRemove);
+  // Check that the password is valid.
+  const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/;
+  if (!passwordRegex.test(password)) {
+    response.status(HttpStatus.BAD_REQUEST).send("Password is too weak.");
+    return;
   }
 
-  response.sendStatus(HttpStatus.NO_CONTENT);
+  // Check that username and email address are not in use.
+  let existingUser = await userRepository.findOne({ username });
+  if (existingUser) {
+    response
+      .status(HttpStatus.BAD_REQUEST)
+      .send("A user with that username already exists.");
+    return;
+  }
+  existingUser = await userRepository.findOne({ email });
+  if (existingUser) {
+    response
+      .status(HttpStatus.BAD_REQUEST)
+      .send("A user with that email address already exists.");
+    return;
+  }
+
+  // Salt the password.
+  const passwordHash = await bcrypt.hash(request.body.password, 12);
+
+  const user: User = {
+    username: username,
+    email: email,
+    passwordHash
+  };
+
+  await userRepository.save(user);
+  response.sendStatus(HttpStatus.OK);
 };

@@ -6,12 +6,12 @@ import {
   validatePassword,
   validateUsername,
   CreateUserModel
-} from "../../common/user";
+} from "../../../common/user";
 import {
   checkEmail,
   checkUsername,
   createUser
-} from "../../common/userManager";
+} from "../../../common/userManager";
 
 const Register = (): JSX.Element => {
   const [username, setUsername] = useState("");

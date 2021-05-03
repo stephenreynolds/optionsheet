@@ -24,11 +24,15 @@ const Login = (): JSX.Element => {
     return username.length > 0 && password.length > 0;
   };
 
+  const onSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <Centered>
       <h1>Sign in</h1>
 
-      <Form>
+      <Form onSubmit={onSubmit}>
         <InputGroup>
           <label htmlFor="username">Username or email address</label>
           <input type="text" id="username" onChange={onUsernameChange} />

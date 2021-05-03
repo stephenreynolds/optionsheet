@@ -10,12 +10,7 @@ export const Hero = styled.div`
     rgba(66, 176, 66, 1) 100%
   );
   color: #fff;
-  padding-bottom: 4px;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: -1;
-  padding-top: 56px;
+  padding-bottom: 1rem;
   
   h1 {
     text-align: center;

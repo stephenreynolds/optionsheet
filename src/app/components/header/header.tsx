@@ -7,20 +7,21 @@ import {
   UserMenu
 } from "./header.styles";
 import { Container } from "../layout/layout.styles";
-import {useLocation} from "react-router";
 
-const Header = (): JSX.Element => {
-  const location = useLocation();
+interface Props {
+  transparent?: boolean;
+}
 
+const Header = ({ transparent }: Props): JSX.Element => {
   return (
-    <NavHeader transparent={location.pathname === "/"}>
+    <NavHeader transparent={transparent}>
       <Container>
         <Nav>
           <BrandLink to="/">OptionSheet</BrandLink>
 
           <UserMenu>
-            <LoginLink to="/login">Sign in</LoginLink>
-            <SignUpLink to="/register">Sign up</SignUpLink>
+            <LoginLink to="/authenticate/login">Sign in</LoginLink>
+            <SignUpLink to="/authenticate/register">Sign up</SignUpLink>
           </UserMenu>
         </Nav>
       </Container>

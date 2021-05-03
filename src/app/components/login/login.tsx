@@ -1,7 +1,29 @@
 import { Link } from "react-router-dom";
-import {Centered, Form, ForgotPassword, CreateAccount, InputGroup} from "./login.styles";
+import {
+  Centered,
+  Form,
+  ForgotPassword,
+  CreateAccount,
+  InputGroup
+} from "./login.styles";
+import { useState } from "react";
 
 const Login = (): JSX.Element => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const onPasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const validate = (): boolean => {
+    return username.length > 0 && password.length > 0;
+  };
+
   return (
     <Centered>
       <h1>Sign in</h1>
@@ -9,20 +31,22 @@ const Login = (): JSX.Element => {
       <Form>
         <InputGroup>
           <label htmlFor="username">Username or email address</label>
-          <input type="text" id="username" />
+          <input type="text" id="username" onChange={onUsernameChange} />
         </InputGroup>
 
         <InputGroup>
           <label htmlFor="password">
-            Password{" "}
+            Password
             <ForgotPassword to="/resetpassword">
               Forgot password?
             </ForgotPassword>
           </label>
-          <input type="password" id="password" />
+          <input type="password" id="password" onChange={onPasswordChange} />
         </InputGroup>
 
-        <button type="submit">Sign in</button>
+        <button type="submit" disabled={!validate()}>
+          Sign in
+        </button>
       </Form>
 
       <CreateAccount>

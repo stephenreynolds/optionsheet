@@ -43,12 +43,66 @@ export const createUser = async (request: Request, response: Response) => {
   // Salt the password.
   const passwordHash = await bcrypt.hash(request.body.password, 12);
 
+  // Save the new user to the database.
   const user: User = {
     username: username,
     email: email,
     passwordHash
   };
-
   await userRepository.save(user);
+  response.sendStatus(HttpStatus.OK);
+};
+
+export const checkUsername = async (request: Request, response: Response): Promise<void> => {
+  const userRepository = getRepository(User);
+  const username = request.body.username;
+
+  if (!username) {
+    // Request received without a username.
+    const message = {
+      reason: "USERNAME_MISSING",
+      message: "Username is missing."
+    };
+    response.status(HttpStatus.BAD_REQUEST).send(message);
+    return;
+  }
+
+  const user = await userRepository.findOne({ username });
+  if (user) {
+    // A user already has this username.
+    const message = {
+      reason: "USERNAME_TAKEN",
+      message: "That username is already taken."
+    };
+    response.status(HttpStatus.OK).send(message);
+    return;
+  }
+  response.sendStatus(HttpStatus.OK);
+};
+
+export const checkEmail = async (request: Request, response: Response): Promise<void> => {
+  const userRepository = getRepository(User);
+  const email = request.body.email;
+
+  if (!email) {
+    // Request received without an email address.
+    const message = {
+      reason: "EMAIL_MISSING",
+      message: "Email address is missing."
+    };
+    response.status(HttpStatus.BAD_REQUEST).send(message);
+    return;
+  }
+
+  const user = await userRepository.findOne({ email });
+  if (user) {
+    // A user already has this email address.
+    const message = {
+      reason: "EMAIL_TAKEN",
+      message: "That email address is already in use."
+    };
+    response.status(HttpStatus.OK).send(message);
+    return;
+  }
   response.sendStatus(HttpStatus.OK);
 };

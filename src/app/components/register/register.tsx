@@ -7,35 +7,53 @@ import {
   validateUsername,
   CreateUserModel
 } from "../../common/user";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { createUser } from "../../redux/actions/userActions";
+import {
+  checkEmail,
+  checkUsername,
+  createUser
+} from "../../common/userManager";
 
-interface Props {
-  createUser: (user: CreateUserModel) => Promise<void>;
-}
-
-const Register = ({ createUser }: Props): JSX.Element => {
+const Register = (): JSX.Element => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
+  const [submitError, setSubmitError] = useState("");
 
   const onUsernameChange = (e) => {
     const value = e.target.value;
     setUsername(value);
+    setUsernameError("");
+  };
+
+  const onUsernameBlur = (e) => {
+    const value = e.target.value;
+    if (value.length > 0) {
+      checkUsername(value).then((res) => {
+        setUsernameError(res.message);
+      });
+    }
   };
 
   const onEmailChange = (e) => {
     const value = e.target.value;
-    const message =
+    setEmail(value);
+    setEmailError(
       validateEmail(value) || value.length === 0
         ? ""
-        : "Please enter a valid email address.";
-    setEmailError(message);
-    setEmail(value);
+        : "Please enter a valid email address."
+    );
+  };
+
+  const onEmailBlur = (e) => {
+    const value = e.target.value;
+    if (value.length > 0) {
+      checkEmail(value).then((res) => {
+        setEmailError(res.message);
+      });
+    }
   };
 
   const onPasswordChange = (e) => {
@@ -65,8 +83,7 @@ const Register = ({ createUser }: Props): JSX.Element => {
 
     if (value.length === 0) {
       setPasswordErrors([]);
-    }
-    else {
+    } else {
       setPasswordErrors(errors);
     }
 
@@ -91,13 +108,15 @@ const Register = ({ createUser }: Props): JSX.Element => {
         console.log("Created user");
       })
       .catch((error) => {
-        console.log(error);
+        setSubmitError(error.response.data);
       });
   };
 
   const validateAll = (): boolean => {
     return (
-      validateUsername(username) && validateEmail(email) && validatePassword(password)
+      validateUsername(username) &&
+      validateEmail(email) &&
+      validatePassword(password)
     );
   };
 
@@ -113,6 +132,7 @@ const Register = ({ createUser }: Props): JSX.Element => {
             id="username"
             value={username}
             onChange={onUsernameChange}
+            onBlur={onUsernameBlur}
             required
           />
           <ErrorMessage>{usernameError}</ErrorMessage>
@@ -124,6 +144,7 @@ const Register = ({ createUser }: Props): JSX.Element => {
             id="email"
             value={email}
             onChange={onEmailChange}
+            onBlur={onEmailBlur}
             required
           />
           <ErrorMessage>{emailError}</ErrorMessage>
@@ -151,6 +172,10 @@ const Register = ({ createUser }: Props): JSX.Element => {
           </ErrorMessage>
         </InputGroup>
 
+        <InputGroup>
+          <ErrorMessage>{submitError}</ErrorMessage>
+        </InputGroup>
+
         <button type="submit" disabled={!validateAll()}>
           Create account
         </button>
@@ -164,10 +189,4 @@ const Register = ({ createUser }: Props): JSX.Element => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    createUser: bindActionCreators(createUser, dispatch)
-  };
-};
-
-export default connect<Promise<void>>(null, mapDispatchToProps)(Register);
+export default Register;

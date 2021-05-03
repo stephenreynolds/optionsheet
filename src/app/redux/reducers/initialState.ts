@@ -1,4 +1,3 @@
 export default {
-  apiCallsInProgress: 0,
-  user: {}
+  apiCallsInProgress: 0
 };

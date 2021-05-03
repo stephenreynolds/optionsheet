@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Centered, Form, ForgotPassword, CreateAccount } from "./login.styles";
+import {Centered, Form, ForgotPassword, CreateAccount, InputGroup} from "./login.styles";
 
 const Login = (): JSX.Element => {
   return (
@@ -7,12 +7,12 @@ const Login = (): JSX.Element => {
       <h1>Sign in</h1>
 
       <Form>
-        <div>
+        <InputGroup>
           <label htmlFor="username">Username or email address</label>
           <input type="text" id="username" />
-        </div>
+        </InputGroup>
 
-        <div>
+        <InputGroup>
           <label htmlFor="password">
             Password{" "}
             <ForgotPassword to="/resetpassword">
@@ -20,7 +20,7 @@ const Login = (): JSX.Element => {
             </ForgotPassword>
           </label>
           <input type="password" id="password" />
-        </div>
+        </InputGroup>
 
         <button type="submit">Sign in</button>
       </Form>

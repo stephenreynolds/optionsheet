@@ -22,7 +22,7 @@ export const Form = styled.form`
   input {
     width: 100%;
     height: 2rem;
-    margin: 0.3rem 0 1rem 0;
+    margin-top: 3px;
     border: 1px solid #d4d4d4;
     border-radius: 6px;
     background-color: #f6f6f6;
@@ -32,7 +32,6 @@ export const Form = styled.form`
       outline: none;
       box-shadow: 0 0 0 3px #1271ff;
       border: 1px solid #609eff;
-      margin-bottom: 14px;
     }
   }
 
@@ -48,8 +47,21 @@ export const Form = styled.form`
 
     &:hover {
       cursor: pointer;
-      background-color: #48c948;
+      background-color: #59c159;
     }
+
+    &:disabled {
+      background-color: #7dbf7d;
+      cursor: default;
+    }
+  }
+`;
+
+export const InputGroup = styled.div`
+  margin: 0.3rem 0 1rem 0;
+
+  ul {
+    margin-top: 0;
   }
 `;
 

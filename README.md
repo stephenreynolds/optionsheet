@@ -4,3 +4,15 @@
 # OptionSheet
 
 A platform for logging and analyzing stock and option trades. Built with React and Express.
+
+## Running
+OptionSheet relies on several environment variables. Create a copy of .env.sample 
+and rename it to .env, then set each variable to fit your configuration.
+
+### Production
+
+Run `npm run build` to build, then run `npm start` to start.
+
+### Development
+
+Run `npm run start:dev` to build and start while watching for changes.

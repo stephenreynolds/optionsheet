@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 const nodeExternals = require("webpack-node-externals");
 const path = require("path");
 const webpack = require("webpack");
@@ -5,7 +6,7 @@ const webpack = require("webpack");
 const paths = {
   build: path.resolve(__dirname, "build"),
   node_modules: path.resolve(__dirname, "node_modules"),
-  server: path.resolve(__dirname, "src/server"),
+  server: path.resolve(__dirname, "src/server")
 };
 
 const config = {
@@ -28,6 +29,9 @@ const config = {
   plugins: [
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
+    }),
+    new webpack.DefinePlugin({
+      "process.env": JSON.stringify(dotenv.config().parsed)
     })
   ],
   module: {

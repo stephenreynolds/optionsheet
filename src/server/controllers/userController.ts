@@ -3,35 +3,35 @@ import { User } from "../data/entity/user";
 import { NextFunction, Request, Response } from "express";
 import HttpStatus from "http-status-codes";
 
-export class UserController {
-  private userRepository = getRepository(User);
+export const getAllUsers = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+  return userRepository.find();
+};
 
-  async all(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.find();
+export const getUser = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+  const user = await userRepository.findOne(request.params.id);
+
+  if (!user) {
+    response.status(HttpStatus.NOT_FOUND);
+    return;
   }
 
-  async one(request: Request, response: Response, next: NextFunction) {
-    const user = await this.userRepository.findOne(request.params.id);
+  return user;
+};
 
-    if (!user) {
-      response.status(HttpStatus.NOT_FOUND);
-      return;
-    }
+export const saveUser = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+  return userRepository.save(request.body);
+};
 
-    return user;
+export const removeUser = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+  const userToRemove = await userRepository.findOne(request.params.id);
+
+  if (userToRemove) {
+    await userRepository.remove(userToRemove);
   }
 
-  async save(request: Request, response: Response, next: NextFunction) {
-    return this.userRepository.save(request.body);
-  }
-
-  async remove(request: Request, response: Response, next: NextFunction) {
-    const userToRemove = await this.userRepository.findOne(request.params.id);
-
-    if (userToRemove) {
-      await this.userRepository.remove(userToRemove);
-    }
-
-    response.sendStatus(HttpStatus.NO_CONTENT);
-  }
-}
+  response.sendStatus(HttpStatus.NO_CONTENT);
+};

@@ -1,35 +1,35 @@
-import { UserController } from "./controllers/userController";
-import { ClientController } from "./controllers/clientController";
+import {
+  getAllUsers,
+  getUser,
+  removeUser,
+  saveUser
+} from "./controllers/userController";
+import { getApp } from "./controllers/clientController";
 
 export const Routes = [
   {
     method: "get",
     route: "/api/users",
-    controller: UserController,
-    action: "all"
+    action: getAllUsers
   },
   {
     method: "get",
     route: "/api/users/:id",
-    controller: UserController,
-    action: "one"
+    action: getUser
   },
   {
     method: "post",
     route: "/api/users",
-    controller: UserController,
-    action: "save"
+    action: saveUser
   },
   {
     method: "delete",
     route: "/api/users/:id",
-    controller: UserController,
-    action: "remove"
+    action: removeUser
   },
   {
     method: "get",
     route: "/*",
-    controller: ClientController,
-    action: "app"
+    action: getApp
   }
 ];

@@ -59,22 +59,14 @@ export const checkUsername = async (request: Request, response: Response): Promi
 
   if (!username) {
     // Request received without a username.
-    const message = {
-      reason: "USERNAME_MISSING",
-      message: "Username is missing."
-    };
-    response.status(HttpStatus.BAD_REQUEST).send(message);
+    response.status(HttpStatus.BAD_REQUEST).send("Username is missing.");
     return;
   }
 
   const user = await userRepository.findOne({ username });
   if (user) {
     // A user already has this username.
-    const message = {
-      reason: "USERNAME_TAKEN",
-      message: "That username is already taken."
-    };
-    response.status(HttpStatus.OK).send(message);
+    response.status(HttpStatus.OK).send("That username is already taken.");
     return;
   }
   response.sendStatus(HttpStatus.OK);
@@ -86,22 +78,14 @@ export const checkEmail = async (request: Request, response: Response): Promise<
 
   if (!email) {
     // Request received without an email address.
-    const message = {
-      reason: "EMAIL_MISSING",
-      message: "Email address is missing."
-    };
-    response.status(HttpStatus.BAD_REQUEST).send(message);
+    response.status(HttpStatus.BAD_REQUEST).send("Email address is missing.");
     return;
   }
 
   const user = await userRepository.findOne({ email });
   if (user) {
     // A user already has this email address.
-    const message = {
-      reason: "EMAIL_TAKEN",
-      message: "That email address is already in use."
-    };
-    response.status(HttpStatus.OK).send(message);
+    response.status(HttpStatus.OK).send("That email address is already in use.");
     return;
   }
   response.sendStatus(HttpStatus.OK);

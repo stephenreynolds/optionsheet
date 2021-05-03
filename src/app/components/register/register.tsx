@@ -31,8 +31,8 @@ const Register = (): JSX.Element => {
   const onUsernameBlur = (e) => {
     const value = e.target.value;
     if (value.length > 0) {
-      checkUsername(value).then((res) => {
-        setUsernameError(res.message);
+      checkUsername(value).then((message) => {
+        setUsernameError(message);
       });
     }
   };
@@ -50,8 +50,8 @@ const Register = (): JSX.Element => {
   const onEmailBlur = (e) => {
     const value = e.target.value;
     if (value.length > 0) {
-      checkEmail(value).then((res) => {
-        setEmailError(res.message);
+      checkEmail(value).then((message) => {
+        setEmailError(message);
       });
     }
   };

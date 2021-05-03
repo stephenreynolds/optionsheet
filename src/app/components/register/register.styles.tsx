@@ -46,7 +46,12 @@ export const Form = styled.form`
 
     &:hover {
       cursor: pointer;
-      background-color: #48c948;
+      background-color: #59c159;
+    }
+
+    &:disabled {
+      background-color: #7dbf7d;
+      cursor: default;
     }
   }
 

@@ -1,13 +1,18 @@
 import { Link } from "react-router-dom";
 import { Centered, ErrorMessage, Form, InputGroup } from "./register.styles";
 import { useState } from "react";
-import { CreateUserModel } from "../../common/user";
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+  CreateUserModel
+} from "../../common/user";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { createUser } from "../../redux/actions/userActions";
 
 interface Props {
-  createUser: (user: CreateUserModel) => any;
+  createUser: (user: CreateUserModel) => Promise<void>;
 }
 
 const Register = ({ createUser }: Props): JSX.Element => {
@@ -25,66 +30,21 @@ const Register = ({ createUser }: Props): JSX.Element => {
 
   const onEmailChange = (e) => {
     const value = e.target.value;
-    validateEmail(value);
+    const message =
+      validateEmail(value) || value.length === 0
+        ? ""
+        : "Please enter a valid email address.";
+    setEmailError(message);
     setEmail(value);
   };
 
   const onPasswordChange = (e) => {
     const value = e.target.value;
-    validatePassword(value);
-    setPassword(value);
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-
-    const usernameIsValid = validateUsername(username);
-    const emailIsValid = validateEmail(email);
-    const passwordIsValid = validatePassword(password);
-
-    if (usernameIsValid && emailIsValid && passwordIsValid) {
-      const user: CreateUserModel = {
-        username,
-        email,
-        password
-      };
-
-      createUser(user)
-        .then(() => {
-          console.log("Created user");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  };
-
-  const validateUsername = (value: string): boolean => {
-    return value.length > 0;
-  };
-
-  const validateEmail = (value: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const message =
-      regex.test(value) || value.length === 0
-        ? ""
-        : "Please enter a valid email address.";
-    setEmailError(message);
-    return message.length === 0;
-  };
-
-  const validatePassword = (value: string): boolean => {
     const minLength = 8;
     const lowercase = /(?=.*[a-z])/;
     const uppercase = /(?=.*[A-Z])/;
     const digit = /(?=.*[0-9])/;
     const special = /(?=.*[^A-Za-z0-9])/;
-
-    if (value.length === 0) {
-      setPasswordErrors([]);
-      return false;
-    }
-
     const errors = [];
 
     if (!lowercase.test(value)) {
@@ -103,16 +63,49 @@ const Register = ({ createUser }: Props): JSX.Element => {
       errors.push(`At least ${minLength} characters long`);
     }
 
-    setPasswordErrors(errors);
+    if (value.length === 0) {
+      setPasswordErrors([]);
+    }
+    else {
+      setPasswordErrors(errors);
+    }
 
-    return passwordErrors.length === 0;
+    setPassword(value);
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validateAll()) {
+      return;
+    }
+
+    const user: CreateUserModel = {
+      username,
+      email,
+      password
+    };
+
+    createUser(user)
+      .then(() => {
+        console.log("Created user");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const validateAll = (): boolean => {
+    return (
+      validateUsername(username) && validateEmail(email) && validatePassword(password)
+    );
   };
 
   return (
     <Centered>
       <h1>Create an account</h1>
 
-      <Form>
+      <Form onSubmit={onSubmit}>
         <InputGroup>
           <label htmlFor="username">Username</label>
           <input
@@ -122,6 +115,7 @@ const Register = ({ createUser }: Props): JSX.Element => {
             onChange={onUsernameChange}
             required
           />
+          <ErrorMessage>{usernameError}</ErrorMessage>
         </InputGroup>
         <InputGroup>
           <label htmlFor="email">Email address</label>
@@ -157,7 +151,7 @@ const Register = ({ createUser }: Props): JSX.Element => {
           </ErrorMessage>
         </InputGroup>
 
-        <button type="submit" onClick={onSubmit}>
+        <button type="submit" disabled={!validateAll()}>
           Create account
         </button>
 
@@ -176,4 +170,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(null, mapDispatchToProps)(Register);
+export default connect<Promise<void>>(null, mapDispatchToProps)(Register);

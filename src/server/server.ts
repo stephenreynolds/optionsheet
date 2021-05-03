@@ -26,7 +26,7 @@ async function start(connection: Connection) {
 
   // Register express routes from defined application routes
   Routes.forEach((route) => {
-    (app as any)[route.method](
+    app[route.method](
       route.route,
       (req: Request, res: Response, next: Function) => {
         const result = new (route.controller as any)()[route.action](

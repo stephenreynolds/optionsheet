@@ -11,7 +11,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ default: false })
   emailConfirmed: boolean;
 
   @Column()

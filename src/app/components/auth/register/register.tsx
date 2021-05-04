@@ -5,35 +5,30 @@ import {
   validateEmail,
   validatePassword,
   validateUsername,
-  CreateUserModel,
-  Credentials
+  CreateUserModel
 } from "../../../common/user";
 import { checkEmail, checkUsername } from "../../../common/userManager";
 import Input from "../../layout/input";
 import Button from "../../layout/button";
 import Label from "../../layout/label";
 import InputGroup from "../../layout/inputGroup";
-import { bindActionCreators } from "redux";
 import * as authActions from "../../../redux/actions/authActions";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getIsLoggedIn, getMessage } from "../../../redux/selectors/user";
+import { PromiseDispatch } from "../../../redux/promiseDispatch";
 
-interface Props {
-  isLoggedIn: boolean;
-  message: string;
-  actions: {
-    register: (model: CreateUserModel) => any;
-    login: (credentials: Credentials) => any;
-  };
-}
+const Register = (): JSX.Element => {
+  const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
+  const message = useSelector((state) => getMessage(state));
 
-const Register = ({ isLoggedIn, message, actions }: Props): JSX.Element => {
+  const dispatch: PromiseDispatch = useDispatch();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
-  const [submitError, setSubmitError] = useState("");
 
   const onUsernameChange = (e) => {
     const value = e.target.value;
@@ -116,14 +111,9 @@ const Register = ({ isLoggedIn, message, actions }: Props): JSX.Element => {
       password
     };
 
-    actions
-      .register(user)
-      .then(() => {
-        actions.login({ username, password }).then();
-      })
-      .catch(() => {
-        setSubmitError(message);
-      });
+    dispatch(authActions.register(user)).then(() => {
+      dispatch(authActions.login({ username, password })).then();
+    });
   };
 
   const validateAll = (): boolean => {
@@ -190,7 +180,7 @@ const Register = ({ isLoggedIn, message, actions }: Props): JSX.Element => {
       </InputGroup>
 
       <InputGroup>
-        <ErrorMessage>{submitError}</ErrorMessage>
+        <ErrorMessage>{message}</ErrorMessage>
       </InputGroup>
 
       <Button type="submit" color="green" disabled={!validateAll()}>
@@ -205,20 +195,4 @@ const Register = ({ isLoggedIn, message, actions }: Props): JSX.Element => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    isLoggedIn: state.authenticateReducer.isLoggedIn,
-    message: state.message
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    actions: {
-      register: bindActionCreators(authActions.register, dispatch),
-      login: bindActionCreators(authActions.login, dispatch)
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default Register;

@@ -6,7 +6,7 @@ import {
   SignUpLink,
   UserMenu
 } from "./header.styles";
-import { Container } from "../layout/layout.styles";
+import { Container } from "../layout/container";
 
 interface Props {
   transparent?: boolean;

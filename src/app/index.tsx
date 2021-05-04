@@ -2,7 +2,7 @@ import ReactDOM from "react-dom";
 import { ThemeProvider } from "styled-components";
 import { Provider as ReduxProvider } from "react-redux";
 import App from "./components/app";
-import { theme } from "./theme.styles";
+import { theme } from "./components/layout/theme";
 import configureStore from "./redux/configureStore";
 
 const store = configureStore();

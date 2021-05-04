@@ -1,4 +1,4 @@
-import { Container } from "../layout/layout.styles";
+import { Container } from "../layout/container";
 
 const NotFound = (): JSX.Element => (
   <Container>

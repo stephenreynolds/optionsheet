@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import {
-  Centered,
-  Form,
+  LoginForm,
   ForgotPassword,
-  CreateAccount,
-  InputGroup
+  CreateAccount
 } from "./login.styles";
 import { useState } from "react";
+import Input from "../../layout/input";
+import Button from "../../layout/button";
+import Label from "../../layout/label";
+import InputGroup from "../../layout/inputGroup";
 
 const Login = (): JSX.Element => {
   const [username, setUsername] = useState("");
@@ -29,34 +31,32 @@ const Login = (): JSX.Element => {
   };
 
   return (
-    <Centered>
-      <h1>Sign in</h1>
+    <LoginForm onSubmit={onSubmit} className="mx-auto">
+      <h1 className="text-center">Sign in</h1>
 
-      <Form onSubmit={onSubmit}>
-        <InputGroup>
-          <label htmlFor="username">Username or email address</label>
-          <input type="text" id="username" onChange={onUsernameChange} />
-        </InputGroup>
+      <InputGroup>
+        <Label htmlFor="username">Username or email address</Label>
+        <Input type="text" id="username" onChange={onUsernameChange} />
+      </InputGroup>
 
-        <InputGroup>
-          <label htmlFor="password">
-            Password
-            <ForgotPassword to="/resetpassword">
-              Forgot password?
-            </ForgotPassword>
-          </label>
-          <input type="password" id="password" onChange={onPasswordChange} />
-        </InputGroup>
+      <InputGroup>
+        <Label htmlFor="password">
+          Password
+          <ForgotPassword to="/resetpassword">
+            Forgot password?
+          </ForgotPassword>
+        </Label>
+        <Input type="password" id="password" onChange={onPasswordChange} />
+      </InputGroup>
 
-        <button type="submit" disabled={!validate()}>
-          Sign in
-        </button>
-      </Form>
+      <Button type="submit" color="green" disabled={!validate()}>
+        Sign in
+      </Button>
 
       <CreateAccount>
         New to OptionSheet? <Link to="/register">Create an account</Link>.
       </CreateAccount>
-    </Centered>
+    </LoginForm>
   );
 };
 

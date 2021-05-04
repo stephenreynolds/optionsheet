@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 export const NavHeader = styled.header`
   background-color: ${(props) =>
     props.transparent ? "transparent" : "#2b2b2b"};
+
+  a {
+    color: #fff;
+  }
 `;
 
 export const Nav = styled.nav`
@@ -12,7 +16,6 @@ export const Nav = styled.nav`
 `;
 
 export const BrandLink = styled(Link)`
-  color: #fff;
   font-size: 24px;
   font-weight: bold;
   text-decoration: none;
@@ -32,7 +35,6 @@ export const UserMenu = styled.div`
 export const ButtonLink = styled(Link)`
   padding: 0.5rem;
   font-size: 16px;
-  color: #fff;
   text-decoration: none;
   transition: opacity 0.4s;
 

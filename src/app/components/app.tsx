@@ -1,6 +1,6 @@
 import BaseStyles from "./baseStyles";
 import Routes from "./routes";
-import NormalizeStyles from "../normalize";
+import NormalizeStyles from "./normalize";
 
 const App = (): JSX.Element => (
   <>

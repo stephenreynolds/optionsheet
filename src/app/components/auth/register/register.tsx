@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Centered, ErrorMessage, Form, InputGroup } from "./register.styles";
+import { ErrorMessage, RegisterForm } from "./register.styles";
 import { useState } from "react";
 import {
   validateEmail,
@@ -12,6 +12,10 @@ import {
   checkUsername,
   createUser
 } from "../../../common/userManager";
+import Input from "../../layout/input";
+import Button from "../../layout/button";
+import Label from "../../layout/label";
+import InputGroup from "../../layout/inputGroup";
 
 const Register = (): JSX.Element => {
   const [username, setUsername] = useState("");
@@ -121,71 +125,69 @@ const Register = (): JSX.Element => {
   };
 
   return (
-    <Centered>
-      <h1>Create an account</h1>
+    <RegisterForm onSubmit={onSubmit} className="mx-auto">
+      <h1 className="text-center">Create an account</h1>
 
-      <Form onSubmit={onSubmit}>
-        <InputGroup>
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={onUsernameChange}
-            onBlur={onUsernameBlur}
-            required
-          />
-          <ErrorMessage>{usernameError}</ErrorMessage>
-        </InputGroup>
-        <InputGroup>
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={onEmailChange}
-            onBlur={onEmailBlur}
-            required
-          />
-          <ErrorMessage>{emailError}</ErrorMessage>
-        </InputGroup>
-        <InputGroup>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={onPasswordChange}
-            required
-          />
-          <ErrorMessage>
-            {passwordErrors.length > 0 && (
-              <>
-                Please ensure your password contains the following:
-                <ul>
-                  {passwordErrors.map((e) => (
-                    <li key={e}>{e}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </ErrorMessage>
-        </InputGroup>
+      <InputGroup>
+        <Label htmlFor="username">Username</Label>
+        <Input
+          type="text"
+          id="username"
+          value={username}
+          onChange={onUsernameChange}
+          onBlur={onUsernameBlur}
+          required
+        />
+        <ErrorMessage>{usernameError}</ErrorMessage>
+      </InputGroup>
+      <InputGroup>
+        <Label htmlFor="email">Email address</Label>
+        <Input
+          type="email"
+          id="email"
+          value={email}
+          onChange={onEmailChange}
+          onBlur={onEmailBlur}
+          required
+        />
+        <ErrorMessage>{emailError}</ErrorMessage>
+      </InputGroup>
+      <InputGroup>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          type="password"
+          id="password"
+          value={password}
+          onChange={onPasswordChange}
+          required
+        />
+        <ErrorMessage>
+          {passwordErrors.length > 0 && (
+            <>
+              Please ensure your password contains the following:
+              <ul>
+                {passwordErrors.map((e) => (
+                  <li key={e}>{e}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </ErrorMessage>
+      </InputGroup>
 
-        <InputGroup>
-          <ErrorMessage>{submitError}</ErrorMessage>
-        </InputGroup>
+      <InputGroup>
+        <ErrorMessage>{submitError}</ErrorMessage>
+      </InputGroup>
 
-        <button type="submit" disabled={!validateAll()}>
-          Create account
-        </button>
+      <Button type="submit" color="green" disabled={!validateAll()}>
+        Create account
+      </Button>
 
-        <p>
-          By creating an account you agree to our{" "}
-          <Link to="/terms">Terms of Service</Link>.
-        </p>
-      </Form>
-    </Centered>
+      <p>
+        By creating an account you agree to our{" "}
+        <Link to="/terms">Terms of Service</Link>.
+      </p>
+    </RegisterForm>
   );
 };
 

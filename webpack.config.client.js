@@ -102,8 +102,7 @@ const config = {
             ? [
                 MiniCssExtractPlugin.loader,
                 {
-                  loader: "css-loader",
-                  modules: true
+                  loader: "css-loader"
                 },
                 {
                   loader: "sass-loader",
@@ -117,11 +116,7 @@ const config = {
                   loader: "style-loader"
                 },
                 {
-                  loader: "css-loader",
-                  options: {
-                    importLoaders: 0,
-                    modules: true
-                  }
+                  loader: "css-loader"
                 },
                 {
                   loader: "sass-loader",

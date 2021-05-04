@@ -27,26 +27,7 @@ export const BrandLink = styled(Link)`
   }
 `;
 
-export const UserMenu = styled.div`
+export const RightMenu = styled.div`
   flex: 1 1 auto;
   text-align: right;
-`;
-
-export const ButtonLink = styled(Link)`
-  padding: 0.5rem;
-  font-size: 16px;
-  text-decoration: none;
-  transition: opacity 0.4s;
-
-  &:hover {
-    opacity: 0.75;
-  }
-`;
-
-export const LoginLink = styled(ButtonLink)``;
-
-export const SignUpLink = styled(ButtonLink)`
-  border: 1px solid #fff;
-  border-radius: 5px;
-  margin-left: 0.5rem;
 `;

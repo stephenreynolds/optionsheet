@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import cors from "cors";
-import express, { Request, Response } from "express";
+import express from "express";
 import morgan from "morgan";
 import path from "path";
 import { Connection, createConnection } from "typeorm";
 import config from "./config";
-import { Routes } from "./routes";
+import {attachRoutes} from "./routes";
 
 // Connect to database and start server.
 createConnection(config.connectionOptions).then(start);
@@ -24,18 +24,7 @@ async function start(connection: Connection) {
     app.use(express.static(path.join(__dirname, "public")));
   }
 
-  // Register express routes from defined application routes
-  Routes.forEach((route) => {
-    app[route.method](
-      route.route,
-      (request: Request, response: Response, next: Function) => {
-        route
-          .action(request, response)
-          .then(() => next)
-          .catch((error) => next(error));
-      }
-    );
-  });
+  attachRoutes(app);
 
   // Listen for requests
   app.listen(config.port, config.host, () => {

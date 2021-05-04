@@ -1,8 +1,10 @@
+import {Container} from "../layout/container";
+
 const Dashboard = (): JSX.Element => {
   return (
-    <div>
+    <Container>
       <h1>Dashboard</h1>
-    </div>
+    </Container>
   );
 };
 

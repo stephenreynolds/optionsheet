@@ -6,13 +6,16 @@
 A platform for logging and analyzing stock and option trades. Built with React and Express.
 
 ## Running
-OptionSheet relies on several environment variables. Create a copy of .env.sample 
-and rename it to .env, then set each variable to fit your configuration.
+
+- Install [postgreSQL](https://postgresql.org) and create a database.
+- Make a copy of `.env.sample` named `.env`, and set your database credentials and other environment variables.
 
 ### Production
-
-Run `npm run build` to build, then run `npm start` to start.
+Run `npm run build` then `npm run start` to build and start the server.
+The client can be accessed on `http://localhost:4001`.
 
 ### Development
 
-Run `npm run start:dev` to build and start while watching for changes.
+Run `npm run start:dev` to build and run while watching for changes.
+In development, the client is served on `http://localhost:4000`. Navigating to 
+`http://localhost:4001` will redirect there.

@@ -1,23 +1,32 @@
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { ErrorMessage, RegisterForm } from "./register.styles";
 import { useState } from "react";
 import {
   validateEmail,
   validatePassword,
   validateUsername,
-  CreateUserModel
+  CreateUserModel,
+  Credentials
 } from "../../../common/user";
-import {
-  checkEmail,
-  checkUsername,
-  createUser
-} from "../../../common/userManager";
+import { checkEmail, checkUsername } from "../../../common/userManager";
 import Input from "../../layout/input";
 import Button from "../../layout/button";
 import Label from "../../layout/label";
 import InputGroup from "../../layout/inputGroup";
+import { bindActionCreators } from "redux";
+import * as authActions from "../../../redux/actions/authActions";
+import { connect } from "react-redux";
 
-const Register = (): JSX.Element => {
+interface Props {
+  isLoggedIn: boolean;
+  message: string;
+  actions: {
+    register: (model: CreateUserModel) => any;
+    login: (credentials: Credentials) => any;
+  };
+}
+
+const Register = ({ isLoggedIn, message, actions }: Props): JSX.Element => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -107,12 +116,13 @@ const Register = (): JSX.Element => {
       password
     };
 
-    createUser(user)
+    actions
+      .register(user)
       .then(() => {
-        console.log("Created user");
+        actions.login({ username, password }).then();
       })
-      .catch((error) => {
-        setSubmitError(error.response.data);
+      .catch(() => {
+        setSubmitError(message);
       });
   };
 
@@ -123,6 +133,10 @@ const Register = (): JSX.Element => {
       validatePassword(password)
     );
   };
+
+  if (isLoggedIn) {
+    return <Redirect to="/profile" />;
+  }
 
   return (
     <RegisterForm onSubmit={onSubmit} className="mx-auto">
@@ -191,4 +205,20 @@ const Register = (): JSX.Element => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state) => {
+  return {
+    isLoggedIn: state.authenticateReducer.isLoggedIn,
+    message: state.message
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: {
+      register: bindActionCreators(authActions.register, dispatch),
+      login: bindActionCreators(authActions.login, dispatch)
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

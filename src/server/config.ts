@@ -1,5 +1,6 @@
-import {User} from "./data/entity/user";
-import {ConnectionOptions} from "typeorm";
+import { User } from "./data/entity/user";
+import { ConnectionOptions } from "typeorm";
+import {Role} from "./data/entity/role";
 
 const connectionOptions: ConnectionOptions = {
   type: "postgres",
@@ -10,9 +11,7 @@ const connectionOptions: ConnectionOptions = {
   password: process.env.DB_PASSWORD,
   synchronize: true,
   logging: false,
-  entities: [
-    User
-  ],
+  entities: [User, Role],
   migrations: [],
   subscribers: []
 };
@@ -22,5 +21,6 @@ export default {
   devPort: Number(process.env.DEV_PORT || 4000),
   host: process.env.HOST || "localhost",
   isProduction: process.env.NODE_ENV === "production",
+  secret: process.env.SECRET,
   connectionOptions
 };

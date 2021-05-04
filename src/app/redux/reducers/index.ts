@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import apiCallStatusReducer from "./apiStatusReducer";
+import authenticateReducer from "./authReducer";
 
 const rootReducer = combineReducers({
-  apiCallStatusReducer
+  authenticateReducer
 });
 
 export default rootReducer;

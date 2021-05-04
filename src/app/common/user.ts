@@ -4,6 +4,11 @@ export interface CreateUserModel {
   password: string;
 }
 
+export interface Credentials {
+  username: string;
+  password: string;
+}
+
 export const validateUsername = (username: string): boolean => {
   return username.length > 0;
 };

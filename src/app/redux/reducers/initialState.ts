@@ -1,3 +1,6 @@
+const token = window.localStorage.getItem("token");
+
 export default {
-  apiCallsInProgress: 0
+  message: {},
+  user: { isLoggedIn: !!token, token }
 };

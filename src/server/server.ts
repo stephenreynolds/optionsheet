@@ -4,14 +4,17 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import path from "path";
-import { Connection, createConnection } from "typeorm";
+import { createConnection } from "typeorm";
 import config from "./config";
 import { attachRoutes } from "./routes";
+import { seedData } from "./data/seed";
 
-// Connect to database and start server.
-createConnection(config.connectionOptions).then(start);
+const database = async () => {
+  const connection = await createConnection(config.connectionOptions);
+  await seedData(connection);
+};
 
-async function start(connection: Connection) {
+const start = async () => {
   const app = express();
 
   // Middleware
@@ -32,4 +35,6 @@ async function start(connection: Connection) {
   app.listen(config.port, config.host, () => {
     console.log(`Server listening on ${config.host}:${config.port}`);
   });
-}
+};
+
+database().then(() => start());

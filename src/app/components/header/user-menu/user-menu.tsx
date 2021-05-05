@@ -1,9 +1,7 @@
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import styled from "styled-components";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../redux/actions/authActions";
-import { Redirect } from "react-router-dom";
 
 const StyledDropdownButton = styled(DropdownButton)`
   button {
@@ -31,20 +29,13 @@ const StyledDropdownItem = styled(Dropdown.Item)`
   }
 `;
 
-interface Props {
-  isLoggedIn: boolean;
-}
 
-const UserMenu = ({ isLoggedIn }: Props): JSX.Element => {
+const UserMenu = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const onLogout = (e) => {
     dispatch(logout());
   };
-
-  if (!isLoggedIn) {
-    return <Redirect to="/" />;
-  }
 
   return (
     <>

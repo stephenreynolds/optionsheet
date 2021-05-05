@@ -18,7 +18,7 @@ const Header = ({ transparent }: Props): JSX.Element => {
         <Nav>
           <BrandLink to="/">OptionSheet</BrandLink>
           <RightMenu>
-            {isLoggedIn ? <UserMenu isLoggedIn={isLoggedIn} /> : <LoginMenu />}
+            {isLoggedIn ? <UserMenu /> : <LoginMenu />}
           </RightMenu>
         </Nav>
       </Container>

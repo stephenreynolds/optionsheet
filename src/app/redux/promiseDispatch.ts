@@ -1,1 +1,1 @@
-export type PromiseDispatch = (any) => Promise<any>;
+export type PromiseDispatch = (Object) => Promise<Object>;

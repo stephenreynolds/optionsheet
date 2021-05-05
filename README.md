@@ -7,9 +7,9 @@ A platform for logging and analyzing stock and option trades. Built with React a
 
 ## Running
 
-- Install [postgreSQL](https://postgresql.org) and create a database.
-- Make a copy of `.env.sample` named `.env`, and set your database credentials and other environment variables.
-- Run `npm install` to install dependencies.
+  - Install [postgreSQL](https://postgresql.org) and create a database.
+  - Make a copy of `.env.sample` named `.env`, and set your database credentials and other environment variables.
+  - Run `npm install` to install dependencies.
 
 ### Production
 Run `npm run build` then `npm run start` to build and start the server.

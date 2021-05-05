@@ -10,8 +10,10 @@ import {
   SET_MESSAGE
 } from "./actionTypes";
 
+type DispatchFunc = (arg: { type: string; payload?: any }) => void;
+
 export const register = (model: CreateUserModel) => {
-  return (dispatch) => {
+  return (dispatch: DispatchFunc) => {
     return userManager.register(model).then(
       (response) => {
         dispatch({ type: REGISTER_SUCCESS });
@@ -35,7 +37,7 @@ export const register = (model: CreateUserModel) => {
 };
 
 export const login = (credentials: Credentials) => {
-  return (dispatch) => {
+  return (dispatch: DispatchFunc) => {
     return userManager.login(credentials).then(
       (data) => {
         dispatch({ type: LOGIN_SUCCESS, payload: data });
@@ -58,14 +60,14 @@ export const login = (credentials: Credentials) => {
 };
 
 export const logout = () => {
-  return (dispatch) => {
+  return (dispatch: DispatchFunc) => {
     userManager.logout();
     dispatch({ type: LOGOUT });
   };
 };
 
 export const getMyInfo = () => {
-  return (dispatch) => {
+  return (dispatch: DispatchFunc) => {
     return userManager.getMyInfo().then(
       (response) => {
         dispatch({ type: GET_MY_INFO_SUCCESS, payload: response.data });

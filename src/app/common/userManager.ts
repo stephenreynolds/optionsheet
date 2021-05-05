@@ -1,27 +1,31 @@
 import { CreateUserModel, Credentials } from "./user";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const url =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:4001";
 
-export const register = async (user: CreateUserModel) => {
+export const register = async (
+  user: CreateUserModel
+): Promise<AxiosResponse> => {
   return await axios.post(`${url}/api/users`, user);
 };
 
-export const checkUsername = async (username: string): Promise<string> => {
-  const res = await axios.post(`${url}/api/users/check_username`, {
+export const checkUsernameAvailable = async (
+  username: string
+): Promise<boolean> => {
+  const res = await axios.post(`${url}/api/users/check_username_available`, {
     username
   });
 
-  return res.data;
+  return res.data.usernameAvailable;
 };
 
-export const checkEmail = async (email: string): Promise<string> => {
-  const res = await axios.post(`${url}/api/users/check_email`, {
+export const checkEmailAvailable = async (email: string): Promise<boolean> => {
+  const res = await axios.post(`${url}/api/users/check_email_available`, {
     email
   });
 
-  return res.data;
+  return res.data.usernameAvailable;
 };
 
 export const login = async (credentials: Credentials): Promise<string> => {

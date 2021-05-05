@@ -1,58 +1,18 @@
 import { Link, Redirect } from "react-router-dom";
-import {
-  LoginForm,
-  ForgotPassword,
-  CreateAccount,
-  ErrorMessage
-} from "./login.styles";
-import { useState } from "react";
-import Input from "../../layout/input";
-import Button from "../../layout/button";
-import Label from "../../layout/label";
-import InputGroup from "../../layout/inputGroup";
+import { CreateAccount, ForgotPassword, LoginContainer } from "./login.styles";
+import { ErrorMessage, Formik } from "formik";
 import { Credentials } from "../../../common/user";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../../../redux/actions/authActions";
-import {
-  getIsLoggedIn,
-  getMessage,
-  getMyInfo
-} from "../../../redux/selectors/user";
+import { getIsLoggedIn, getMyInfo } from "../../../redux/selectors/user";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
+import * as yup from "yup";
+import { Button, Form } from "react-bootstrap";
 
-const Login = (): JSX.Element => {
+const Login = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
   const user = useSelector((state) => getMyInfo(state));
-  const message = useSelector((state) => getMessage(state));
-
   const dispatch: PromiseDispatch = useDispatch();
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const onUsernameChange = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const onPasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const validate = (): boolean => {
-    return username.length > 0 && password.length > 0;
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      const credentials: Credentials = {
-        username,
-        password
-      };
-
-      dispatch(authActions.login(credentials)).then();
-    }
-  };
 
   if (isLoggedIn) {
     if (user.username) {
@@ -61,40 +21,81 @@ const Login = (): JSX.Element => {
     return <></>;
   }
 
+  const onSubmit = (credentials: Credentials) => {
+    dispatch(authActions.login(credentials)).then();
+  };
+
+  const initialValues: Credentials = {
+    username: "",
+    password: ""
+  };
+
   return (
-    <LoginForm onSubmit={onSubmit} className="mx-auto">
-      <h1 className="text-center">Sign in</h1>
+    <LoginContainer>
+      <h1 className="text-center mb-4">Sign in</h1>
 
-      <InputGroup>
-        <Label htmlFor="username">Username or email address</Label>
-        <Input
-          type="text"
-          id="username"
-          onChange={onUsernameChange}
-          tabIndex={1}
-        />
-      </InputGroup>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={yup.object({
+          username: yup.string().required("Username is required"),
+          password: yup.string().required("Password is required")
+        })}
+        validateOnBlur={false}
+        validateOnChange={false}
+        onSubmit={onSubmit}
+      >
+        {({ getFieldProps, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="username">
+              <Form.Label>Username or email address</Form.Label>
+              <Form.Control
+                name="username"
+                type="text"
+                aria-describedby="usernameHelpBlock"
+                tabIndex={1}
+                {...getFieldProps("username")}
+              />
+              <Form.Text id="usernameHelpBlock" muted>
+                <ErrorMessage name="username" />
+              </Form.Text>
+            </Form.Group>
 
-      <InputGroup>
-        <Label htmlFor="password">
-          Password
-          <ForgotPassword to="/resetpassword" tabIndex={4}>
-            Forgot password?
-          </ForgotPassword>
-        </Label>
-        <Input
-          type="password"
-          id="password"
-          onChange={onPasswordChange}
-          tabIndex={2}
-        />
-      </InputGroup>
+            <Form.Group controlId="password">
+              <Form.Label className="d-flex flex-grow-1">
+                Password
+                <ForgotPassword
+                  to="/resetpassword"
+                  className="flex-fill"
+                  tabIndex={3}
+                >
+                  Forgot password?
+                </ForgotPassword>
+              </Form.Label>
+              <Form.Control
+                name="password"
+                type="password"
+                aria-describedby="passwordHelpBlock"
+                tabIndex={2}
+                {...getFieldProps("password")}
+              />
+              <Form.Text id="passwordHelpBlock" muted>
+                <ErrorMessage name="password" />
+              </Form.Text>
+            </Form.Group>
 
-      <ErrorMessage>{message}</ErrorMessage>
-
-      <Button type="submit" color="green" disabled={!validate()} tabIndex={3}>
-        Sign in
-      </Button>
+            <Form.Group>
+              <Button
+                type="submit"
+                variant="success"
+                className="w-100"
+                tabIndex={4}
+              >
+                Sign in
+              </Button>
+            </Form.Group>
+          </Form>
+        )}
+      </Formik>
 
       <CreateAccount>
         New to OptionSheet?{" "}
@@ -103,7 +104,7 @@ const Login = (): JSX.Element => {
         </Link>
         .
       </CreateAccount>
-    </LoginForm>
+    </LoginContainer>
   );
 };
 

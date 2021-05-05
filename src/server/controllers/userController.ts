@@ -58,50 +58,30 @@ export const createUser = async (request: Request, response: Response) => {
   response.sendStatus(HttpStatus.OK);
 };
 
-export const checkUsername = async (
+export const checkUsernameAvailable = async (
   request: Request,
   response: Response
 ): Promise<void> => {
   const userRepository = getRepository(User);
   const username = request.body.username;
 
-  if (!username) {
-    // Request received without a username.
-    response.status(HttpStatus.BAD_REQUEST).send("Username is missing.");
-    return;
-  }
-
   const user = await userRepository.findOne({ username });
-  if (usernameBlacklist.includes(username) || user) {
-    // A user already has this username.
-    response.status(HttpStatus.OK).send("That username is not available.");
-    return;
-  }
-  response.sendStatus(HttpStatus.NO_CONTENT);
+  response.send({
+    usernameAvailable: usernameBlacklist.includes(username) || user
+  });
 };
 
-export const checkEmail = async (
+export const checkEmailAvailable = async (
   request: Request,
   response: Response
 ): Promise<void> => {
   const userRepository = getRepository(User);
   const email = request.body.email;
 
-  if (!email) {
-    // Request received without an email address.
-    response.status(HttpStatus.BAD_REQUEST).send("Email address is missing.");
-    return;
-  }
-
   const user = await userRepository.findOne({ email });
-  if (user) {
-    // A user already has this email address.
-    response
-      .status(HttpStatus.OK)
-      .send("That email address is already in use.");
-    return;
-  }
-  response.sendStatus(HttpStatus.NO_CONTENT);
+  response.send({
+    usernameAvailable: user
+  });
 };
 
 export const getUser = async (request: Request, response: Response) => {

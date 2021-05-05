@@ -2,7 +2,7 @@ import Header from "../header/header";
 import { Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router";
-import { checkUsername } from "../../common/userManager";
+import { checkUsernameAvailable } from "../../common/userManager";
 import ErrorComponent from "../error";
 import { useSelector } from "react-redux";
 import { getMyInfo } from "../../redux/selectors/user";
@@ -12,16 +12,14 @@ interface MatchParams {
   project: string;
 }
 
-interface Props extends RouteComponentProps<MatchParams> {}
-
-const Profile = ({ ...props }: Props): JSX.Element => {
+const Profile = ({ ...props }: RouteComponentProps<MatchParams>): JSX.Element => {
   const [checked, setChecked] = useState(false);
   const [userFound, setUserFound] = useState(false);
   const user = useSelector((state) => getMyInfo(state));
 
   useEffect(() => {
     const username = props.match.params.username;
-    checkUsername(username).then((message) => {
+    checkUsernameAvailable(username).then((message) => {
       if (message) {
         setUserFound(true);
       }

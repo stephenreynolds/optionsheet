@@ -1,129 +1,22 @@
 import { Link, Redirect } from "react-router-dom";
-import { ErrorMessage, RegisterForm } from "./register.styles";
-import { useState } from "react";
+import { RegisterContainer } from "./register.styles";
+import { CreateUserModel } from "../../../common/user";
 import {
-  validateEmail,
-  validatePassword,
-  validateUsername,
-  CreateUserModel
-} from "../../../common/user";
-import { checkEmail, checkUsername } from "../../../common/userManager";
-import Input from "../../layout/input";
-import Button from "../../layout/button";
-import Label from "../../layout/label";
-import InputGroup from "../../layout/inputGroup";
+  checkEmailAvailable,
+  checkUsernameAvailable
+} from "../../../common/userManager";
+import { ErrorMessage, Formik } from "formik";
 import * as authActions from "../../../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
-import {getIsLoggedIn, getMessage, getMyInfo} from "../../../redux/selectors/user";
+import { getIsLoggedIn, getMyInfo } from "../../../redux/selectors/user";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
+import * as yup from "yup";
+import { Button, Form } from "react-bootstrap";
 
 const Register = (): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
   const user = useSelector((state) => getMyInfo(state));
-  const message = useSelector((state) => getMessage(state));
-
   const dispatch: PromiseDispatch = useDispatch();
-
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [passwordErrors, setPasswordErrors] = useState([]);
-
-  const onUsernameChange = (e) => {
-    const value = e.target.value;
-    setUsername(value);
-    setUsernameError("");
-  };
-
-  const onUsernameBlur = (e) => {
-    const value = e.target.value;
-    if (value.length > 0) {
-      checkUsername(value).then((message) => {
-        setUsernameError(message);
-      });
-    }
-  };
-
-  const onEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    setEmailError(
-      validateEmail(value) || value.length === 0
-        ? ""
-        : "Please enter a valid email address."
-    );
-  };
-
-  const onEmailBlur = (e) => {
-    const value = e.target.value;
-    if (value.length > 0) {
-      checkEmail(value).then((message) => {
-        setEmailError(message);
-      });
-    }
-  };
-
-  const onPasswordChange = (e) => {
-    const value = e.target.value;
-    const minLength = 8;
-    const lowercase = /(?=.*[a-z])/;
-    const uppercase = /(?=.*[A-Z])/;
-    const digit = /(?=.*[0-9])/;
-    const special = /(?=.*[^A-Za-z0-9])/;
-    const errors = [];
-
-    if (!lowercase.test(value)) {
-      errors.push("At least one lowercase letter");
-    }
-    if (!uppercase.test(value)) {
-      errors.push("At least one uppercase letter");
-    }
-    if (!digit.test(value)) {
-      errors.push("At least one digit");
-    }
-    if (!special.test(value)) {
-      errors.push("At least one special character");
-    }
-    if (value.length < minLength) {
-      errors.push(`At least ${minLength} characters long`);
-    }
-
-    if (value.length === 0) {
-      setPasswordErrors([]);
-    } else {
-      setPasswordErrors(errors);
-    }
-
-    setPassword(value);
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateAll()) {
-      return;
-    }
-
-    const user: CreateUserModel = {
-      username,
-      email,
-      password
-    };
-
-    dispatch(authActions.register(user)).then(() => {
-      dispatch(authActions.login({ username, password })).then();
-    });
-  };
-
-  const validateAll = (): boolean => {
-    return (
-      validateUsername(username) &&
-      validateEmail(email) &&
-      validatePassword(password)
-    );
-  };
 
   if (isLoggedIn) {
     if (user.username) {
@@ -132,70 +25,125 @@ const Register = (): JSX.Element => {
     return <></>;
   }
 
+  const onSubmit = (model: CreateUserModel) => {
+    dispatch(authActions.register(model)).then(() => {
+      dispatch(
+        authActions.login({
+          username: model.username,
+          password: model.password
+        })
+      ).then();
+    });
+  };
+
+  const initialValues: CreateUserModel = {
+    username: "",
+    email: "",
+    password: ""
+  };
+
+  const validationSchema = yup.object({
+    username: yup
+      .string()
+      .required("Username is required")
+      .test(
+        "checkUsername",
+        "That username is not available",
+        async (value) => value && !(await checkUsernameAvailable(value))
+      ),
+    email: yup
+      .string()
+      .email("Must be a valid email address")
+      .required("Email address is required")
+      .test(
+        "checkEmail",
+        "That email is already in use",
+        async (value) => value && !(await checkEmailAvailable(value))
+      ),
+    password: yup
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .matches(
+        /(?=.*[a-z])/,
+        "Password must contain at least one lowercase letter"
+      )
+      .matches(
+        /(?=.*[A-Z])/,
+        "Password must contain at least one uppercase letter"
+      )
+      .matches(/(?=.*[0-9])/, "Password must contain at least one digit")
+      .matches(
+        /(?=.*[^A-Za-z0-9])/,
+        "Password must contain at least one special character"
+      )
+      .required("Password is required")
+  });
+
   return (
-    <RegisterForm onSubmit={onSubmit} className="mx-auto">
-      <h1 className="text-center">Create an account</h1>
+    <RegisterContainer>
+      <h1 className="text-center mb-4">Create an account</h1>
 
-      <InputGroup>
-        <Label htmlFor="username">Username</Label>
-        <Input
-          type="text"
-          id="username"
-          value={username}
-          onChange={onUsernameChange}
-          onBlur={onUsernameBlur}
-          required
-        />
-        <ErrorMessage>{usernameError}</ErrorMessage>
-      </InputGroup>
-      <InputGroup>
-        <Label htmlFor="email">Email address</Label>
-        <Input
-          type="email"
-          id="email"
-          value={email}
-          onChange={onEmailChange}
-          onBlur={onEmailBlur}
-          required
-        />
-        <ErrorMessage>{emailError}</ErrorMessage>
-      </InputGroup>
-      <InputGroup>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          type="password"
-          id="password"
-          value={password}
-          onChange={onPasswordChange}
-          required
-        />
-        <ErrorMessage>
-          {passwordErrors.length > 0 && (
-            <>
-              Please ensure your password contains the following:
-              <ul>
-                {passwordErrors.map((e) => (
-                  <li key={e}>{e}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </ErrorMessage>
-      </InputGroup>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        validateOnChange={false}
+        onSubmit={onSubmit}
+      >
+        {({ getFieldProps, handleSubmit }) => (
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                name="username"
+                type="text"
+                aria-describedby="usernameHelpBlock"
+                {...getFieldProps("username")}
+              />
+              <Form.Text id="usernameHelpBlock" muted>
+                <ErrorMessage name="username" />
+              </Form.Text>
+            </Form.Group>
 
-      <InputGroup>
-        <ErrorMessage>{message}</ErrorMessage>
-      </InputGroup>
+            <Form.Group controlId="email">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                name="email"
+                type="text"
+                aria-describedby="emailHelpBlock"
+                {...getFieldProps("email")}
+              />
+              <Form.Text id="emailHelpBlock" muted>
+                <ErrorMessage name="email" />
+              </Form.Text>
+            </Form.Group>
 
-      <Button type="submit" color="green" disabled={!validateAll()}>
-        Create account
-      </Button>
+            <Form.Group controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                name="password"
+                type="password"
+                aria-describedby="passwordHelpBlock"
+                {...getFieldProps("password")}
+              />
+              <Form.Text id="passwordHelpBlock" muted>
+                <ErrorMessage name="password" />
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group>
+              <Button type="submit" variant="success" className="w-100">
+                Create account
+              </Button>
+            </Form.Group>
+          </Form>
+        )}
+      </Formik>
 
       <p>
         By creating an account you agree to our{" "}
         <Link to="/terms">Terms of Service</Link>.
       </p>
-    </RegisterForm>
+    </RegisterContainer>
   );
 };
 

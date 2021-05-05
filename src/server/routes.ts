@@ -6,11 +6,11 @@ import {verifyJwtToken} from "./middleware/authentication";
 
 export const attachRoutes = (app: Express): void => {
   app.post("/api/users", users.createUser);
-  app.post("/api/users/check_email", users.checkEmail);
-  app.post("/api/users/check_username", users.checkUsername);
+  app.post("/api/users/check_email_available", users.checkEmailAvailable);
+  app.post("/api/users/check_username_available", users.checkUsernameAvailable);
   app.get("/api/users/:username", users.getUser);
-  app.get("/api/auth/me", [verifyJwtToken], auth.getMyInfo);
   app.post("/api/auth/authenticate", auth.authenticateUser);
+  app.get("/api/auth/me", [verifyJwtToken], auth.getMyInfo);
   app.get("/dashboard", [verifyJwtToken], getApp);
   app.get("/*", getApp);
 };

@@ -1,4 +1,5 @@
 const blacklist = [
+  "api",
   "home",
   "login",
   "register",

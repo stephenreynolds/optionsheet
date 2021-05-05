@@ -4,6 +4,7 @@ import HttpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 import { User } from "../data/entity/user";
 import { Role } from "../data/entity/role";
+import usernameBlacklist from "../usernameBlacklist";
 
 export const createUser = async (request: Request, response: Response) => {
   const userRepository = getRepository(User);
@@ -71,9 +72,9 @@ export const checkUsername = async (
   }
 
   const user = await userRepository.findOne({ username });
-  if (user) {
+  if (usernameBlacklist.includes(username) || user) {
     // A user already has this username.
-    response.status(HttpStatus.OK).send("That username is already taken.");
+    response.status(HttpStatus.OK).send("That username is not available.");
     return;
   }
   response.sendStatus(HttpStatus.NO_CONTENT);

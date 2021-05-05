@@ -14,7 +14,7 @@ import { Credentials } from "../../../common/user";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../../../redux/actions/authActions";
 import { getIsLoggedIn, getMessage } from "../../../redux/selectors/user";
-import {PromiseDispatch} from "../../../redux/promiseDispatch";
+import { PromiseDispatch } from "../../../redux/promiseDispatch";
 
 const Login = (): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
@@ -59,25 +59,41 @@ const Login = (): JSX.Element => {
 
       <InputGroup>
         <Label htmlFor="username">Username or email address</Label>
-        <Input type="text" id="username" onChange={onUsernameChange} />
+        <Input
+          type="text"
+          id="username"
+          onChange={onUsernameChange}
+          tabIndex={1}
+        />
       </InputGroup>
 
       <InputGroup>
         <Label htmlFor="password">
           Password
-          <ForgotPassword to="/resetpassword">Forgot password?</ForgotPassword>
+          <ForgotPassword to="/resetpassword" tabIndex={4}>
+            Forgot password?
+          </ForgotPassword>
         </Label>
-        <Input type="password" id="password" onChange={onPasswordChange} />
+        <Input
+          type="password"
+          id="password"
+          onChange={onPasswordChange}
+          tabIndex={2}
+        />
       </InputGroup>
 
       <ErrorMessage>{message}</ErrorMessage>
 
-      <Button type="submit" color="green" disabled={!validate()}>
+      <Button type="submit" color="green" disabled={!validate()} tabIndex={3}>
         Sign in
       </Button>
 
       <CreateAccount>
-        New to OptionSheet? <Link to="/register">Create an account</Link>.
+        New to OptionSheet?{" "}
+        <Link to="/register" tabIndex={5}>
+          Create an account
+        </Link>
+        .
       </CreateAccount>
     </LoginForm>
   );

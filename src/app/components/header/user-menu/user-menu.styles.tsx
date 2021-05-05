@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 export const StyledDropdownButton = styled(DropdownButton)`
   button {
-    background-color: transparent;
+    background-color: transparent !important;
     border: none;
     outline: none !important;
 

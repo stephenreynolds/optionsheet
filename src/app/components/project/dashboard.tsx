@@ -1,4 +1,4 @@
-import {Container} from "../layout/container";
+import {Container} from "react-bootstrap";
 
 const Dashboard = (): JSX.Element => {
   return (

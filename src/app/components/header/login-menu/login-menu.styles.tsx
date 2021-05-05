@@ -6,9 +6,11 @@ export const ButtonLink = styled(Link)`
   font-size: 16px;
   text-decoration: none;
   transition: opacity 0.4s;
+  color: #fff;
 
   &:hover {
     opacity: 0.75;
+    text-decoration: none;
   }
 `;
 

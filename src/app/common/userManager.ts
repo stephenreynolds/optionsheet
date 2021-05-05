@@ -26,7 +26,7 @@ export const checkEmail = async (email: string): Promise<string> => {
 
 export const login = async (credentials: Credentials): Promise<string> => {
   return axios
-    .post(`${url}/api/users/authenticate`, credentials)
+    .post(`${url}/api/auth/authenticate`, credentials)
     .then((response) => {
       if (response.data.token) {
         localStorage.setItem("token", JSON.stringify(response.data.token));
@@ -48,4 +48,12 @@ export const getAuthHeader = () => {
   }
 
   return {};
+};
+
+export const getUserInfo = (username: string) => {
+  return axios.get(`${url}/api/users/${username}`);
+};
+
+export const getMyInfo = () => {
+  return axios.get(`${url}/api/auth/me`, { headers: getAuthHeader() });
 };

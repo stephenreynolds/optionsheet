@@ -1,7 +1,8 @@
 import { Dropdown, DropdownButton } from "react-bootstrap";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/actions/authActions";
+import { getMyInfo } from "../../../redux/selectors/user";
 
 const StyledDropdownButton = styled(DropdownButton)`
   button {
@@ -29,18 +30,18 @@ const StyledDropdownItem = styled(Dropdown.Item)`
   }
 `;
 
-
 const UserMenu = (): JSX.Element => {
+  const user = useSelector((state) => getMyInfo(state));
   const dispatch = useDispatch();
 
-  const onLogout = (e) => {
+  const onLogout = () => {
     dispatch(logout());
   };
 
   return (
     <>
-      <StyledDropdownButton menuAlign="right" title="Username">
-        <StyledDropdownItem href="/profile">Profile</StyledDropdownItem>
+      <StyledDropdownButton menuAlign="right" title={user.username ? user.username : ""}>
+        <StyledDropdownItem href={`/${user.username}`}>Profile</StyledDropdownItem>
         <StyledDropdownItem href="/settings">Settings</StyledDropdownItem>
         <Dropdown.Divider />
         <StyledDropdownItem onClick={onLogout}>Sign out</StyledDropdownItem>

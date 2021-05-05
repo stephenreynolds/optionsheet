@@ -35,3 +35,24 @@ export const authenticateUser = async (
 
   response.status(HttpStatus.OK).send({ token });
 };
+
+export const getMyInfo = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+
+  const id = request.body.userId;
+  if (!id) {
+    return response.status(HttpStatus.BAD_REQUEST).send("User id not provided");
+  }
+
+  let user = await userRepository.findOne(id);
+  if (!user) {
+    return response.status(HttpStatus.BAD_REQUEST).send("User not found");
+  }
+
+  const data = {
+    username: user.username,
+    email: user.email
+  };
+
+  return response.send(data);
+};

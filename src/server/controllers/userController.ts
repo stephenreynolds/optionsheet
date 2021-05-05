@@ -103,3 +103,21 @@ export const checkEmail = async (
   }
   response.sendStatus(HttpStatus.NO_CONTENT);
 };
+
+export const getUser = async (request: Request, response: Response) => {
+  const userRepository = getRepository(User);
+
+  const username = request.params.username;
+
+  let user = await userRepository.findOne({ username });
+  if (!user) {
+    return response.status(HttpStatus.BAD_REQUEST).send("User not found");
+  }
+
+  const data = {
+    username: user.username,
+    email: user.email
+  };
+
+  return response.send(data);
+};

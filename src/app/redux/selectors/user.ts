@@ -5,3 +5,7 @@ export const getIsLoggedIn = (state): boolean => {
 export const getMessage = (state): string => {
   return state.message;
 };
+
+export const getMyInfo = (state) => {
+  return state.authenticateReducer.me;
+};

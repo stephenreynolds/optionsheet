@@ -1,5 +1,6 @@
 import initialState from "./initialState";
 import {
+  GET_MY_INFO_SUCCESS,
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
@@ -7,7 +8,7 @@ import {
   REGISTER_SUCCESS
 } from "../actions/actionTypes";
 
-const authenticateReducer = (state = initialState.user, action) => {
+const authenticateReducer = (state = initialState.auth, action) => {
   const { type, payload } = action;
 
   switch (type) {
@@ -21,6 +22,8 @@ const authenticateReducer = (state = initialState.user, action) => {
       return { ...state, isLoggedIn: false, token: null };
     case LOGOUT:
       return { ...state, isLoggedIn: false, token: null };
+    case GET_MY_INFO_SUCCESS:
+      return { ...state, me: payload };
     default:
       return state;
   }

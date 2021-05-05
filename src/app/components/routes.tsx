@@ -1,16 +1,17 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "./home/home";
 import Authenticate from "./auth";
-import ErrorComponent from "./error";
-import Project from "./project";
+import Profile from "./profile";
 
 const Routes = () => (
   <BrowserRouter>
     <Switch>
-      <Route exact path="/" component={Home} />
-      <Route path="/authenticate" component={Authenticate} />
-      <Route path="/dashboard" component={Project} />
-      <Route component={ErrorComponent} />
+      <Route exact path={["/", "/home"]} component={Home} />
+      <Route
+        path={["/login", "/register", "/resetpassword"]}
+        component={Authenticate}
+      />
+      <Route path="/:username" component={Profile} />
     </Switch>
   </BrowserRouter>
 );

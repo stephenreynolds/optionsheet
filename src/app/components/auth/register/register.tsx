@@ -14,11 +14,12 @@ import Label from "../../layout/label";
 import InputGroup from "../../layout/inputGroup";
 import * as authActions from "../../../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getIsLoggedIn, getMessage } from "../../../redux/selectors/user";
+import {getIsLoggedIn, getMessage, getMyInfo} from "../../../redux/selectors/user";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 
 const Register = (): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
+  const user = useSelector((state) => getMyInfo(state));
   const message = useSelector((state) => getMessage(state));
 
   const dispatch: PromiseDispatch = useDispatch();
@@ -125,7 +126,10 @@ const Register = (): JSX.Element => {
   };
 
   if (isLoggedIn) {
-    return <Redirect to="/profile" />;
+    if (user.username) {
+      return <Redirect to={`/${user.username}`} />;
+    }
+    return <></>;
   }
 
   return (

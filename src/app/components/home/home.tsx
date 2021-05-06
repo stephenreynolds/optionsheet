@@ -5,7 +5,7 @@ import Header from "../header/header";
 const Home = (): JSX.Element => (
   <>
     <Hero>
-      <Header transparent />
+      <Header transparent="true" />
       <Container>
         <h1 className="lead text-center">
           A platform for logging and analyzing stock and option trades.

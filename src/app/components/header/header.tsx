@@ -6,14 +6,14 @@ import LoginMenu from "./login-menu/login-menu";
 import {Navbar} from "react-bootstrap";
 
 interface Props {
-  transparent?: boolean;
+  transparent?: string;
 }
 
 const Header = ({ transparent }: Props): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
 
   return (
-    <StyledNavbar expand="lg" transparent={transparent.toString()}>
+    <StyledNavbar expand="lg" transparent={transparent}>
       <StyledBrand href="/">OptionSheet</StyledBrand>
       <Navbar.Toggle aria-controls="navbar" />
       <Navbar.Collapse id="navbar">

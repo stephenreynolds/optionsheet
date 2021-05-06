@@ -18,7 +18,7 @@ const UserMenu = (): JSX.Element => {
         menuAlign="right"
         title={user.username ? user.username : ""}
       >
-        <StyledDropdownItem href={`/${user.username}`}>
+        <StyledDropdownItem href={`/profile`}>
           Profile
         </StyledDropdownItem>
         <StyledDropdownItem href="/settings">Settings</StyledDropdownItem>

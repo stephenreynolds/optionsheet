@@ -4,21 +4,17 @@ import { ErrorMessage, Formik } from "formik";
 import { Credentials } from "../../../common/user";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../../../redux/actions/authActions";
-import { getIsLoggedIn, getMyInfo } from "../../../redux/selectors/user";
+import { getIsLoggedIn } from "../../../redux/selectors/user";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import * as yup from "yup";
 import { Button, Form } from "react-bootstrap";
 
 const Login = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
-  const user = useSelector((state) => getMyInfo(state));
   const dispatch: PromiseDispatch = useDispatch();
 
   if (isLoggedIn) {
-    if (user.username) {
-      return <Redirect to={`/${user.username}`} />;
-    }
-    return <></>;
+    return <Redirect to={"/profile"} />;
   }
 
   const onSubmit = (credentials: Credentials) => {

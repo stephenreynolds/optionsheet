@@ -1,6 +1,8 @@
 import { User } from "./data/entity/user";
 import { ConnectionOptions } from "typeorm";
-import {Role} from "./data/entity/role";
+import { Role } from "./data/entity/role";
+import { Leg, Trade } from "./data/entity/trade";
+import { Project } from "./data/entity/project";
 
 const connectionOptions: ConnectionOptions = {
   type: "postgres",
@@ -11,7 +13,7 @@ const connectionOptions: ConnectionOptions = {
   password: process.env.DB_PASSWORD,
   synchronize: true,
   logging: false,
-  entities: [User, Role],
+  entities: [User, Role, Trade, Leg, Project],
   migrations: [],
   subscribers: []
 };

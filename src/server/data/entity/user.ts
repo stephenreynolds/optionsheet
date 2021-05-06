@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  OneToMany
+} from "typeorm";
 import { Role } from "./role";
 import { JoinTable } from "typeorm";
+import { Project } from "./project";
 
 @Entity()
 export class User {
@@ -22,4 +29,12 @@ export class User {
   @ManyToMany(() => Role, (role) => role.users, { cascade: true })
   @JoinTable()
   roles: Role[];
+
+  @OneToMany(() => Project, (project) => project.user, {
+    onDelete: "CASCADE"
+  })
+  projects?: Project[];
+
+  @Column()
+  imageUrl?: string;
 }

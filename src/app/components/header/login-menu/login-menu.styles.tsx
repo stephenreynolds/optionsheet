@@ -11,6 +11,7 @@ export const ButtonLink = styled(Link)`
   &:hover {
     opacity: 0.75;
     text-decoration: none;
+    color: #fff;
   }
 `;
 

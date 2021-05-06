@@ -13,7 +13,7 @@ const Header = ({ transparent }: Props): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
 
   return (
-    <StyledNavbar expand="lg" transparent={transparent}>
+    <StyledNavbar expand="lg" transparent={transparent.toString()}>
       <StyledBrand href="/">OptionSheet</StyledBrand>
       <Navbar.Toggle aria-controls="navbar" />
       <Navbar.Collapse id="navbar">

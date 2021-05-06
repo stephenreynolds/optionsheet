@@ -4,7 +4,6 @@ import HttpStatus from "http-status-codes";
 import bcrypt from "bcrypt";
 import { User } from "../data/entity/user";
 import { Role } from "../data/entity/role";
-import usernameBlacklist from "../usernameBlacklist";
 
 export const createUser = async (request: Request, response: Response) => {
   const userRepository = getRepository(User);
@@ -67,7 +66,7 @@ export const checkUsernameAvailable = async (
 
   const user = await userRepository.findOne({ username });
   response.send({
-    usernameAvailable: usernameBlacklist.includes(username) || user
+    usernameAvailable: user
   });
 };
 
@@ -91,7 +90,7 @@ export const getUser = async (request: Request, response: Response) => {
 
   let user = await userRepository.findOne({ username });
   if (!user) {
-    return response.status(HttpStatus.BAD_REQUEST).send("User not found");
+    return response.status(HttpStatus.NOT_FOUND).send("User not found");
   }
 
   const data = {

@@ -13,7 +13,7 @@ export const register = async (
 export const checkUsernameAvailable = async (
   username: string
 ): Promise<boolean> => {
-  const res = await axios.post(`${url}/api/users/check_username_available`, {
+  const res = await axios.post(`${url}/api/auth/check_username_available`, {
     username
   });
 
@@ -21,7 +21,7 @@ export const checkUsernameAvailable = async (
 };
 
 export const checkEmailAvailable = async (email: string): Promise<boolean> => {
-  const res = await axios.post(`${url}/api/users/check_email_available`, {
+  const res = await axios.post(`${url}/api/auth/check_email_available`, {
     email
   });
 

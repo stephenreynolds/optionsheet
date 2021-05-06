@@ -94,6 +94,7 @@ export const getUser = async (request: Request, response: Response) => {
   }
 
   const data = {
+    id: user.id,
     username: user.username,
     email: user.email
   };

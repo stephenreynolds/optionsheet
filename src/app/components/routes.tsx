@@ -3,12 +3,16 @@ import Home from "./home/home";
 import Authenticate from "./auth";
 import ErrorComponent from "./error";
 import UserComponent from "./user";
+import Project from "./project";
 
-const Routes = () => {
+const Routes = ({ isLoggedIn }) => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path={["/", "/home"]} component={Home} />
+        <Route exact path="/">
+          {isLoggedIn ? <Project /> : <Home />}
+        </Route>
+        <Route exact path="/home" component={Home} />
         <Route
           path={["/login", "/register", "/resetpassword"]}
           component={Authenticate}
@@ -23,5 +27,4 @@ const Routes = () => {
     </BrowserRouter>
   );
 };
-
 export default Routes;

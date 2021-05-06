@@ -3,6 +3,18 @@ import "normalize.css/normalize.css";
 import "bootstrap/scss/bootstrap.scss";
 
 export default createGlobalStyle`
+  html, body {
+    height: 100%;
+    width: 100%;
+    min-height: 100%;
+  }
+  
+  #root {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+  }
+  
   input {
     background-color: #f6f6f6 !important;
   }

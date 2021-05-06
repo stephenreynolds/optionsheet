@@ -1,12 +1,12 @@
 import { Route, Switch } from "react-router-dom";
-import Dashboard from "./dashboard";
+import Dashboard from "./dashboard/dashboard";
 import Header from "../header/header";
 
 const Project = (): JSX.Element => (
   <>
     <Header />
     <Switch>
-      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/" component={Dashboard} />
     </Switch>
   </>
 );

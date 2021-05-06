@@ -10,7 +10,7 @@ export class Project {
   @OneToMany(() => Trade, (trade) => trade.project, {
     onDelete: "CASCADE"
   })
-  trades: Trade[];
+  trades?: Trade[];
 
   @PrimaryColumn()
   @ManyToOne(() => User, (user) => user.id)

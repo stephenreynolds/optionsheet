@@ -8,7 +8,7 @@ import {
 import { ErrorMessage, Formik } from "formik";
 import * as authActions from "../../../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../../redux/selectors/user";
+import { getIsLoggedIn } from "../../../redux/selectors/userSelectors";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import * as yup from "yup";
 import { Button, Form } from "react-bootstrap";
@@ -18,7 +18,7 @@ const Register = (): JSX.Element => {
   const dispatch: PromiseDispatch = useDispatch();
 
   if (isLoggedIn) {
-    return <Redirect to={`/profile`} />;
+    return <Redirect to="/" />;
   }
 
   const onSubmit = (model: CreateUserModel) => {

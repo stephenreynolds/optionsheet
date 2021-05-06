@@ -1,8 +1,12 @@
 import { Dropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/actions/authActions";
-import { getMyInfo } from "../../../redux/selectors/user";
-import { StyledDropdownButton, StyledDropdownItem, StyledIcon } from "./user-menu.styles";
+import { getMyInfo } from "../../../redux/selectors/userSelectors";
+import {
+  StyledDropdownButton,
+  StyledDropdownItem,
+  StyledIcon
+} from "./user-menu.styles";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 
 const UserMenu = (): JSX.Element => {

@@ -51,7 +51,8 @@ export const getMyInfo = async (request: Request, response: Response) => {
 
   const data = {
     username: user.username,
-    email: user.email
+    email: user.email,
+    id: user.id
   };
 
   return response.send(data);

@@ -6,7 +6,7 @@ import { Route, Switch, useParams } from "react-router-dom";
 import Profile from "./profile";
 import Header from "../header/header";
 import { useSelector } from "react-redux";
-import { getMyInfo } from "../../redux/selectors/user";
+import { getMyInfo } from "../../redux/selectors/userSelectors";
 import NotFound from "../error/not-found";
 
 const UserComponent = () => {

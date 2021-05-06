@@ -1,9 +1,9 @@
 import { RightMenu, StyledBrand, StyledNavbar } from "./header.styles";
 import UserMenu from "./user-menu/user-menu";
 import { useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../redux/selectors/user";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 import LoginMenu from "./login-menu/login-menu";
-import {Navbar} from "react-bootstrap";
+import { Navbar } from "react-bootstrap";
 import Search from "./search/search";
 
 interface Props {
@@ -19,9 +19,7 @@ const Header = ({ transparent }: Props): JSX.Element => {
       <Search transparent={transparent} />
       <Navbar.Toggle aria-controls="navbar" />
       <Navbar.Collapse id="navbar">
-        <RightMenu>
-          {isLoggedIn ? <UserMenu /> : <LoginMenu />}
-        </RightMenu>
+        <RightMenu>{isLoggedIn ? <UserMenu /> : <LoginMenu />}</RightMenu>
       </Navbar.Collapse>
     </StyledNavbar>
   );

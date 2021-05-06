@@ -35,6 +35,6 @@ export class User {
   })
   projects?: Project[];
 
-  @Column()
+  @Column({ nullable: true })
   imageUrl?: string;
 }

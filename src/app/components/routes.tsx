@@ -21,7 +21,7 @@ const Routes = ({ isLoggedIn }) => {
           component={UserComponent}
         />
         <Route path="/user/:username/project/:project" component={Project} />
-        <Route path="/">{isLoggedIn ? <Dashboard /> : <Home />}</Route>
+        <Route exact path="/">{isLoggedIn ? <Dashboard /> : <Home />}</Route>
         <Route component={ErrorComponent} />
       </Switch>
     </BrowserRouter>

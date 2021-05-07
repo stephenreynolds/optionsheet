@@ -1,22 +1,29 @@
 import { createGlobalStyle } from "styled-components";
 import "normalize.css/normalize.css";
 import "bootstrap/scss/bootstrap.scss";
+import colors from "./colors";
 
 export default createGlobalStyle`
-  html, body {
-    height: 100%;
-    width: 100%;
-    min-height: 100%;
-  }
-  
-  #root {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
+  html, body, #root {
+    background-color: ${colors.backgroundDark};
+    color: ${colors.textColor};
   }
   
   input {
-    background-color: #f6f6f6 !important;
+    background-color: #111 !important;
+    border-color: #777 !important;
+    border-radius: 6px;
+    color: ${colors.textColor} !important;
+
+    &::placeholder {
+      color: ${colors.textColor} !important;
+    }
+
+    &:focus {
+      &::placeholder {
+        color: ${colors.textColor.darken(0.4)} !important;
+      }
+    }
   }
 
   // Remove default clear button from inputs

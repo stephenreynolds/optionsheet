@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Home from "./home/home";
+import Home from "./home";
 import Authenticate from "./auth";
 import ErrorComponent from "./error";
 import UserComponent from "./user";
@@ -9,9 +9,6 @@ const Routes = ({ isLoggedIn }) => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/">
-          {isLoggedIn ? <Project /> : <Home />}
-        </Route>
         <Route exact path="/home" component={Home} />
         <Route
           path={["/login", "/register", "/resetpassword"]}
@@ -22,6 +19,7 @@ const Routes = ({ isLoggedIn }) => {
           path={["/user", "/profile", "/user/:username"]}
           component={UserComponent}
         />
+        <Route path="/">{isLoggedIn ? <Project /> : <Home />}</Route>
         <Route component={ErrorComponent} />
       </Switch>
     </BrowserRouter>

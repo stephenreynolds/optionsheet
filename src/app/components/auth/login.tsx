@@ -1,13 +1,29 @@
 import { Link, Redirect } from "react-router-dom";
-import { CreateAccount, ForgotPassword, LoginContainer } from "./login.styles";
 import { ErrorMessage, Formik } from "formik";
-import { Credentials } from "../../../common/user";
+import { Credentials } from "../../common/user";
 import { useDispatch, useSelector } from "react-redux";
-import * as authActions from "../../../redux/actions/authActions";
-import { getIsLoggedIn } from "../../../redux/selectors/userSelectors";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
+import * as authActions from "../../redux/actions/authActions";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
+import { PromiseDispatch } from "../../redux/promiseDispatch";
 import * as yup from "yup";
-import { Button, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
+import styled from "styled-components";
+
+const LoginContainer = styled(Container)`
+  width: 400px;
+  margin-top: 1.5rem;
+`;
+
+const ForgotPassword = styled(Link)`
+  text-align: right;
+`;
+
+const CreateAccount = styled.div`
+  border: 1px solid #c2c2c2;
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+`;
 
 const Login = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));

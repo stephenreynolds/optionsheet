@@ -1,6 +1,6 @@
 import { Route, Switch } from "react-router-dom";
 import NotFound from "./not-found";
-import Header from "../header/header";
+import Header from "../header";
 
 const ErrorComponent = (): JSX.Element => (
   <>

@@ -1,18 +1,13 @@
 import { Container } from "react-bootstrap";
-import { Hero } from "./home.styles";
-import Header from "../header/header";
+import Header from "../header";
 
 const Home = (): JSX.Element => (
   <>
-    <Hero>
-      <Header transparent="true" />
-      <Container>
-        <h1 className="lead text-center">
-          A platform for logging and analyzing stock and option trades.
-        </h1>
-      </Container>
-    </Hero>
+    <Header />
     <Container>
+      <h1 className="lead text-center">
+        A platform for logging and analyzing stock and option trades.
+      </h1>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis minus
         natus quibusdam repudiandae voluptatem. Delectus doloribus eaque maiores

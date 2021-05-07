@@ -19,7 +19,7 @@ const ProjectListContainer = styled.aside`
 
 const ProjectListNav = styled.nav`
   margin-top: 0.5rem;
-  
+
   ul {
     list-style: none;
     padding-left: 0;
@@ -27,7 +27,7 @@ const ProjectListNav = styled.nav`
 
     a {
       font-weight: 600;
-      color: ${colors.textColor}
+      color: ${colors.textColor};
     }
   }
 `;
@@ -40,8 +40,8 @@ const ProjectList = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    if (currentUser.id) {
-      dispatch(actions.projects(currentUser.id));
+    if (currentUser.username) {
+      dispatch(actions.getProjects(currentUser.username));
     }
   }, [currentUser]);
 

@@ -1,5 +1,6 @@
-import { CreateUserModel, Credentials } from "./user";
+import { CreateUserModel, Credentials } from "./models/user";
 import axios, { AxiosResponse } from "axios";
+import { getAuthHeader } from "./auth";
 
 const url =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:4001";
@@ -42,16 +43,6 @@ export const login = async (credentials: Credentials): Promise<string> => {
 
 export const logout = () => {
   localStorage.removeItem("token");
-};
-
-export const getAuthHeader = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-
-  if (token) {
-    return { "x-access-token": token };
-  }
-
-  return {};
 };
 
 export const getUserInfo = (username: string) => {

@@ -13,6 +13,12 @@ export const attachRoutes = (app: Express): void => {
   app.post("/api/auth/authenticate", auth.authenticateUser);
   app.get("/api/auth/me", [verifyJwtToken], auth.getMyInfo);
   app.post("/api/projects", [verifyJwtToken], projects.createProject);
-  app.get("/api/projects", projects.getProjects);
+  app.get("/api/projects/:username", projects.getProjects);
+  app.get("/api/projects/:username/:project", projects.getProjectByName);
+  app.post(
+    "/api/projects/:username/:project",
+    [verifyJwtToken],
+    projects.addTrade
+  );
   app.get("/*", getApp);
 };

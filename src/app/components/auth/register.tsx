@@ -1,5 +1,5 @@
 import { Link, Redirect } from "react-router-dom";
-import { CreateUserModel } from "../../common/user";
+import { CreateUserModel } from "../../common/models/user";
 import {
   checkEmailAvailable,
   checkUsernameAvailable

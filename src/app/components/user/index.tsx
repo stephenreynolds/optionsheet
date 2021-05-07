@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getUserInfo } from "../../common/userManager";
 import ErrorComponent from "../error";
-import { User } from "../../common/user";
+import { User } from "../../common/models/user";
 import { Route, Switch, useParams } from "react-router-dom";
 import Profile from "./profile";
 import Header from "../header";

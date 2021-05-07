@@ -1,4 +1,4 @@
-import { CreateUserModel, Credentials } from "../../common/user";
+import { CreateUserModel, Credentials } from "../../common/models/user";
 import * as userManager from "../../common/userManager";
 import {
   GET_MY_INFO_SUCCESS,
@@ -6,8 +6,7 @@ import {
   LOGIN_SUCCESS,
   LOGOUT,
   REGISTER_FAIL,
-  REGISTER_SUCCESS,
-  SET_MESSAGE
+  REGISTER_SUCCESS
 } from "./actionTypes";
 
 type DispatchFunc = (arg: { type: string; payload?: any }) => void;
@@ -15,21 +14,12 @@ type DispatchFunc = (arg: { type: string; payload?: any }) => void;
 export const register = (model: CreateUserModel) => {
   return (dispatch: DispatchFunc) => {
     return userManager.register(model).then(
-      (response) => {
+      () => {
         dispatch({ type: REGISTER_SUCCESS });
-        dispatch({ type: SET_MESSAGE, payload: response.data.message });
         return Promise.resolve();
       },
-      (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
+      () => {
         dispatch({ type: REGISTER_FAIL });
-        dispatch({ type: SET_MESSAGE, payload: message });
         return Promise.reject();
       }
     );
@@ -43,16 +33,8 @@ export const login = (credentials: Credentials) => {
         dispatch({ type: LOGIN_SUCCESS, payload: data });
         return Promise.resolve();
       },
-      (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
+      () => {
         dispatch({ type: LOGIN_FAIL });
-        dispatch({ type: SET_MESSAGE, payload: message });
         return Promise.reject();
       }
     );
@@ -68,22 +50,9 @@ export const logout = () => {
 
 export const getMyInfo = () => {
   return (dispatch: DispatchFunc) => {
-    return userManager.getMyInfo().then(
-      (response) => {
-        dispatch({ type: GET_MY_INFO_SUCCESS, payload: response.data });
-        return Promise.resolve();
-      },
-      (error) => {
-        const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-
-        dispatch({ type: SET_MESSAGE, payload: message });
-        return Promise.reject();
-      }
-    );
+    return userManager.getMyInfo().then((response) => {
+      dispatch({ type: GET_MY_INFO_SUCCESS, payload: response.data });
+      return Promise.resolve();
+    });
   };
 };

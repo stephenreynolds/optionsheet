@@ -22,7 +22,7 @@ export class Trade {
   @Column()
   open: Date;
 
-  @Column()
+  @Column({ nullable: true })
   closed?: Date;
 
   @OneToMany(() => Leg, (leg) => leg.trade, {
@@ -34,21 +34,19 @@ export class Trade {
   @Column({ type: "int" })
   quantity: number;
 
-  @Column()
   @Column({ type: "numeric", scale: 2 })
   priceFilled: number;
 
-  @Column()
-  @Column({ type: "numeric", scale: 2 })
+  @Column({ type: "numeric", scale: 2, nullable: true })
   priceClosed?: number;
 
-  @Column()
+  @Column({ nullable: true })
   openingNote?: string;
 
-  @Column()
+  @Column({ nullable: true })
   closingNote?: string;
 
-  @Column("text", { array: true })
+  @Column("text", { array: true, default: [] })
   tags: string[];
 
   @ManyToOne(() => Project, (project) => project.trades)

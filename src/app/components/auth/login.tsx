@@ -1,6 +1,6 @@
 import { Link, Redirect } from "react-router-dom";
 import { ErrorMessage, Formik } from "formik";
-import { Credentials } from "../../common/user";
+import { Credentials } from "../../common/models/user";
 import { useDispatch, useSelector } from "react-redux";
 import * as authActions from "../../redux/actions/authActions";
 import { getIsLoggedIn } from "../../redux/selectors/userSelectors";

@@ -4,6 +4,7 @@ import Authenticate from "./auth";
 import ErrorComponent from "./error";
 import UserComponent from "./user";
 import Project from "./project";
+import Dashboard from "./dashboard";
 
 const Routes = ({ isLoggedIn }) => {
   return (
@@ -19,7 +20,8 @@ const Routes = ({ isLoggedIn }) => {
           path={["/user", "/profile", "/user/:username"]}
           component={UserComponent}
         />
-        <Route path="/">{isLoggedIn ? <Project /> : <Home />}</Route>
+        <Route path="/user/:username/project/:project" component={Project} />
+        <Route path="/">{isLoggedIn ? <Dashboard /> : <Home />}</Route>
         <Route component={ErrorComponent} />
       </Switch>
     </BrowserRouter>

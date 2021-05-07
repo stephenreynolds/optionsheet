@@ -2,6 +2,7 @@ import ProjectList from "./project-list";
 import { Container } from "react-bootstrap";
 import styled from "styled-components";
 import colors from "../colors";
+import Header from "../header";
 
 const DashboardContainer = styled(Container)`
   padding: 0;
@@ -18,12 +19,15 @@ const DashboardContent = styled.main`
 
 const Dashboard = (): JSX.Element => {
   return (
-    <DashboardContainer className="row mx-auto">
-      <ProjectList />
-      <DashboardContent className="col">
-        <h1>Dashboard</h1>
-      </DashboardContent>
-    </DashboardContainer>
+    <>
+      <Header />
+      <DashboardContainer className="row mx-auto">
+        <ProjectList />
+        <DashboardContent className="col">
+          <h1>Dashboard</h1>
+        </DashboardContent>
+      </DashboardContainer>
+    </>
   );
 };
 

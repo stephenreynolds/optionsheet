@@ -1,12 +1,20 @@
 import initialState from "./initialState";
-import { GET_PROJECTS_SUCCESS } from "../actions/actionTypes";
+import {
+  GET_PROJECT_SUCCESS,
+  GET_PROJECTS_SUCCESS
+} from "../actions/actionTypes";
 
-const projectReducer = (state = initialState.projects, action) => {
+const projectReducer = (
+  state = { projects: initialState.projects, project: initialState.project },
+  action
+) => {
   const { type, payload } = action;
 
   switch (type) {
     case GET_PROJECTS_SUCCESS:
       return { projects: payload };
+    case GET_PROJECT_SUCCESS:
+      return { project: payload };
     default:
       return state;
   }

@@ -1,7 +1,7 @@
-import Header from "../header/header";
+import Header from "../header";
 import { Route, Switch } from "react-router-dom";
-import Login from "./login/login";
-import Register from "./register/register";
+import Login from "./login";
+import Register from "./register";
 import NotFound from "../error/not-found";
 
 const Authenticate = (): JSX.Element => (

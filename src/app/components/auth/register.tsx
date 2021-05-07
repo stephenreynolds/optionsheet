@@ -1,17 +1,22 @@
 import { Link, Redirect } from "react-router-dom";
-import { RegisterContainer } from "./register.styles";
-import { CreateUserModel } from "../../../common/user";
+import { CreateUserModel } from "../../common/user";
 import {
   checkEmailAvailable,
   checkUsernameAvailable
-} from "../../../common/userManager";
+} from "../../common/userManager";
 import { ErrorMessage, Formik } from "formik";
-import * as authActions from "../../../redux/actions/authActions";
+import * as authActions from "../../redux/actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../../redux/selectors/userSelectors";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
+import { PromiseDispatch } from "../../redux/promiseDispatch";
 import * as yup from "yup";
-import { Button, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
+import styled from "styled-components";
+
+const RegisterContainer = styled(Container)`
+  width: 400px;
+  margin-top: 2rem;
+`;
 
 const Register = (): JSX.Element => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));

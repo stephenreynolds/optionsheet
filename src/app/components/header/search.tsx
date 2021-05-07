@@ -1,9 +1,22 @@
 import { Form } from "react-bootstrap";
-import { StyledSearch } from "./search.styles";
+import styled from "styled-components";
 
-const Search = ({ transparent }) => {
+const StyledSearch = styled(Form)`
+  flex-grow: 1;
+
+  input {
+    width: 270px;
+    transition: width 0.2s;
+
+    &:focus {
+      width: 540px;
+    }
+  }
+`;
+
+const Search = () => {
   return (
-    <StyledSearch transparent={transparent}>
+    <StyledSearch>
       <Form.Control
         type="search"
         name="search"

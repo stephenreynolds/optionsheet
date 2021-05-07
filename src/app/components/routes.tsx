@@ -9,9 +9,6 @@ const Routes = ({ isLoggedIn }) => {
   return (
     <BrowserRouter>
       <Switch>
-        <Route exact path="/">
-          {isLoggedIn ? <Project /> : <Home />}
-        </Route>
         <Route exact path="/home" component={Home} />
         <Route
           path={["/login", "/register", "/resetpassword"]}
@@ -22,6 +19,9 @@ const Routes = ({ isLoggedIn }) => {
           path={["/user", "/profile", "/user/:username"]}
           component={UserComponent}
         />
+        <Route path="/">
+          {isLoggedIn ? <Project /> : <Home />}
+        </Route>
         <Route component={ErrorComponent} />
       </Switch>
     </BrowserRouter>

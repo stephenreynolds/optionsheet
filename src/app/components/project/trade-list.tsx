@@ -1,0 +1,9 @@
+const TradeList = () => {
+  return (
+    <>
+      <h1>Trades</h1>
+    </>
+  );
+};
+
+export default TradeList;

@@ -37,7 +37,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
-      - run: npm test -- --coverage && coveralls < coverage/lcov.info
+      - run: npm run test:ci
       - name: Coveralls
         uses: coverallsapp/github-action@1.1.3
         with:

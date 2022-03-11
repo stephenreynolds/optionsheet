@@ -17,34 +17,29 @@ jobs:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-    - uses: actions/checkout@v2
-    - name: Cache
-      uses: actions/cache@v2.1.7
-      with:
-        # A list of files, directories, and wildcard patterns to cache and restore
-        path: ~/.npm
-        # An explicit key for restoring and saving the cache
-        key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
-        # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
-        restore-keys: ${{ runner.OS }}-npm-cache-
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+      - uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v2.1.7
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: ~/.npm
+          # An explicit key for restoring and saving the cache
+          key: ${{ runner.OS }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          # An ordered list of keys to use for restoring the cache if no cache hit occurred for key
+          restore-keys: ${{ runner.OS }}-npm-cache-
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
       - run: jest --coverage && coveralls < coverage/lcov.info
       - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@1.1.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel: true
+          uses: coverallsapp/github-action@1.1.3
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            parallel: true
         
   finish:
       needs: build

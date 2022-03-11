@@ -39,6 +39,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - run: jest --coverage && coveralls < coverage/lcov.info
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@1.1.3
         with:

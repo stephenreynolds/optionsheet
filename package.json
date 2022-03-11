@@ -11,7 +11,7 @@
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
     "test": "NODE_ENV=test jest",
-    "coverage": "npm run test --coverage && coveralls < coverage/lcov.info"
+    "coverage": "NODE_ENV=test jest --coverage && coveralls < coverage/lcov.info"
   },
   "repository": {
     "type": "git",

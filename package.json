@@ -11,7 +11,7 @@
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
     "test": "jest",
-    "test:ci": "jest --coverage"
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",

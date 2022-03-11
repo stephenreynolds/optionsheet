@@ -10,8 +10,7 @@
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
-    "test": "jest --watch",
-    "test:ci": "jest --coverage && coveralls < coverage/lcov.info"
+    "test": "jest --watch"
   },
   "repository": {
     "type": "git",

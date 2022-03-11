@@ -9,8 +9,7 @@
     "stop": "pm2 stop optionsheet",
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
-    "lint": "eslint",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",

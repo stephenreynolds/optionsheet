@@ -9,7 +9,9 @@
     "stop": "pm2 stop optionsheet",
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "jest --watch",
+    "test:ci": "jest --coverage && coveralls < coverage/lcov.info"
   },
   "repository": {
     "type": "git",

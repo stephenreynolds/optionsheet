@@ -1,6 +1,7 @@
 import compression from "compression";
 import cors from "cors";
 import express from "express";
+import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 
 const app = express();
@@ -14,5 +15,8 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(compression());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(morgan("tiny"));
 
 export default app;

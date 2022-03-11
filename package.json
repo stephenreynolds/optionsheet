@@ -2,7 +2,7 @@
   "name": "optionsheet-back",
   "version": "1.0.0",
   "description": "Backend for OptionSheet, a work-in-progress tool for logging and analyzing options portfolios.",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "build": "webpack",
     "start": "pm2 start build/server.js --name optionsheet",

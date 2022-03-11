@@ -1,0 +1,19 @@
+{
+  "name": "optionsheet-back",
+  "version": "1.0.0",
+  "description": "Backend for OptionSheet, a work-in-progress tool for logging and analyzing options portfolios.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephenreynolds/optionsheet-server.git"
+  },
+  "author": "Stephen Reynolds (mail@stephenreynolds.dev)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephenreynolds/optionsheet-server/issues"
+  },
+  "homepage": "https://github.com/stephenreynolds/optionsheet-server#readme"
+}

@@ -10,8 +10,8 @@
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
-    "test": "jest",
-    "coverage": "jest --coverage"
+    "test": "NODE_ENV=test jest",
+    "coverage": "npm run test --coverage"
   },
   "repository": {
     "type": "git",

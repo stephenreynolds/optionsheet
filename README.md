@@ -1,4 +1,5 @@
 [![main](https://github.com/optionsheet/optionsheet-back/actions/workflows/main.yml/badge.svg)](https://github.com/optionsheet/optionsheet-back/actions/workflows/main.yml)
+[![CodeQL](https://github.com/optionsheet/optionsheet-back/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/optionsheet/optionsheet-back/actions/workflows/codeql-analysis.yml)
 
 ## OptionSheet Backend
 

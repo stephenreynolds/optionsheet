@@ -1,0 +1,38 @@
+scalar Date
+
+type Query {
+  users: [User]
+  roles: [Role]
+  projects: [Project]
+  trades: [Trade]
+}
+
+type User {
+  id: ID
+  username: String
+  email: String
+  emailConfirmed: Boolean
+  passwordHash: String
+  roles: [Role]
+  imageUrl: String
+  projects: [Project]
+}
+
+type Role {
+  id: ID
+  name: String
+}
+
+type Project {
+  id: ID
+  name: String
+  description: String
+  trades: [Trade]
+  tags: [String]
+  owner: User
+  lastEdited: Date
+}
+
+type Trade {
+  id: ID
+}

@@ -10,13 +10,11 @@ createConnection(ormConfig).then();
 
 const app = express();
 
-const limiter = rateLimit({
+// Middleware
+app.use(rateLimit({
   windowMs: 60 * 100, // 1 minute
   max: 100
-});
-
-// Middleware
-app.use(limiter);
+}));
 app.use(compression());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));

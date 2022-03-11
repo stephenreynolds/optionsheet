@@ -10,8 +10,7 @@
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
-    "test": "NODE_ENV=test jest",
-    "coverage": "NODE_ENV=test jest --coverage && coveralls < coverage/lcov.info"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

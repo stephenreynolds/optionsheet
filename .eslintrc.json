@@ -1,0 +1,17 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "commonjs": true,
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": [
+    "webpack.config.js"
+  ],
+  "root": true
+}

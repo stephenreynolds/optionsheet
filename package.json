@@ -11,7 +11,7 @@
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
     "test": "jest",
-    "coverage": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "test:ci": "jest --coverage"
   },
   "repository": {
     "type": "git",

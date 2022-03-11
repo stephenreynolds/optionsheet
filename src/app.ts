@@ -3,6 +3,10 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
+import { createConnection } from "typeorm";
+import ormConfig from "./data/ormConfig";
+
+createConnection(ormConfig).then();
 
 const app = express();
 

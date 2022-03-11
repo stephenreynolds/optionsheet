@@ -29,7 +29,8 @@
     "express-rate-limit": "^6.3.0",
     "http-status-codes": "^2.2.0",
     "morgan": "^1.10.0",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "typeorm": "^0.2.45"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

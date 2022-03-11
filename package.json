@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/stephenreynolds/optionsheet-server#readme",
   "dependencies": {
+    "compression": "^1.7.4",
     "express": "^4.17.3",
+    "express-rate-limit": "^6.3.0",
     "morgan": "^1.10.0",
     "pg": "^8.7.3"
   },

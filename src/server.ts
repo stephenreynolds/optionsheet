@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import config from "./config";
 import rateLimit from "express-rate-limit";
 
@@ -11,6 +12,7 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(limiter);
+app.use(compression());
 
 app.listen(config.port, config.host, () => {
   console.log(`Server listening on ${config.host}:${config.port}`);

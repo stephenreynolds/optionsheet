@@ -10,7 +10,7 @@
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",
-    "test": "jest --watch"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

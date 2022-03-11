@@ -2,6 +2,7 @@ scalar Date
 
 type Query {
   users: [User]
+  user(id: ID!): User
   roles: [Role]
   projects: [Project]
   trades: [Trade]
@@ -29,10 +30,40 @@ type Project {
   description: String
   trades: [Trade]
   tags: [String]
-  owner: User
   lastEdited: Date
+  user: User
 }
 
 type Trade {
   id: ID
+  symbol: String
+  openDate: Date
+  closeDate: Date
+  legs: [Leg]
+  openingNote: String
+  closingNote: String
+  tags: [String]
+  project: Project
+}
+
+enum Side {
+  Buy,
+  Sell
+}
+
+enum PutCall {
+  Put,
+  Call
+}
+
+type Leg {
+  id: ID
+  side: Side,
+  putCall: PutCall
+  quantity: Int
+  expiration: Date
+  strike: Float
+  openPrice: Float
+  closePrice: Float
+  trade: Trade
 }

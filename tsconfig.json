@@ -1,5 +1,20 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": [
+      "es2020",
+      "scripthost"
+    ],
+    "alwaysStrict": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "noImplicitThis": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   }
 }

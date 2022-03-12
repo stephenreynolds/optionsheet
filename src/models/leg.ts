@@ -17,5 +17,5 @@ export interface Leg {
   putCall?: PutCall,
   expiration?: Date;
   strike?: number;
-  tradeId: number;
+  tradeId: string;
 }

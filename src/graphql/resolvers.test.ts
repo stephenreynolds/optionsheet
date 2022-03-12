@@ -217,11 +217,13 @@ describe("Trades", () => {
           }
       `;
 
-      const tradeId = dataSource.getTrades()[0].id;
-      const result = await server.executeOperation({ query, variables: { tradeId } });
+      const trade = dataSource.getTrades()[0];
+      const result = await server.executeOperation({ query, variables: { tradeId: trade.id } });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.tradeById.legs).toBeDefined();
+
+      const legs = dataSource.getLegs().filter(leg => leg.tradeId === trade.id);
+      expect(result.data.tradeById.legs).toHaveLength(legs.length);
     });
   });
 });

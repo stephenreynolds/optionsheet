@@ -47,7 +47,8 @@ export class MockDataSource extends DataSource {
         id: leg.id.toString(),
         side: Side[leg.side],
         putCall: leg.putCall ? PutCall[leg.putCall] : undefined,
-        expiration: leg.expiration ? new Date(leg.expiration) : undefined
+        expiration: leg.expiration ? new Date(leg.expiration) : undefined,
+        tradeId: leg.tradeId ? leg.tradeId.toString() : undefined
       }
     });
   }

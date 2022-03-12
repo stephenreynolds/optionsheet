@@ -36,6 +36,7 @@ export class MockDataSource extends DataSource {
     this.trades = trades.map(trade => {
       return {
         ...trade,
+        id: trade.id.toString(),
         openDate: new Date(trade.openDate),
         closeDate: trade.closeDate ? new Date(trade.closeDate) : undefined
       }
@@ -43,6 +44,7 @@ export class MockDataSource extends DataSource {
     this.legs = legs.map(leg => {
       return {
         ...leg,
+        id: leg.id.toString(),
         side: Side[leg.side],
         putCall: leg.putCall ? PutCall[leg.putCall] : undefined,
         expiration: leg.expiration ? new Date(leg.expiration) : undefined

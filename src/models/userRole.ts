@@ -1,4 +1,4 @@
 export interface UserRole {
   userId: string;
-  roleId: number;
+  roleId: string;
 }

@@ -9,7 +9,7 @@ export enum PutCall {
 }
 
 export interface Leg {
-  id: number;
+  id: string;
   side: Side;
   quantity: number;
   openPrice: number;

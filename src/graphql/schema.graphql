@@ -6,6 +6,7 @@ type Query {
   projects: [Project]
   projectById(id: ID!): Project
   trades: [Trade]
+  tradeById(id: ID!): Trade
 }
 
 input RegisterInput {
@@ -54,7 +55,7 @@ type Project {
 }
 
 type Trade {
-  id: Int!
+  id: ID!
   symbol: String!
   openDate: Date!
   closeDate: Date
@@ -76,7 +77,7 @@ enum PutCall {
 }
 
 type Leg {
-  id: Int!
+  id: ID!
   side: Side!,
   putCall: PutCall
   quantity: Int!

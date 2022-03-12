@@ -1,5 +1,5 @@
 export interface Trade {
-  id: number;
+  id: string;
   symbol: string;
   openDate: Date;
   closeDate?: Date;

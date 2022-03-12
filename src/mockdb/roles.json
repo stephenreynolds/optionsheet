@@ -1,14 +1,14 @@
 [
   {
-    "id": 1,
+    "id": "d17ac76d-9d34-405c-bd93-f742cc9dc2b2",
     "name": "user"
   },
   {
-    "id": 2,
+    "id": "2883b9ca-8858-4fd1-9fcd-93790d20b656",
     "name": "moderator"
   },
   {
-    "id": 3,
+    "id": "2eed9d93-c542-412d-87f1-997a081eaa9f",
     "name": "admin"
   }
 ]

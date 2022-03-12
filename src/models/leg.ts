@@ -1,5 +1,3 @@
-import { ID } from "./types";
-
 export enum Side {
   Buy = "Buy",
   Sell = "Sell"
@@ -11,7 +9,7 @@ export enum PutCall {
 }
 
 export interface Leg {
-  id: ID;
+  id: number;
   side: Side;
   quantity: number;
   openPrice: number;
@@ -19,5 +17,5 @@ export interface Leg {
   putCall?: PutCall,
   expiration?: Date;
   strike?: number;
-  tradeId: ID;
+  tradeId: number;
 }

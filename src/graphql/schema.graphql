@@ -22,14 +22,8 @@ type AuthDetails {
   roles: [String]!
 }
 
-type RegisterResponse {
-  success: Boolean!
-  authDetails: AuthDetails
-  message: String
-}
-
 type Mutation {
-  register(credentials: RegisterInput): RegisterResponse
+  register(credentials: RegisterInput): AuthDetails
 }
 
 type User {
@@ -59,7 +53,7 @@ type Project {
 }
 
 type Trade {
-  id: ID!
+  id: Int!
   symbol: String!
   openDate: Date!
   closeDate: Date
@@ -81,7 +75,7 @@ enum PutCall {
 }
 
 type Leg {
-  id: ID!
+  id: Int!
   side: Side!,
   putCall: PutCall
   quantity: Int!

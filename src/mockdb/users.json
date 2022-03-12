@@ -1,10 +1,18 @@
 [
   {
     "id": "c397a10d-c194-4d54-852a-6837ced3c974",
-    "username": "admin",
-    "email": "admin@optionsheet.com",
+    "username": "username_taken",
+    "email": "username_taken_test@test.com",
     "emailConfirmed": false,
-    "passwordHash": "$2b$12$6bgyFmVqzh5xHOGTEh19d.yv1v8jHsKY2waeYM1UylXYgEsiAUguy",
+    "passwordHash": "$2a$12$hIzKGgsZ.yepyKfFIvjCUuiCGoQCYymzA0nbNIXahj6yISDNj5rfK",
+    "imageUrl": null
+  },
+  {
+    "id": "a00a6f1a-2408-459e-902a-1feb8cda35bd",
+    "username": "email_taken_test",
+    "email": "email_taken@test.com",
+    "emailConfirmed": false,
+    "passwordHash": "$2a$12$XnNQlvEViCxJKQFtYUy5UuV1DHE3CqbaTD6vkTEVKhwoTNG7ALr0q",
     "imageUrl": null
   }
 ]

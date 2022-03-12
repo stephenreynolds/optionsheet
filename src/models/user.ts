@@ -1,7 +1,5 @@
-import { ID } from "./types";
-
 export interface User {
-  id: ID;
+  id: string;
   username: string;
   email: string;
   emailConfirmed: boolean;
@@ -16,16 +14,10 @@ export interface RegisterModel {
 }
 
 export interface AuthDetails {
-  id: ID;
+  id: string;
   token: string;
   username: string;
   email: string;
   imageUrl?: string;
   roles: string[];
-}
-
-export interface AuthResponse {
-  success: boolean;
-  authDetails?: AuthDetails;
-  message?: string;
 }

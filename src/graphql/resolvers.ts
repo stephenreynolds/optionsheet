@@ -4,7 +4,7 @@ import { createUser } from "../controllers/user";
 export const resolvers = {
   Query: {
     users: async (_, __, { dataSources }) => dataSources.data.getUsers(),
-    userById: (_, args, { dataSources }) => dataSources.data.getUsers().find(user => user.id === Number(args.id)),
+    userById: (_, args, { dataSources }) => dataSources.data.getUsers().find(user => user.id === args.id),
     projects: (_, __, { dataSources }) => dataSources.data.getProjects(),
     trades: (_, __, { dataSources }) => dataSources.data.getTrades()
   },

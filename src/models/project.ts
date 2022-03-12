@@ -1,10 +1,8 @@
-import { ID } from "./types";
-
 export interface Project {
-  id: ID;
+  id: string;
   name: string;
   description: string;
   tags: string[];
   lastEdited: Date;
-  userId: ID;
+  userId: string;
 }

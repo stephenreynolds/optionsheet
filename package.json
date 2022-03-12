@@ -25,11 +25,14 @@
   "dependencies": {
     "apollo-server-core": "^3.6.4",
     "apollo-server-express": "^3.6.4",
+    "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "express": "^4.17.3",
     "express-rate-limit": "^6.3.0",
     "graphql": "^16.3.0",
-    "morgan": "^1.10.0"
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@jagi/jest-transform-graphql": "^1.0.2",

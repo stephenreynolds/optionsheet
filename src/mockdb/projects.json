@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Test",
+    "description": "",
+    "tags": [],
+    "userId": 1,
+    "lastEdited": "2022-03-05 02:15:30.667000",
+    "id": "4209633e-1571-4ef5-916d-5cd2420ebed4",
+    "startingBalance": null,
+    "risk": null
+  },
+  {
+    "name": "New Price Model",
+    "description": "",
+    "tags": [],
+    "userId": 1,
+    "lastEdited": "2022-03-08 20:14:48.658000",
+    "id": "e69495d8-5241-43a5-9805-218e07826d5c",
+    "startingBalance": null,
+    "risk": null
+  },
+  {
+    "name": "My Portfolio (old)",
+    "description": "My real portfolio.",
+    "tags": ["options", "real"],
+    "userId": 1,
+    "lastEdited": "2022-03-07 22:35:42.595000",
+    "id": "4cafb925-4592-4bf1-a014-32cb40409bfc",
+    "startingBalance": 420.67,
+    "risk": 5
+  },
+  {
+    "name": "A new project with tags",
+    "description": "This is a new project with tags.",
+    "tags": ["new", "wat", "theta gang"],
+    "userId": 1,
+    "lastEdited": "2022-03-07 11:50:15.170000",
+    "id": "3ee5de32-d4a9-4fe5-989a-52cdb775ef4a",
+    "startingBalance": null,
+    "risk": null
+  },
+  {
+    "name": "My Portfolio",
+    "description": "",
+    "tags": ["portfolio"],
+    "userId": 1,
+    "lastEdited": "2022-03-10 15:35:48.974000",
+    "id": "19d0d48d-8e8e-453e-bf62-acd93db6ce72",
+    "startingBalance": 7000,
+    "risk": 5
+  }
+]

@@ -8,6 +8,7 @@ import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import config from "./config";
 import { resolvers } from "./graphql/resolvers";
 import typeDefs from "./graphql/schema.graphql";
+import { MockDataSource } from "./mockdb/mockDb";
 
 const startApolloServer = async (typeDefs, resolvers) => {
   const app = express();
@@ -25,6 +26,11 @@ const startApolloServer = async (typeDefs, resolvers) => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    dataSources: () => {
+      return {
+        data: new MockDataSource()
+      }
+    },
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
   });
 

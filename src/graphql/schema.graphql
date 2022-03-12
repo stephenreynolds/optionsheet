@@ -2,14 +2,38 @@ scalar Date
 
 type Query {
   users: [User]
-  user(id: ID!): User
-  roles: [Role]
+  userById(id: ID!): User
   projects: [Project]
   trades: [Trade]
 }
 
+input RegisterInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+type AuthDetails {
+  id: ID!
+  token: String!
+  username: String!
+  email: String!
+  imageUrl: String
+  roles: [String]!
+}
+
+type RegisterResponse {
+  success: Boolean!
+  authDetails: AuthDetails
+  message: String
+}
+
+type Mutation {
+  register(credentials: RegisterInput): RegisterResponse
+}
+
 type User {
-  id: ID
+  id: ID!
   username: String
   email: String
   emailConfirmed: Boolean
@@ -20,30 +44,30 @@ type User {
 }
 
 type Role {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
 }
 
 type Project {
-  id: ID
-  name: String
+  id: ID!
+  name: String!
   description: String
   trades: [Trade]
   tags: [String]
   lastEdited: Date
-  user: User
+  user: User!
 }
 
 type Trade {
-  id: ID
-  symbol: String
-  openDate: Date
+  id: ID!
+  symbol: String!
+  openDate: Date!
   closeDate: Date
   legs: [Leg]
   openingNote: String
   closingNote: String
   tags: [String]
-  project: Project
+  project: Project!
 }
 
 enum Side {
@@ -57,13 +81,13 @@ enum PutCall {
 }
 
 type Leg {
-  id: ID
-  side: Side,
+  id: ID!
+  side: Side!,
   putCall: PutCall
-  quantity: Int
+  quantity: Int!
   expiration: Date
   strike: Float
-  openPrice: Float
+  openPrice: Float!
   closePrice: Float
-  trade: Trade
+  trade: Trade!
 }

@@ -177,7 +177,10 @@ describe("User", () => {
       const result = await server.executeOperation({ query, variables: { userId } });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.userById.projects).toBeDefined();
+
+      const projects = dataSource.getProjects().filter(project => project.userId === userId);
+
+      expect(result.data.userById.projects).toHaveLength(projects.length);
     });
   });
 });

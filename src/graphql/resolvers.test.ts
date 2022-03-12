@@ -25,7 +25,7 @@ describe("Query", () => {
   describe("users", () => {
     it("gets a list of users", async () => {
       const query = gql`
-          query Query {
+          query Users {
               users {
                   id
               }
@@ -42,7 +42,7 @@ describe("Query", () => {
   describe("userById", () => {
     it("gets a user by id", async () => {
       const query = gql`
-          query Query($userId: ID!) {
+          query UserById($userId: ID!) {
               userById(id: $userId) {
                   id
               }
@@ -60,7 +60,7 @@ describe("Query", () => {
   describe("projects", () => {
     it("gets a list of projects", async () => {
       const query = gql`
-          query Query {
+          query Projects {
               projects {
                   id
               }
@@ -73,13 +73,30 @@ describe("Query", () => {
       expect(result.data.projects[0].id).toBeDefined();
     });
   });
+
+  describe("trades", () => {
+    it("gets a list of trades", async () => {
+      const query = gql`
+          query Trades {
+              trades {
+                  id
+              }
+          }
+      `;
+
+      const result = await server.executeOperation({ query });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.trades[0].id).toBeDefined();
+    });
+  });
 });
 
 describe("Mutation", () => {
   describe("register", () => {
     it("creates a user", async () => {
       const query = gql`
-          mutation Mutation($credentials: RegisterInput) {
+          mutation Register($credentials: RegisterInput) {
               register(credentials: $credentials) {
                   id
               }

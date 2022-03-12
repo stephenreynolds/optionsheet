@@ -1,5 +1,21 @@
 [
   {
+    "id": "f731791c-70da-4bec-b1c1-95aeab3f8c8a",
+    "username": "Joseph Joestar",
+    "email": "jojo@test.com",
+    "emailConfirmed": false,
+    "passwordHash": "$2a$12$lrC6sKmzKeQutP5zVo3u6Op1V8LPlEo66c4dHGcuerTIRwnDeItyC",
+    "imageUrl": null
+  },
+  {
+    "id": "c80517db-e104-4473-a1a9-f4889e3b963f",
+    "username": "Dio Brando",
+    "email": "dio@test.com",
+    "emailConfirmed": false,
+    "passwordHash": "$2a$12$M22O4WNljuI2dQ41zS4AN.zMVDtkq4l63mvdsHBaZn1z67bhOOvOu",
+    "imageUrl": null
+  },
+  {
     "id": "c397a10d-c194-4d54-852a-6837ced3c974",
     "username": "username_taken",
     "email": "username_taken_test@test.com",

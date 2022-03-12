@@ -142,4 +142,24 @@ describe("User", () => {
       expect(result.data.userById.roles[0].id).toBeDefined();
     });
   });
+
+  describe("projects", () => {
+    it("gets a list of projects for a user with id", async () => {
+      const query = gql`
+          query Projects($userId: ID!) {
+              userById(id: $userId) {
+                  projects {
+                      id
+                  }
+              }
+          }
+      `;
+
+      const userId = dataSource.getUsers()[0].id;
+      const result = await server.executeOperation({ query, variables: { userId } });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.userById.projects[0].id).toBeDefined();
+    });
+  });
 });

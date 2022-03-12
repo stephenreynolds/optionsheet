@@ -74,6 +74,24 @@ describe("Query", () => {
     });
   });
 
+  describe("projectById", () => {
+    it("gets a project by id", async () => {
+      const query = gql`
+          query ProjectById($projectId: ID!) {
+              projectById(id: $projectId) {
+                  id
+              }
+          }
+      `;
+
+      const projectId = dataSource.getProjects()[0].id;
+      const result = await server.executeOperation({ query, variables: { projectId } });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.projectById.id).toBe(projectId);
+    });
+  });
+
   describe("trades", () => {
     it("gets a list of trades", async () => {
       const query = gql`

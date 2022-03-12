@@ -117,6 +117,24 @@ describe("Query", () => {
       expect(result.data.trades).toHaveLength(trades.length);
     });
   });
+
+  describe("login", () => {
+    it("returns auth details after successful login", async () => {
+      const query = gql`
+          query Login($credentials: LoginInput!) {
+              login(credentials: $credentials) {
+                  token
+              }
+          }
+      `;
+
+      const credentials = { username: "test", password: "Tester42@!" };
+
+      const result = await server.executeOperation({ query, variables: { credentials } });
+
+      expect(result.data.login.token).toBeDefined();
+    });
+  });
 });
 
 describe("Mutation", () => {

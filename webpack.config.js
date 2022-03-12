@@ -14,7 +14,7 @@ const config = {
   mode: "production",
   externals: [nodeExternals()],
   entry: {
-    server: path.resolve(paths.src, "server.ts")
+    server: path.resolve(paths.src, "index.ts")
   },
   output: {
     path: paths.build,
@@ -38,11 +38,6 @@ const config = {
       {
         test: /\.ts$/,
         loader: "ts-loader"
-      },
-      {
-        test: /\.(graphql|gql)$/,
-        exclude: /node_modules/,
-        loader: "graphql-tag/loader"
       }
     ]
   }

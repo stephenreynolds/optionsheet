@@ -7,23 +7,20 @@ import { Trade } from "../models/trade";
 import { Project } from "../models/project";
 import { Leg, PutCall, Side } from "../models/leg";
 import { v4 as uuidv4 } from "uuid";
-import { DataSource } from "apollo-datasource";
 
-export class MockDataSource extends DataSource {
-  private readonly users: User[];
-  private readonly projects: Project[];
-  private readonly trades: Trade[];
-  private readonly legs: Leg[];
+export class MockDb {
+  private users: User[];
+  private projects: Project[];
+  private trades: Trade[];
+  private legs: Leg[];
 
   constructor() {
-    super();
-
     this.users = users;
     this.projects = projects.map(project => {
       return {
         ...project,
         lastEdited: new Date(project.lastEdited)
-      }
+      };
     });
     this.trades = trades.map(trade => {
       return {
@@ -31,7 +28,7 @@ export class MockDataSource extends DataSource {
         id: trade.id.toString(),
         openDate: new Date(trade.openDate),
         closeDate: trade.closeDate ? new Date(trade.closeDate) : undefined
-      }
+      };
     });
     this.legs = legs.map(leg => {
       return {
@@ -41,7 +38,7 @@ export class MockDataSource extends DataSource {
         putCall: leg.putCall ? PutCall[leg.putCall] : undefined,
         expiration: leg.expiration ? new Date(leg.expiration) : undefined,
         tradeId: leg.tradeId ? leg.tradeId.toString() : undefined
-      }
+      };
     });
   }
 
@@ -77,5 +74,12 @@ export class MockDataSource extends DataSource {
     this.users.push(newUser);
 
     return newUser;
+  };
+
+  updateUser = (userId, data) => {
+    this.users.findIndex(user => user.id === userId);
+    const user = this.users[userId];
+    this.users[userId] = { ...user, ...data };
+    return this.users[userId];
   };
 }

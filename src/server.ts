@@ -1,56 +1,24 @@
-import compression from "compression";
-import express from "express";
-import morgan from "morgan";
-import rateLimit from "express-rate-limit";
-import http from "http";
-import { ApolloServer } from "apollo-server-express";
-import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import config from "./config";
-import { resolvers } from "./graphql/resolvers";
-import typeDefs from "./graphql/schema.graphql";
-import { MockDataSource } from "./mockdb/mockDataSource";
-import jwt from "jsonwebtoken";
+import { Express } from "express";
+import http from "http";
+import https from "https";
 
-const startApolloServer = async (typeDefs, resolvers) => {
-  const app = express();
+const startServer = (app: Express) => {
+  if (config.http.enabled) {
+    const server = http.createServer(app);
 
-  // Middleware
-  app.use(rateLimit({
-    windowMs: 60 * 100, // 1 minute
-    max: 1000
-  }));
-  app.use(compression());
-  app.use(morgan("tiny"));
+    server.listen(config.http.port, config.host, () => {
+      console.log(`Server listening at http://${config.host}:${config.http.port}`);
+    });
+  }
 
-  const httpServer = http.createServer(app);
+  if (config.https.enabled) {
+    const server = https.createServer(config.https, app);
 
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    dataSources: () => {
-      return {
-        data: new MockDataSource()
-      };
-    },
-    context: ({ req }) => {
-      const token = req.headers.authorization || "";
-
-      const userId = jwt.verify(token, config.secret, (error, decoded) => {
-        return error ? undefined : decoded.id;
-      });
-
-      return { userId };
-    },
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
-  });
-
-  await server.start();
-
-  server.applyMiddleware({ app });
-
-  await new Promise<void>(resolve => httpServer.listen({ port: config.port }, resolve));
-
-  console.log(`Server listening at ${config.host}:${config.port}${server.graphqlPath}`);
+    server.listen(config.https.port, config.host, () => {
+      console.log(`Server listening at https://${config.host}:${config.https.port}`);
+    });
+  }
 };
 
-startApolloServer(typeDefs, resolvers).then();
+export default startServer;

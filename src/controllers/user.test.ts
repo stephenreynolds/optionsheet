@@ -1,11 +1,13 @@
 import { MockDataSource } from "../mockdb/mockDataSource";
 import { createUser } from "./user";
 import { UserInputError } from "apollo-server-core";
+import config from "../config";
 
 describe("createUser",  () => {
   let dataSource: MockDataSource;
 
   beforeAll(() => {
+    config.secret = "test";
     dataSource = new MockDataSource();
   });
 

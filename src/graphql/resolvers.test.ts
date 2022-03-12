@@ -2,12 +2,14 @@ import { ApolloServer, gql } from "apollo-server-express";
 import { MockDataSource } from "../mockdb/mockDataSource";
 import { resolvers } from "./resolvers";
 import typeDefs from "./schema.graphql";
+import config from "../config";
 
 describe("Register user", () => {
   let server: ApolloServer;
   let dataSource: MockDataSource;
 
   beforeAll(() => {
+    config.secret = "test";
     dataSource = new MockDataSource();
     server = new ApolloServer({
       typeDefs,

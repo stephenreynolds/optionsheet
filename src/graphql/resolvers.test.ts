@@ -105,7 +105,10 @@ describe("Query", () => {
       const result = await server.executeOperation({ query });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.trades[0].id).toBeDefined();
+
+      const trades = dataSource.getTrades();
+
+      expect(result.data.trades).toHaveLength(trades.length);
     });
   });
 });

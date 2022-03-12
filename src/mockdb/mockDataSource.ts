@@ -1,9 +1,7 @@
-import userRoles from "../mockdb/userRoles.json";
 import users from "../mockdb/users.json";
 import projects from "../mockdb/projects.json";
 import trades from "../mockdb/trades.json";
 import legs from "../mockdb/legs.json";
-import { UserRole } from "../models/userRole";
 import { User } from "../models/user";
 import { Trade } from "../models/trade";
 import { Project } from "../models/project";
@@ -12,7 +10,6 @@ import { v4 as uuidv4 } from "uuid";
 import { DataSource } from "apollo-datasource";
 
 export class MockDataSource extends DataSource {
-  private readonly userRoles: UserRole[];
   private readonly users: User[];
   private readonly projects: Project[];
   private readonly trades: Trade[];
@@ -21,7 +18,6 @@ export class MockDataSource extends DataSource {
   constructor() {
     super();
 
-    this.userRoles = userRoles;
     this.users = users;
     this.projects = projects.map(project => {
       return {
@@ -48,8 +44,6 @@ export class MockDataSource extends DataSource {
       }
     });
   }
-
-  getUserRoles = (): UserRole[] => this.userRoles;
 
   getUsers = (): User[] => this.users;
 

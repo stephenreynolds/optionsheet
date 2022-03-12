@@ -7,7 +7,8 @@ export const resolvers = {
     userById: (_, args, { dataSources }) => dataSources.data.getUsers().find(user => user.id === args.id),
     projects: (_, __, { dataSources }) => dataSources.data.getProjects(),
     projectById: (_, args, { dataSources }) => dataSources.data.getProjects().find(project => project.id === args.id),
-    trades: (_, __, { dataSources }) => dataSources.data.getTrades()
+    trades: (_, __, { dataSources }) => dataSources.data.getTrades(),
+    tradeById: (_, args, { dataSources }) => dataSources.data.getTrades().find(trade => trade.id === args.id)
   },
   Mutation: {
     register: async (_, { credentials }, { dataSources }) => {

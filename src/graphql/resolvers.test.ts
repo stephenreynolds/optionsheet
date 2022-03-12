@@ -203,3 +203,25 @@ describe("Projects", () => {
     });
   });
 });
+
+describe("Trades", () => {
+  describe("legs", () => {
+    it("gets a list of legs for a trade by id", async () => {
+      const query = gql`
+          query Legs($tradeId: ID!) {
+              tradeById(id: $tradeId) {
+                  legs {
+                      id
+                  }
+              }
+          }
+      `;
+
+      const tradeId = dataSource.getTrades()[0].id;
+      const result = await server.executeOperation({ query, variables: { tradeId } });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.tradeById.legs).toBeDefined();
+    });
+  });
+});

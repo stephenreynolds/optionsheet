@@ -37,6 +37,22 @@ describe("Resolvers", () => {
       expect(result.errors).toBeUndefined();
       expect(result.data.users[0].id).toBeDefined();
     });
+
+    it("gets a user by id", async () => {
+      const query = gql`
+          query Query($userId: ID!) {
+              userById(id: $userId) {
+                  id
+              }
+          }
+      `;
+
+      const userId = dataSource.getUsers()[0].id;
+      const result = await server.executeOperation({ query, variables: { userId } });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.userById.id).toBe(userId);
+    });
   });
 
   describe("Register user", () => {

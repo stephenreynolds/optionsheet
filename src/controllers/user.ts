@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { AuthDetails, RegisterModel, User } from "../models/user";
 import config from "../config";
 import { MockDataSource } from "../mockdb/mockDataSource";
-import { Role } from "../models/role";
 import { UserInputError } from "apollo-server-core";
 import { AuthenticationError } from "apollo-server-express";
 
@@ -23,10 +22,6 @@ const emailAvailable = (email: string, users: User[]) => {
 const passwordValid = (password: string) => {
   const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/;
   return password.length >= 8 && passwordRegex.test(password);
-};
-
-const getRoleByName = (name: string, roles: Role[]) => {
-  return roles.find(role => role.name === name);
 };
 
 const generateToken = (id: string) => {
@@ -54,26 +49,21 @@ export const createUser = async ({ username, email, password }: RegisterModel,
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  const roles = dataSource.getRoles();
-  const role = getRoleByName("user", roles);
-
   const user = {
     username,
     email,
     passwordHash,
-    roles: [role]
+    roles: ["user"]
   };
 
   const insertedUser = dataSource.insertUser(user);
   if (insertedUser) {
 
-    const roleNames = user.roles.map(r => r.name);
-
     return {
       id: insertedUser.id,
       username: insertedUser.username,
       email: insertedUser.email,
-      roles: roleNames,
+      roles: insertedUser.roles,
       token: generateToken(insertedUser.id)
     };
   }
@@ -97,18 +87,12 @@ export const login = async ({ username, email, password }, dataSource: MockDataS
   }
 
   const token = generateToken(user.id);
-  const roleNames = dataSource.getUserRoles()
-    .filter(ur => ur.userId === user.id)
-    .map(ur => dataSource
-      .getRoles()
-      .find(role => role.id === ur.roleId))
-    .map(role => role.name);
 
   return {
     id: user.id,
     username: user.username,
     email: user.email,
-    roles: roleNames,
+    roles: user.roles,
     token
   };
 };

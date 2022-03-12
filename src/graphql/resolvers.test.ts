@@ -150,29 +150,6 @@ describe("Mutation", () => {
 });
 
 describe("User", () => {
-  describe("roles", () => {
-    it("gets a list of roles for a user with id", async () => {
-      const query = gql`
-          query Roles($userId: ID!) {
-              userById(id: $userId) {
-                  roles {
-                      id
-                  }
-              }
-          }
-      `;
-
-      const userId = dataSource.getUsers()[0].id;
-      const result = await server.executeOperation({ query, variables: { userId } });
-
-      expect(result.errors).toBeUndefined();
-
-      const roles = dataSource.getUserRoles().filter(role => role.userId === userId);
-
-      expect(result.data.userById.roles).toHaveLength(roles.length);
-    });
-  });
-
   describe("projects", () => {
     it("gets a list of projects for a user with id", async () => {
       const query = gql`

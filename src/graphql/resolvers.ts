@@ -19,11 +19,6 @@ export const resolvers = {
     }
   },
   User: {
-    roles: (user, _, { dataSources }) => {
-      return dataSources.data.getUserRoles()
-        .filter(ur => ur.userId === user.id)
-        .map(ur => dataSources.data.getRoles().find(r => r.id === ur.roleId));
-    },
     projects: (user, _, { dataSources }) => {
       return dataSources.data.getProjects().filter(p => p.userId === user.id);
     }

@@ -1,4 +1,3 @@
-import roles from "../mockdb/roles.json";
 import userRoles from "../mockdb/userRoles.json";
 import users from "../mockdb/users.json";
 import projects from "../mockdb/projects.json";
@@ -6,7 +5,6 @@ import trades from "../mockdb/trades.json";
 import legs from "../mockdb/legs.json";
 import { UserRole } from "../models/userRole";
 import { User } from "../models/user";
-import { Role } from "../models/role";
 import { Trade } from "../models/trade";
 import { Project } from "../models/project";
 import { Leg, PutCall, Side } from "../models/leg";
@@ -14,7 +12,6 @@ import { v4 as uuidv4 } from "uuid";
 import { DataSource } from "apollo-datasource";
 
 export class MockDataSource extends DataSource {
-  private readonly roles: Role[];
   private readonly userRoles: UserRole[];
   private readonly users: User[];
   private readonly projects: Project[];
@@ -24,7 +21,6 @@ export class MockDataSource extends DataSource {
   constructor() {
     super();
 
-    this.roles = roles;
     this.userRoles = userRoles;
     this.users = users;
     this.projects = projects.map(project => {
@@ -52,8 +48,6 @@ export class MockDataSource extends DataSource {
       }
     });
   }
-
-  getRoles = (): Role[] => this.roles;
 
   getUserRoles = (): UserRole[] => this.userRoles;
 
@@ -87,10 +81,6 @@ export class MockDataSource extends DataSource {
     const id = uuidv4();
     const newUser: User = { ...user, id, emailConfirmed: false };
     this.users.push(newUser);
-
-    user.roles.map(role => {
-      this.userRoles.push({ roleId: role.id, userId: id });
-    });
 
     return newUser;
   };

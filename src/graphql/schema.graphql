@@ -41,14 +41,9 @@ type User {
   email: String
   emailConfirmed: Boolean
   passwordHash: String
-  roles: [Role]
+  roles: [String]
   imageUrl: String
   projects: [Project]
-}
-
-type Role {
-  id: ID!
-  name: String!
 }
 
 type Project {

@@ -5,6 +5,7 @@ export interface User {
   emailConfirmed: boolean;
   passwordHash: string;
   imageUrl?: string;
+  roles: string[];
 }
 
 export interface RegisterModel {

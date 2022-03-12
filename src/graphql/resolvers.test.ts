@@ -35,7 +35,10 @@ describe("Query", () => {
       const result = await server.executeOperation({ query });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.users[0].id).toBeDefined();
+
+      const users = dataSource.getUsers();
+
+      expect(result.data.users).toHaveLength(users.length);
     });
   });
 

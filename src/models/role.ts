@@ -1,6 +1,4 @@
-import { ID } from "./types";
-
 export interface Role {
-  id: ID;
+  id: number;
   name: string;
 }

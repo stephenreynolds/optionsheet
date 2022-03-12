@@ -70,7 +70,10 @@ describe("Query", () => {
       const result = await server.executeOperation({ query });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.projects[0].id).toBeDefined();
+
+      const projects = dataSource.getProjects();
+
+      expect(result.data.projects).toHaveLength(projects.length);
     });
   });
 

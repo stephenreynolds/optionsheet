@@ -199,7 +199,10 @@ describe("Projects", () => {
       const result = await server.executeOperation({ query, variables: { projectId } });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.projectById.trades).toBeDefined();
+
+      const trades = dataSource.getTrades().filter(trade => trade.id === projectId);
+
+      expect(result.data.projectById.trades).toHaveLength(trades.length);
     });
   });
 });
@@ -217,12 +220,12 @@ describe("Trades", () => {
           }
       `;
 
-      const trade = dataSource.getTrades()[0];
-      const result = await server.executeOperation({ query, variables: { tradeId: trade.id } });
+      const tradeId = dataSource.getTrades()[0].id;
+      const result = await server.executeOperation({ query, variables: { tradeId } });
 
       expect(result.errors).toBeUndefined();
 
-      const legs = dataSource.getLegs().filter(leg => leg.tradeId === trade.id);
+      const legs = dataSource.getLegs().filter(leg => leg.tradeId === tradeId);
       expect(result.data.tradeById.legs).toHaveLength(legs.length);
     });
   });

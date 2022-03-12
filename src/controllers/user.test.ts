@@ -1,6 +1,6 @@
 import { MockDataSource } from "../mockdb/mockDataSource";
 import { createUser, login } from "./user";
-import { UserInputError } from "apollo-server-core";
+import { AuthenticationError, UserInputError } from "apollo-server-core";
 import config from "../config";
 
 let dataSource: MockDataSource;
@@ -80,5 +80,29 @@ describe("login", () => {
 
     const result = await login(credentials, dataSource);
     expect(result.token).toBeDefined();
+  });
+
+  it("throws when password is invalid", async () => {
+    const credentials = { username: "test", password: "invalid" };
+
+    await expect(async () => {
+      await login(credentials, dataSource);
+    }).rejects.toThrow(AuthenticationError);
+  });
+
+  it("throws when user does not exist with username", async () => {
+    const credentials = { username: "does not exist", password: "Tester42@!" };
+
+    await expect(async () => {
+      await login(credentials, dataSource);
+    }).rejects.toThrow(UserInputError);
+  });
+
+  it("throws when user does not exist with email", async () => {
+    const credentials = { email: "doesnotexist@test.com", password: "Tester42@!" };
+
+    await expect(async () => {
+      await login(credentials, dataSource);
+    }).rejects.toThrow(UserInputError);
   });
 });

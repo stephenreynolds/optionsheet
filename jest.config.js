@@ -6,8 +6,12 @@ module.exports = {
     "\\.(gql|graphql)$": "@jagi/jest-transform-graphql"
   },
   collectCoverageFrom: [
-    "**/*.{js,ts}",
-    "!**/node_modules/**",
-    "!**/vendor/**"
+    "src/**/*.{js,ts}"
+  ],
+  coveragePathIgnorePatterns: [
+    "node_modules",
+    "build",
+    "jest.config.js",
+    "webpack.config.js"
   ]
 };

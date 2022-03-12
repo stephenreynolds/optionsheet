@@ -71,17 +71,20 @@ export const createUser = async ({ username, email, password }: RegisterModel,
   throw new Error("Failed to create user");
 };
 
-export const login = async ({ username, email, password }, dataSource: MockDataSource) => {
-  let user = dataSource.getUsers().find(user => user.email === email);
+export const login = async (credentials, dataSource: MockDataSource) => {
+  let user: User;
+  if (credentials.email) {
+    user = dataSource.getUsers().find(user => user.email === credentials.email);
+  }
   if (!user) {
-    user = dataSource.getUsers().find(user => user.username === username);
+    user = dataSource.getUsers().find(user => user.username === credentials.username);
   }
 
   if (!user) {
     throw new UserInputError("User does not exist.");
   }
 
-  const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+  const passwordIsValid = await bcrypt.compare(credentials.password, user.passwordHash);
   if (!passwordIsValid) {
     throw new AuthenticationError("Incorrect password.");
   }

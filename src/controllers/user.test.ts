@@ -1,16 +1,16 @@
 import { MockDataSource } from "../mockdb/mockDataSource";
-import { createUser } from "./user";
+import { createUser, login } from "./user";
 import { UserInputError } from "apollo-server-core";
 import config from "../config";
 
-describe("createUser",  () => {
-  let dataSource: MockDataSource;
+let dataSource: MockDataSource;
 
-  beforeAll(() => {
-    config.secret = "test";
-    dataSource = new MockDataSource();
-  });
+beforeAll(() => {
+  config.secret = "test";
+  dataSource = new MockDataSource();
+});
 
+describe("createUser", () => {
   it("creates a new user", async () => {
     const credentials = {
       username: "new_user",
@@ -33,11 +33,11 @@ describe("createUser",  () => {
     };
 
     await expect(async () => {
-      await createUser(credentials, dataSource)
+      await createUser(credentials, dataSource);
     }).rejects.toThrow(UserInputError);
   });
 
-  it("throws when email is already in use",  async () => {
+  it("throws when email is already in use", async () => {
     const credentials = {
       username: "email_taken",
       email: "email_taken@test.com",
@@ -46,7 +46,7 @@ describe("createUser",  () => {
 
     await expect(async () => {
       await createUser(credentials, dataSource);
-    }).rejects.toThrow( UserInputError);
+    }).rejects.toThrow(UserInputError);
   });
 
   it("throws when email is invalid", async () => {
@@ -71,5 +71,14 @@ describe("createUser",  () => {
     await expect(async () => {
       await createUser(credentials, dataSource);
     }).rejects.toThrow(UserInputError);
+  });
+});
+
+describe("login", () => {
+  it("returns auth details after successful login", async () => {
+    const credentials = { username: "test", password: "Tester42@!" };
+
+    const result = await login(credentials, dataSource);
+    expect(result.token).toBeDefined();
   });
 });

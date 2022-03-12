@@ -123,7 +123,7 @@ describe("Mutation", () => {
   describe("register", () => {
     it("creates a user", async () => {
       const query = gql`
-          mutation Register($credentials: RegisterInput) {
+          mutation Register($credentials: RegisterInput!) {
               register(credentials: $credentials) {
                   id
               }

@@ -9,6 +9,7 @@ import config from "./config";
 import { resolvers } from "./graphql/resolvers";
 import typeDefs from "./graphql/schema.graphql";
 import { MockDataSource } from "./mockdb/mockDataSource";
+import jwt from "jsonwebtoken";
 
 const startApolloServer = async (typeDefs, resolvers) => {
   const app = express();
@@ -29,7 +30,16 @@ const startApolloServer = async (typeDefs, resolvers) => {
     dataSources: () => {
       return {
         data: new MockDataSource()
-      }
+      };
+    },
+    context: ({ req }) => {
+      const token = req.headers.authorization || "";
+
+      const userId = jwt.verify(token, config.secret, (error, decoded) => {
+        return error ? undefined : decoded.id;
+      });
+
+      return { userId };
     },
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })]
   });

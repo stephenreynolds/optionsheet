@@ -89,7 +89,7 @@ export class MockDataSource extends DataSource {
     this.users.push(newUser);
 
     user.roles.map(role => {
-      this.userRoles.push({ roleId: role.roleId, userId: id });
+      this.userRoles.push({ roleId: role.id, userId: id });
     });
 
     return newUser;

@@ -1,14 +1,17 @@
 import dateScalar from "./dateScalar";
-import { createUser } from "../controllers/user";
+import { createUser, login } from "../controllers/user";
 
 export const resolvers = {
   Query: {
     users: async (_, __, { dataSources }) => dataSources.data.getUsers(),
-    userById: (_, args, { dataSources }) => dataSources.data.getUsers().find(user => user.id === args.id),
+    userById: (_, { id }, { dataSources }) => dataSources.data.getUsers().find(user => user.id === id),
     projects: (_, __, { dataSources }) => dataSources.data.getProjects(),
-    projectById: (_, args, { dataSources }) => dataSources.data.getProjects().find(project => project.id === args.id),
+    projectById: (_, { id }, { dataSources }) => dataSources.data.getProjects().find(project => project.id === id),
     trades: (_, __, { dataSources }) => dataSources.data.getTrades(),
-    tradeById: (_, args, { dataSources }) => dataSources.data.getTrades().find(trade => trade.id === args.id)
+    tradeById: (_, { id }, { dataSources }) => dataSources.data.getTrades().find(trade => trade.id === id),
+    login: async (_, { credentials }, { dataSources }) => {
+      return await login(credentials, dataSources.data);
+    }
   },
   Mutation: {
     register: async (_, { credentials }, { dataSources }) => {

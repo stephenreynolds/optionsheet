@@ -5,6 +5,7 @@ import config from "../config";
 import { MockDataSource } from "../mockdb/mockDataSource";
 import { Role } from "../models/role";
 import { UserInputError } from "apollo-server-core";
+import { AuthenticationError } from "apollo-server-express";
 
 const usernameAvailable = (username: string, users: User[]) => {
   return !users.find(user => user.username === username);
@@ -78,4 +79,36 @@ export const createUser = async ({ username, email, password }: RegisterModel,
   }
 
   throw new Error("Failed to create user");
+};
+
+export const login = async ({ username, email, password }, dataSource: MockDataSource) => {
+  let user = dataSource.getUsers().find(user => user.email === email);
+  if (!user) {
+    user = dataSource.getUsers().find(user => user.username === username);
+  }
+
+  if (!user) {
+    throw new UserInputError("User does not exist.");
+  }
+
+  const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordIsValid) {
+    throw new AuthenticationError("Incorrect password.");
+  }
+
+  const token = generateToken(user.id);
+  const roleNames = dataSource.getUserRoles()
+    .filter(ur => ur.userId === user.id)
+    .map(ur => dataSource
+      .getRoles()
+      .find(role => role.id === ur.roleId))
+    .map(role => role.name);
+
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    roles: roleNames,
+    token
+  };
 };

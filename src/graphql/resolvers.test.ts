@@ -157,7 +157,10 @@ describe("User", () => {
       const result = await server.executeOperation({ query, variables: { userId } });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.userById.roles[0].id).toBeDefined();
+
+      const roles = dataSource.getUserRoles().filter(role => role.userId === userId);
+
+      expect(result.data.userById.roles).toHaveLength(roles.length);
     });
   });
 

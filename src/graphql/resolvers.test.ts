@@ -4,25 +4,25 @@ import { resolvers } from "./resolvers";
 import typeDefs from "./schema.graphql";
 import config from "../config";
 
-describe("Resolvers", () => {
-  let server: ApolloServer;
-  let dataSource: MockDataSource;
+let server: ApolloServer;
+let dataSource: MockDataSource;
 
-  beforeAll(() => {
-    config.secret = "test";
-    dataSource = new MockDataSource();
-    server = new ApolloServer({
-      typeDefs,
-      resolvers,
-      dataSources: () => {
-        return {
-          data: dataSource
-        };
-      }
-    });
+beforeAll(() => {
+  config.secret = "test";
+  dataSource = new MockDataSource();
+  server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => {
+      return {
+        data: dataSource
+      };
+    }
   });
+});
 
-  describe("Users", () => {
+describe("Query", () => {
+  describe("users", () => {
     it("gets a list of users", async () => {
       const query = gql`
           query Query {
@@ -37,7 +37,9 @@ describe("Resolvers", () => {
       expect(result.errors).toBeUndefined();
       expect(result.data.users[0].id).toBeDefined();
     });
+  });
 
+  describe("userById", () => {
     it("gets a user by id", async () => {
       const query = gql`
           query Query($userId: ID!) {
@@ -55,7 +57,26 @@ describe("Resolvers", () => {
     });
   });
 
-  describe("Register user", () => {
+  describe("projects", () => {
+    it("gets a list of projects", async () => {
+      const query = gql`
+          query Query {
+              projects {
+                  id
+              }
+          }
+      `;
+
+      const result = await server.executeOperation({ query });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.projects[0].id).toBeDefined();
+    });
+  });
+});
+
+describe("Mutation", () => {
+  describe("register", () => {
     it("creates a user", async () => {
       const query = gql`
           mutation Mutation($credentials: RegisterInput) {

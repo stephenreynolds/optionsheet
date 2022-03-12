@@ -159,7 +159,29 @@ describe("User", () => {
       const result = await server.executeOperation({ query, variables: { userId } });
 
       expect(result.errors).toBeUndefined();
-      expect(result.data.userById.projects[0].id).toBeDefined();
+      expect(result.data.userById.projects).toBeDefined();
+    });
+  });
+});
+
+describe("Projects", () => {
+  describe("trades", () => {
+    it("gets a list of trades for a project by id", async () => {
+      const query = gql`
+          query Trades($projectId: ID!) {
+              projectById(id: $projectId) {
+                  trades {
+                      id
+                  }
+              }
+          }
+      `;
+
+      const projectId = dataSource.getProjects()[0].id;
+      const result = await server.executeOperation({ query, variables: { projectId } });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data.projectById.trades).toBeDefined();
     });
   });
 });

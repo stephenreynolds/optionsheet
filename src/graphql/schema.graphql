@@ -4,6 +4,7 @@ type Query {
   users: [User]
   userById(id: ID!): User
   projects: [Project]
+  projectById(id: ID!): Project
   trades: [Trade]
 }
 

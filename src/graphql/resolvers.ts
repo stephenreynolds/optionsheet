@@ -6,6 +6,7 @@ export const resolvers = {
     users: async (_, __, { dataSources }) => dataSources.data.getUsers(),
     userById: (_, args, { dataSources }) => dataSources.data.getUsers().find(user => user.id === args.id),
     projects: (_, __, { dataSources }) => dataSources.data.getProjects(),
+    projectById: (_, args, { dataSources }) => dataSources.data.getProjects().find(project => project.id === args.id),
     trades: (_, __, { dataSources }) => dataSources.data.getTrades()
   },
   Mutation: {

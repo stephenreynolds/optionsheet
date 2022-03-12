@@ -1,4 +1,4 @@
-import { MockDataSource } from "../mockdb/mockDb";
+import { MockDataSource } from "../mockdb/mockDataSource";
 import { createUser } from "./user";
 import { UserInputError } from "apollo-server-core";
 

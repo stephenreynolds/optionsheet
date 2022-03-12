@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthDetails, RegisterModel, User } from "../models/user";
 import config from "../config";
-import { MockDataSource } from "../mockdb/mockDb";
+import { MockDataSource } from "../mockdb/mockDataSource";
 import { Role } from "../models/role";
 import { UserInputError } from "apollo-server-core";
 

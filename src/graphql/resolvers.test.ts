@@ -1,5 +1,5 @@
 import { ApolloServer, gql } from "apollo-server-express";
-import { MockDataSource } from "../mockdb/mockDb";
+import { MockDataSource } from "../mockdb/mockDataSource";
 import { resolvers } from "./resolvers";
 import typeDefs from "./schema.graphql";
 

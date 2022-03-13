@@ -38,10 +38,10 @@ export class User {
   })
   projects?: Project[];
 
-  @Column()
+  @Column({ default: "" })
   avatarUrl?: string;
 
-  @Column()
+  @Column({ default: "" })
   bio?: string;
 
   @Column({ default: new Date() })

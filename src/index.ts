@@ -4,10 +4,8 @@ import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import startServer from "./server";
-import { createConnection } from "typeorm";
-import ormConfig from "./data/ormConfig";
-import { seedData } from "./data/seed";
 import { attachRoutes } from "./routes";
+import connect from "./data/connect";
 
 const app = express();
 
@@ -23,10 +21,5 @@ app.use(express.json());
 app.use(morgan("tiny"));
 
 attachRoutes(app);
-
-const connect = async () => {
-  const connection = await createConnection(ormConfig);
-  await seedData(connection);
-};
 
 connect().then(() => startServer(app));

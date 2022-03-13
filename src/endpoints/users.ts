@@ -61,23 +61,3 @@ export const createUser = async (request: Request, response: Response) => {
   await userRepository.save(user);
   response.sendStatus(StatusCodes.OK);
 };
-
-export const checkUsernameAvailable = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  const username = request.body.username;
-
-  const user = await userRepository.findOne({ username });
-  response.send({
-    usernameAvailable: !!user
-  });
-};
-
-export const checkEmailAvailable = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  const email = request.body.email;
-
-  const user = await userRepository.findOne({ email });
-  response.send({
-    emailAvailable: !!user
-  });
-};

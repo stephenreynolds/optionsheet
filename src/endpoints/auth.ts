@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
-import config from "../config";
 import { User } from "../data/entities/user";
 import { sendError } from "../errorResponse";
+import config from "../config";
 
 export const authenticateUser = async (
   request: Request,
@@ -36,4 +36,30 @@ export const authenticateUser = async (
   });
 
   response.status(StatusCodes.OK).send({ token });
+};
+
+export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
+  try {
+    const userRepository = getRepository(User);
+    let available = true;
+
+    if (request.query.email) {
+      const email = request.query.email.toString();
+      const userWithEmail = await userRepository.findOne({ email });
+      available = !userWithEmail;
+    }
+
+    if (request.query.username) {
+      const username = request.query.username.toString();
+      const userWithName = await userRepository.findOne({ username });
+      available = !userWithName;
+    }
+
+    response.send({ available });
+  }
+  catch (error) {
+    const message = "Failed to check if email and username are available";
+    console.log(`${message}: ${error.message}`);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
 };

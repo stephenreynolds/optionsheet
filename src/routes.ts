@@ -1,10 +1,10 @@
 import { Express } from "express";
 import { verifyJwtToken } from "./middleware/authentication";
-import * as auth from "./controllers/authController";
+import * as auth from "./endpoints/auth";
 import * as projects from "./controllers/projectController";
 import * as trades from "./controllers/tradeController";
-import * as users from "./controllers/userController";
 import * as user from "./endpoints/user";
+import * as users from "./endpoints/users";
 
 export const attachRoutes = (app: Express) => {
   // Users
@@ -12,15 +12,12 @@ export const attachRoutes = (app: Express) => {
   app.patch("/user", [verifyJwtToken], user.update);
   app.delete("/user", [verifyJwtToken], user.deleteAccount);
 
-  // Session
-  app.post("/session/check_email_available", users.checkEmailAvailable);
-  app.post("/session/check_username_available", users.checkUsernameAvailable);
-
   // Users
   app.post("/users", users.createUser);
 
-  // Authentication
+  // Auth
   app.post("/auth/authenticate", auth.authenticateUser);
+  app.get("/auth/check-credentials", auth.emailAndUsernameAvailable);
 
   // Projects
   app.post("/projects", [verifyJwtToken], projects.createProject);

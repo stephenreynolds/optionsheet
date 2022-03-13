@@ -5,8 +5,12 @@ import * as trades from "./controllers/tradeController";
 import * as users from "./controllers/userController";
 import { getMyUsername } from "./controllers/userController";
 import { verifyJwtToken } from "./middleware/authentication";
+import * as user from "./endpoints/user";
 
 export const attachRoutes = (app: Express) => {
+  // Users
+  app.get("/user", [verifyJwtToken], user.getAuthenticatedUser);
+
   // Session
   app.get("/session/username", [verifyJwtToken], getMyUsername);
   app.get("/session/email", [verifyJwtToken], users.getEmail);

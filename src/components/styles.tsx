@@ -2,6 +2,7 @@ import styled, { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
   html, body {
+    margin: 0;
     font-family: system-ui, sans-serif;
     font-size: 14px;
     background-color: ${props => props.theme.dark.bg};

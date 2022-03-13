@@ -8,7 +8,7 @@ export const register = async (user: CreateUserModel) => {
 
 export const login = async (credentials: Credentials) => {
   return axios
-    .post(`${apiUrl}/auth/authenticate`, credentials)
+    .post(`${apiUrl}/auth`, credentials)
     .then((response) => {
       if (response.data.token) {
         localStorage.setItem("token", JSON.stringify(response.data.token));

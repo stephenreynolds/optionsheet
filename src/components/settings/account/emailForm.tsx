@@ -1,12 +1,13 @@
 import { ErrorMessage, Formik } from "formik";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkEmailAvailable, getEmail } from "../../../common/userApi";
+import { checkEmailAvailable } from "../../../common/userApi";
 import { changeEmail } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
+import { getEmail } from "../../../redux/selectors/userSelectors";
 
 const validationSchema = yup.object({
   email: yup
@@ -21,21 +22,11 @@ const validationSchema = yup.object({
 });
 
 const EmailForm = () => {
+  const currentEmail = useSelector(state => getEmail(state));
   const dispatch: PromiseDispatch = useDispatch();
 
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(currentEmail);
   const [confirmed, setConfirmed] = useState(false);
-
-  useEffect(() => {
-    getEmail()
-      .then((response) => {
-        setEmail(response.data.email);
-        setConfirmed(response.data.confirmed);
-      })
-      .catch((error) => {
-        toast.error(`Failed to get user email: ${error.messsage}`);
-      });
-  }, []);
 
   if (!email.length) {
     return null;

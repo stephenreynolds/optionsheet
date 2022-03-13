@@ -3,11 +3,11 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { deleteUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { getMyUsername } from "../../../redux/selectors/userSelectors";
+import { getUsername } from "../../../redux/selectors/userSelectors";
 import Modal from "../../shared/modal";
 
 const DeleteAccount = ({ show, toggleVisibility }) => {
-  const username = useSelector((state) => getMyUsername(state));
+  const username = useSelector((state) => getUsername(state));
   const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
 

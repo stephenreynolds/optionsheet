@@ -2,12 +2,8 @@ import axios from "axios";
 import { getAuthHeader } from "./auth";
 import { apiUrl } from "./api";
 
-export const getUsername = () => {
-  return axios.get(`${apiUrl}/session/username`, { headers: getAuthHeader() });
-};
-
-export const getEmail = () => {
-  return axios.get(`${apiUrl}/session/email`, { headers: getAuthHeader() });
+export const getAuthenticatedUser = () => {
+  return axios.get(`${apiUrl}/user`, { headers: getAuthHeader() });
 };
 
 export const changeUsername = async (username: string) => {

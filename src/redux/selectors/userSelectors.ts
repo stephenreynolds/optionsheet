@@ -1,9 +1,13 @@
 import { User } from "../../common/models/user";
 
-export const getMyInfo = (state): User => {
+export const getUser = (state): User => {
   return state.user;
 };
 
-export const getMyUsername = (state): string => {
-  return state.user ? state.user.username : undefined;
+export const getUsername = (state): string => {
+  return state.user.username ?? undefined;
+};
+
+export const getEmail = (state): string => {
+  return state.user.email ?? undefined;
 };

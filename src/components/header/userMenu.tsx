@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/authActions";
-import { getMyUsername } from "../../redux/selectors/userSelectors";
+import { getUsername } from "../../redux/selectors/userSelectors";
 // import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -73,7 +73,7 @@ const DropdownMenu = styled.div`
 `;
 
 const UserMenu = () => {
-  const username = useSelector((state) => getMyUsername(state));
+  const username = useSelector((state) => getUsername(state));
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

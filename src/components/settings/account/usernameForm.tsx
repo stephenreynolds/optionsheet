@@ -5,11 +5,11 @@ import * as yup from "yup";
 import { checkUsernameAvailable } from "../../../common/userApi";
 import { changeUsername } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { getMyUsername } from "../../../redux/selectors/userSelectors";
+import { getUsername } from "../../../redux/selectors/userSelectors";
 import { HelpBlock } from "../utils";
 
 const UsernameForm = () => {
-  const username = useSelector((state) => getMyUsername(state));
+  const username = useSelector((state) => getUsername(state));
   const dispatch: PromiseDispatch = useDispatch();
 
   if (!username) {

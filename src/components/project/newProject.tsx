@@ -10,7 +10,7 @@ import * as projectActions from "../../redux/actions/projectActions";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import { getProjectTags } from "../../redux/selectors/projectSelectors";
-import { getMyUsername } from "../../redux/selectors/userSelectors";
+import { getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
 
 const NewProjectContainer = styled.div`
@@ -73,7 +73,7 @@ const initialValues = {
 
 const NewProject = () => {
   const loading = useSelector((state) => apiCallsInProgress(state));
-  const username = useSelector((state) => getMyUsername(state));
+  const username = useSelector((state) => getUsername(state));
   const tagSuggestions = useSelector((state) => getProjectTags(state));
   const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();

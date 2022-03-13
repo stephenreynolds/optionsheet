@@ -4,20 +4,20 @@ import {
   CHANGE_PASSWORD_SUCCESS,
   CHANGE_USERNAME_SUCCESS,
   DELETE_USER_SUCCESS,
-  GET_USERNAME_SUCCESS,
+  GET_AUTHENTICATED_USER_SUCCESS,
   LOGIN_FAIL
 } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
 import { logout } from "./authActions";
 
-export const getUsername = () => {
+export const getAuthenticatedUser = () => {
   return (dispatch) => {
     dispatch(beginApiCall());
-    return userApi.getUsername()
-      .then((response) => {
-        dispatch({ type: GET_USERNAME_SUCCESS, payload: response.data });
+    return userApi.getAuthenticatedUser()
+      .then(response => {
+        dispatch({ type: GET_AUTHENTICATED_USER_SUCCESS, payload: response.data });
       })
-      .catch((error) => {
+      .catch(error => {
         dispatch({ type: LOGIN_FAIL });
         dispatch(apiCallError());
         throw error.response.data;
@@ -58,7 +58,7 @@ export const changeEmail = (email: string) => {
     dispatch(beginApiCall());
     return userApi.changeEmail(email)
       .then(() => {
-        dispatch({ type: CHANGE_EMAIL_SUCCESS});
+        dispatch({ type: CHANGE_EMAIL_SUCCESS });
       })
       .catch((error) => {
         dispatch(apiCallError());
@@ -72,7 +72,7 @@ export const deleteUser = (username: string) => {
     dispatch(beginApiCall());
     return userApi.deleteUser(username)
       .then(() => {
-        dispatch({ type: DELETE_USER_SUCCESS});
+        dispatch({ type: DELETE_USER_SUCCESS });
         dispatch(logout());
       })
       .catch((error) => {

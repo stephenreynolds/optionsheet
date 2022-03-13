@@ -7,7 +7,7 @@ import styled from "styled-components";
 import * as projectActions from "../../redux/actions/projectActions";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import { getProjects } from "../../redux/selectors/projectSelectors";
-import { getMyUsername } from "../../redux/selectors/userSelectors";
+import { getUsername } from "../../redux/selectors/userSelectors";
 
 const ProjectListNav = styled.div`
   ul {
@@ -36,7 +36,7 @@ const ProjectListNav = styled.div`
 
 const ProjectList = () => {
   const loading = useSelector((state) => apiCallsInProgress(state));
-  const username = useSelector((state) => getMyUsername(state));
+  const username = useSelector((state) => getUsername(state));
   const projects = useSelector((state) => getProjects(state));
   const dispatch: PromiseDispatch = useDispatch();
 

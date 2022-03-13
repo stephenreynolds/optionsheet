@@ -16,7 +16,7 @@ export const attachRoutes = (app: Express) => {
   app.post("/users", users.createUser);
 
   // Auth
-  app.post("/auth/authenticate", auth.authenticateUser);
+  app.post("/auth", auth.authenticate);
   app.get("/auth/check-credentials", auth.emailAndUsernameAvailable);
 
   // Projects

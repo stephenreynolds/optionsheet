@@ -7,17 +7,26 @@ import { User } from "../data/entities/user";
 import { sendError } from "../errorResponse";
 import config from "../config";
 
-export const authenticateUser = async (
+export const authenticate = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  const userRepository = getRepository(User);
-  const usernameOrEmail = request.body.username || request.body.email;
+  const username = request.body.username;
+  const email = request.body.email;
   const password = request.body.password;
 
-  let user = await userRepository.findOne({ username: usernameOrEmail });
-  if (!user) {
-    user = await userRepository.findOne({ email: usernameOrEmail });
+  const userRepository = getRepository(User);
+  let user: User;
+
+  if (username) {
+    user = await userRepository.findOne({ username });
+  }
+  else if (email) {
+    user = await userRepository.findOne({ email });
+  }
+  else {
+    sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
+    return;
   }
 
   if (!user) {

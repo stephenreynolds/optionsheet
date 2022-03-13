@@ -3,7 +3,6 @@ import * as auth from "./controllers/authController";
 import * as projects from "./controllers/projectController";
 import * as trades from "./controllers/tradeController";
 import * as users from "./controllers/userController";
-import { getMyUsername } from "./controllers/userController";
 import { verifyJwtToken } from "./middleware/authentication";
 import * as user from "./endpoints/user";
 
@@ -12,8 +11,6 @@ export const attachRoutes = (app: Express) => {
   app.get("/user", [verifyJwtToken], user.getAuthenticatedUser);
 
   // Session
-  app.get("/session/username", [verifyJwtToken], getMyUsername);
-  app.get("/session/email", [verifyJwtToken], users.getEmail);
   app.post("/session/change_username", [verifyJwtToken], users.changeUsername);
   app.post("/session/change_password", [verifyJwtToken], users.changePassword);
   app.post("/session/change_email", [verifyJwtToken], users.changeEmail);
@@ -22,7 +19,6 @@ export const attachRoutes = (app: Express) => {
 
   // Users
   app.post("/users", users.createUser);
-  app.get("/users/:username", users.getUser);
   app.delete("/users/:username", [verifyJwtToken], users.deleteAccount);
 
   // Authentication

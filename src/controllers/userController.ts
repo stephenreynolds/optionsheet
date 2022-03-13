@@ -82,63 +82,6 @@ export const checkEmailAvailable = async (request: Request, response: Response) 
   });
 };
 
-export const getUser = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-
-  const username = request.params.username;
-
-  const user = await userRepository.findOne({ username });
-  if (!user) {
-    sendError(request, response, StatusCodes.NOT_FOUND, "User not found.");
-    return;
-  }
-
-  const data = {
-    id: user.id,
-    username: user.username,
-    email: user.email
-  };
-
-  return response.send(data);
-};
-
-export const getMyUsername = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-
-  const id = request.body.userId;
-  if (!id) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User ID was not provided.");
-  }
-
-  const user = await userRepository.findOne(id);
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-  }
-
-  return response.send(user.username);
-};
-
-export const getEmail = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-
-  const id = request.body.userId;
-  if (!id) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User ID was not provided.");
-  }
-
-  const user = await userRepository.findOne(id);
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-  }
-
-  const data = {
-    email: user.email,
-    emailConfirmed: user.emailConfirmed
-  };
-
-  return response.send(data);
-};
-
 export const changeUsername = async (request: Request, response: Response) => {
   try {
     const userRepository = getRepository(User);

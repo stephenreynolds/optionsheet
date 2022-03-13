@@ -86,7 +86,7 @@ const TradeDetails = () => {
             <h1 className="mb-0">{trade.symbol}</h1>
             <h3>{getStrategyFromLegs(trade.legs)}</h3>
             {trade.tags.length > 0 && trade.tags.map((tag) => (
-              <TagPill key={tag}>{tag}</TagPill>
+              <TagPill key={tag.name}>{tag.name}</TagPill>
             ))}
           </div>
           <div>

@@ -1,3 +1,5 @@
+import { Tag } from "./tag";
+
 export enum Side {
   Buy = "Buy",
   Sell = "Sell"
@@ -26,7 +28,7 @@ export interface Trade {
   legs: Leg[];
   openingNote?: string;
   closingNote?: string;
-  tags?: string[];
+  tags?: Tag[];
 }
 
 export interface TradeCreateModel {
@@ -34,7 +36,7 @@ export interface TradeCreateModel {
   openDate: Date;
   legs: Leg[];
   openingNote?: string;
-  tags?: string[];
+  tags?: Tag[];
 }
 
 export interface TradeUpdateModel {
@@ -44,5 +46,5 @@ export interface TradeUpdateModel {
   legs?: Leg[];
   openingNote?: string;
   closingNote?: string;
-  tags?: string[];
+  tags?: Tag[];
 }

@@ -244,7 +244,7 @@ const Trades = () => {
               </td>
               <td className="left-align">
                 {trade.tags.map((tag) => (
-                  <TagPill key={tag} value={tag}>{tag}</TagPill>
+                  <TagPill key={tag.name} value={tag.name}>{tag.name}</TagPill>
                 ))}
               </td>
             </tr>

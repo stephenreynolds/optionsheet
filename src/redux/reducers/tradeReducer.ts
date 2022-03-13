@@ -6,18 +6,18 @@ import {
 import { Trade } from "../../common/models/trade";
 import _ from "lodash";
 import produce from "immer";
+import { Tag } from "../../common/models/tag";
 
 const getAllTradeTags = (trades: Trade[]) => {
   return _.uniq(trades
     .map((trade) => trade.tags)
-    .flat()
-    .map((tag) => tag.toLowerCase()));
+    .flat());
 };
 
 interface TradeReducerState {
   trade: Trade;
   trades: Trade[];
-  tags: string[];
+  tags: Tag[];
 }
 
 const initialState: Readonly<Partial<TradeReducerState>> = {};

@@ -1,11 +1,12 @@
 import { Trade } from "../../common/models/trade";
 import { getProfitLoss } from "../../common/tradeUtils";
+import { Tag } from "../../common/models/tag";
 
 export const getTrades = (state): Trade[] => {
   return state.trades ? state.trades.trades : undefined;
 };
 
-export const getTradeTags = (state): string[] => {
+export const getTradeTags = (state): Tag[] => {
   return state.trades ? state.trades.tags : undefined;
 };
 

@@ -150,7 +150,7 @@ const Project = () => {
           </PLPill>
 
           {project.tags.map((tag) => (
-            <TagPill key={tag}>{tag}</TagPill>
+            <TagPill key={tag.name}>{tag.name}</TagPill>
           ))}
         </div>
       </TitleBar>

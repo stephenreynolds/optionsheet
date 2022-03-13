@@ -7,11 +7,12 @@ import {
 import { Project, ProjectSummaryModel } from "../../common/models/project";
 import _ from "lodash";
 import produce from "immer";
+import { Tag } from "../../common/models/tag";
 
 interface ProjectReducerState {
   projects: ProjectSummaryModel[];
   project: Project;
-  tags: string[];
+  tags: Tag[];
 }
 
 const initialState: Readonly<Partial<ProjectReducerState>> = {};
@@ -19,8 +20,7 @@ const initialState: Readonly<Partial<ProjectReducerState>> = {};
 const getAllProjectTags = (projects: Project[]) => {
   return _.uniq(projects
     .map((project) => project.tags)
-    .flat()
-    .map((tag) => tag.toLowerCase()));
+    .flat());
 };
 
 const projectReducer = produce((state, action) => {

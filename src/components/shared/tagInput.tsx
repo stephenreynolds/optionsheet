@@ -73,7 +73,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
 
   const onKeyDown = (e) => {
     const key = e.key;
-    const trimmedInput = input.trim();
+    const trimmedInput = input.trim().toLowerCase();
 
     if (key === "Tab" && shownSuggestions.length) {
       e.preventDefault();
@@ -83,7 +83,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
     }
     else if ((key === "," || key === "Enter" || key === "Tab") && trimmedInput.length && !tags.includes(trimmedInput)) {
       e.preventDefault();
-      setTags([...tags, trimmedInput]);
+      setTags([...tags, { name: trimmedInput }]);
       setInput("");
       setShownSuggestions([]);
     }
@@ -93,7 +93,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
       const tagsCopy = [...tags];
       const poppedTag = tagsCopy.pop();
       setTags(tagsCopy);
-      setInput(poppedTag);
+      setInput(poppedTag.name);
     }
 
     setIsKeyReleased(false);
@@ -133,7 +133,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
         <div className="tags">
           {tags.map((tag, index) => (
             <div className="tag" key={index}>
-              {tag}
+              {tag.name}
               <button onClick={(e) => deleteTag(e, index)}>x</button>
             </div>
           ))}

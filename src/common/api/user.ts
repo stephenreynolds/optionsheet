@@ -1,19 +1,19 @@
 import axios from "axios";
-import { apiUrl, getAuthHeader } from "./api";
+import { apiRoot, getAuthHeader } from "./api";
 import { UserUpdateModel } from "../models/user";
 
 export const getAuthenticatedUser = () => {
-  return axios.get(`${apiUrl}/user`, { headers: getAuthHeader() });
+  return axios.get(`${apiRoot}/user`, { headers: getAuthHeader() });
 };
 
 export const updateUser = async (data: UserUpdateModel) => {
-  return axios.patch(`${apiUrl}/user`, data, {
+  return axios.patch(`${apiRoot}/user`, data, {
     headers: getAuthHeader()
   });
 };
 
 export const deleteUser = async () => {
-  return axios.delete(`${apiUrl}/user`, {
+  return axios.delete(`${apiRoot}/user`, {
     headers: getAuthHeader()
   });
 };
@@ -24,7 +24,7 @@ interface EmailUsername {
 }
 
 export const checkCredentials = async (credentials: EmailUsername) => {
-  const res = await axios.get(`${apiUrl}/auth/check-credentials`, {
+  const res = await axios.get(`${apiRoot}/auth/check-credentials`, {
     params: credentials
   });
 

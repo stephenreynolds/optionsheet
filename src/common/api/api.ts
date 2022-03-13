@@ -1,4 +1,4 @@
-export const apiUrl = "https://localhost:443"
+export const apiRoot = "https://localhost:443"
 
 export const getAuthHeader = () => {
   const token = JSON.parse(localStorage.getItem("token"));

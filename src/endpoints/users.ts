@@ -1,10 +1,12 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getRepository } from "typeorm";
 import { Role } from "../data/entities/role";
 import { User } from "../data/entities/user";
 import { sendError } from "../errorResponse";
+import config from "../config";
 
 export const createUser = async (request: Request, response: Response) => {
   const userRepository = getRepository(User);
@@ -58,6 +60,11 @@ export const createUser = async (request: Request, response: Response) => {
     passwordHash,
     roles: [role]
   };
-  await userRepository.save(user);
-  response.sendStatus(StatusCodes.OK);
+  const newUser = await userRepository.save(user);
+
+  const token = jwt.sign({ id: newUser.id }, config.secret, {
+    expiresIn: 86400 // 24 hours
+  });
+
+  response.send({ token });
 };

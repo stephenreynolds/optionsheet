@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Trade } from "./trade";
 import { User } from "./user";
+import { Tag } from "./tag";
 
 @Entity()
 export class Project {
@@ -22,8 +23,12 @@ export class Project {
   @Column()
   description: string;
 
-  @Column("text", { array: true })
-  tags?: string[];
+  @ManyToMany(() => Tag, (tag) => tag.projects, {
+    eager: true,
+    cascade: true
+  })
+  @JoinTable()
+  tags?: Tag[];
 
   @Column("numeric", { scale: 2, nullable: true })
   startingBalance?: number;

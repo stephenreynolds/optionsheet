@@ -95,7 +95,7 @@ export const createProject = async (request: Request, response: Response) => {
     name,
     description,
     startingBalance: startingBalance ? startingBalance : null,
-    tags: tags ? tags : [],
+    tags,
     user: userId,
     lastEdited: new Date()
   };
@@ -141,10 +141,12 @@ export const updateProject = async (request: Request, response: Response) => {
     delete request.body.userId;
     const updatedData: Project = request.body;
 
-    await projectRepository.update({
-      user: user.id,
-      name: projectName
-    }, updatedData);
+    const updatedProject = {
+      ...project,
+      ...updatedData
+    };
+
+    await projectRepository.save(updatedProject);
 
     await onProjectUpdated(project, projectRepository);
 

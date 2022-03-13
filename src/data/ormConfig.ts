@@ -4,6 +4,7 @@ import { Project } from "./entities/project";
 import { Role } from "./entities/role";
 import { Trade } from "./entities/trade";
 import { User } from "./entities/user";
+import { Tag } from "./entities/tag";
 
 const ormConfig: ConnectionOptions = {
   type: "postgres",
@@ -14,7 +15,7 @@ const ormConfig: ConnectionOptions = {
   password: process.env.DB_PASSWORD || "optionsheet",
   synchronize: true,
   logging: false,
-  entities: [User, Role, Trade, Leg, Project],
+  entities: [User, Role, Trade, Leg, Project, Tag],
   migrations: [`${__dirname}/migrations/**/*.ts`],
   subscribers: [`${__dirname}/subscribers/**/*.ts`],
   cli: {

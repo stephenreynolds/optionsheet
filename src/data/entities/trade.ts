@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Project } from "./project";
 import { Leg } from "./leg";
+import { Tag } from "./tag";
 
 @Entity()
 export class Trade {
@@ -29,8 +30,12 @@ export class Trade {
   @Column({ nullable: true })
   closingNote?: string;
 
-  @Column("text", { array: true, default: [] })
-  tags: string[];
+  @ManyToMany(() => Tag, (tag) => tag.trades, {
+    eager: true,
+    cascade: true
+  })
+  @JoinTable()
+  tags?: Tag[];
 
   @ManyToOne(() => Project, (project) => project.trades, { onDelete: "CASCADE" })
   project: Project;

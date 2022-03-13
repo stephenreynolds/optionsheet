@@ -2,7 +2,7 @@ import { ErrorMessage, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkCredentials } from "../../../common/userApi";
+import { checkCredentials } from "../../../common/api/user";
 import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getUsername } from "../../../redux/selectors/userSelectors";

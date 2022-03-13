@@ -1,5 +1,5 @@
 import { UserUpdateModel } from "../../common/models/user";
-import * as userApi from "../../common/userApi";
+import * as userApi from "../../common/api/user";
 import {
   DELETE_USER_SUCCESS,
   GET_AUTHENTICATED_USER_SUCCESS,

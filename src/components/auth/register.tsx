@@ -6,7 +6,7 @@ import * as authActions from "../../redux/actions/authActions";
 import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
-import { checkCredentials } from "../../common/userApi";
+import { checkCredentials } from "../../common/api/user";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";

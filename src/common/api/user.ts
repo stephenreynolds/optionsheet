@@ -1,7 +1,6 @@
 import axios from "axios";
-import { getAuthHeader } from "./auth";
-import { apiUrl } from "./api";
-import { UserUpdateModel } from "./models/user";
+import { apiUrl, getAuthHeader } from "./api";
+import { UserUpdateModel } from "../models/user";
 
 export const getAuthenticatedUser = () => {
   return axios.get(`${apiUrl}/user`, { headers: getAuthHeader() });

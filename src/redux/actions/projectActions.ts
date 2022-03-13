@@ -1,4 +1,4 @@
-import * as projectApi from "../../common/projectApi";
+import * as projectApi from "../../common/api/projects";
 import {
   GET_PROJECTS_SUCCESS,
   GET_PROJECT_SUCCESS,

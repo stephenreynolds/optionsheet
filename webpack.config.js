@@ -26,7 +26,7 @@ module.exports = (env) => {
     },
     output: {
       path: paths.build,
-      publicPath: "",
+      publicPath: "/",
       filename: "static/js/[name].[contenthash:8].js",
       chunkFilename: "static/js/[name].[chunkhash:8].js",
       clean: true

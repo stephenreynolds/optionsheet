@@ -7,8 +7,8 @@ export const register = (model: CreateUserModel) => {
   return (dispatch) => {
     dispatch(beginApiCall());
     return authApi.register(model)
-      .then(() => {
-        dispatch({ type: REGISTER_SUCCESS });
+      .then((data) => {
+        dispatch({ type: REGISTER_SUCCESS, payload: data });
       })
       .catch((error) => {
         dispatch({ type: REGISTER_FAIL });

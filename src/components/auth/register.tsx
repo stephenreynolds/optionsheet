@@ -136,17 +136,10 @@ const Register = () => {
   }, [isLoggedIn, navigate]);
 
   const onSubmit = (model: CreateUserModel) => {
-    dispatch(authActions.register(model)).then(() => {
-      dispatch(
-        authActions.login({
-          username: model.username,
-          password: model.password
-        })
-      ).then()
-        .catch((error) => {
-          setRegisterError(error.message);
-        });
-    });
+    dispatch(authActions.register(model))
+      .catch((error) => {
+        setRegisterError(error.message);
+      });
   };
 
   return (

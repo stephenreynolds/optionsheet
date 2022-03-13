@@ -5,36 +5,69 @@ import { Leg } from "../data/entities/leg";
 import { Project } from "../data/entities/project";
 import { Trade } from "../data/entities/trade";
 import { User } from "../data/entities/user";
-import { sendError } from "../errorResponse";
+import { logError, sendError } from "../errorResponse";
 
 const onProjectUpdated = async (project: Project, projectRepository: Repository<Project>) => {
   await projectRepository.update({ id: project.id }, { lastEdited: new Date() });
 };
 
 export const getTrades = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
-  const username = request.params.username;
-  const user = await userRepository.findOne({ username });
+  try {
+    const userRepository = getRepository(User);
+    const username = request.params.username;
+    const user = await userRepository.findOne({ username });
 
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-    return;
+    if (!user) {
+      sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+      return;
+    }
+
+    const projectRepository = getRepository(Project);
+    const projectName = request.params.project;
+    const project = await projectRepository.findOne({ name: projectName });
+
+    if (!project) {
+      sendError(request, response, StatusCodes.BAD_REQUEST, "Project does not exist");
+      return;
+    }
+
+    const tradeRepository = getRepository(Trade);
+    const trades = await tradeRepository.find({ project });
+
+    response.send(trades.map((trade) => {
+      return {
+        ...trade,
+        legs: trade.legs.map((leg) => {
+          return {
+            ...leg,
+            quantity: Number(leg.quantity),
+            strike: Number(leg.strike),
+            openPrice: Number(leg.openPrice),
+            closePrice: leg.closePrice ? Number(leg.closePrice) : null
+          };
+        })
+      };
+    }));
   }
-
-  const projectRepository = getRepository(Project);
-  const projectName = request.params.project;
-  const project = await projectRepository.findOne({ name: projectName });
-
-  if (!project) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "Project does not exist");
-    return;
+  catch (error) {
+    const message = "Failed to get trades";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
+};
 
-  const tradeRepository = getRepository(Trade);
-  const trades = await tradeRepository.find({ project });
+export const getTradeById = async (request: Request, response: Response) => {
+  try {
+    const tradeRepository = getRepository(Trade);
+    const id = Number(request.params.id);
+    const trade = await tradeRepository.findOne(id);
 
-  response.send(trades.map((trade) => {
-    return {
+    if (!trade) {
+      sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
+      return;
+    }
+
+    response.send({
       ...trade,
       legs: trade.legs.map((leg) => {
         return {
@@ -45,32 +78,13 @@ export const getTrades = async (request: Request, response: Response) => {
           closePrice: leg.closePrice ? Number(leg.closePrice) : null
         };
       })
-    };
-  }));
-};
-
-export const getTradeById = async (request: Request, response: Response) => {
-  const tradeRepository = getRepository(Trade);
-  const id = Number(request.params.id);
-  const trade = await tradeRepository.findOne(id);
-
-  if (!trade) {
-    sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
-    return;
+    });
   }
-
-  response.send({
-    ...trade,
-    legs: trade.legs.map((leg) => {
-      return {
-        ...leg,
-        quantity: Number(leg.quantity),
-        strike: Number(leg.strike),
-        openPrice: Number(leg.openPrice),
-        closePrice: leg.closePrice ? Number(leg.closePrice) : null
-      };
-    })
-  });
+  catch (error) {
+    const message = "Failed to get trade by id";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
 };
 
 export const addTrade = async (request: Request, response: Response) => {

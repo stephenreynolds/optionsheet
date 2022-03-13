@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../data/entities/user";
 import { StatusCodes } from "http-status-codes";
-import { sendError } from "../errorResponse";
+import { logError, sendError } from "../errorResponse";
 
 interface UserDetails {
   username: string;
@@ -46,7 +46,9 @@ export const get = async (request: Request, response: Response) => {
     response.status(StatusCodes.OK).send(userDetails);
   }
   catch (error) {
-    console.log(`Failed to get user: ${error.message}`);
+    const message = "Failed to get user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
 
@@ -133,8 +135,9 @@ export const update = async (request: Request, response: Response) => {
     response.status(StatusCodes.OK).send(userDetails);
   }
   catch (error) {
-    console.log(`Failed to update user: ${error.message}`);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user.");
+    const message = "Failed to update user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
 
@@ -149,7 +152,8 @@ export const deleteAccount = async (request: Request, response: Response) => {
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    console.log(`Failed to delete user: ${error.message}`);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user.");
+    const message = "Failed to delete user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };

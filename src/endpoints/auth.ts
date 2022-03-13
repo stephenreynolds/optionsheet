@@ -4,47 +4,48 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getRepository } from "typeorm";
 import { User } from "../data/entities/user";
-import { sendError } from "../errorResponse";
+import { logError, sendError } from "../errorResponse";
 import config from "../config";
 
-export const authenticate = async (
-  request: Request,
-  response: Response
-): Promise<void> => {
-  const username = request.body.username;
-  const email = request.body.email;
-  const password = request.body.password;
+export const authenticate = async (request: Request, response: Response) => {
+  try {
+    const username = request.body.username;
+    const email = request.body.email;
+    const password = request.body.password;
 
-  const userRepository = getRepository(User);
-  let user: User;
+    const userRepository = getRepository(User);
+    let user: User;
 
-  if (username) {
-    user = await userRepository.findOne({ username });
+    if (username) {
+      user = await userRepository.findOne({ username });
+    }
+    else if (email) {
+      user = await userRepository.findOne({ email });
+    }
+    else {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
+    }
+
+    if (!user) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
+
+    const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+    if (!passwordIsValid) {
+      return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
+    }
+
+    const token = jwt.signJwtToken({id: user.id}, config.jwt.secret, {
+      expiresIn: config.jwt.jwtExpiration
+    });
+
+    response.status(StatusCodes.OK).send({ token });
   }
-  else if (email) {
-    user = await userRepository.findOne({ email });
+  catch (error) {
+    const message = "Failed to authenticate";
+    logError(error, message);
+    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
-  else {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
-    return;
-  }
-
-  if (!user) {
-    sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
-    return;
-  }
-
-  const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
-  if (!passwordIsValid) {
-    sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
-    return;
-  }
-
-  const token = jwt.sign({ id: user.id }, config.secret, {
-    expiresIn: 86400 // 24 hours
-  });
-
-  response.status(StatusCodes.OK).send({ token });
 };
 
 export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
@@ -68,7 +69,7 @@ export const emailAndUsernameAvailable = async (request: Request, response: Resp
   }
   catch (error) {
     const message = "Failed to check if email and username are available";
-    console.log(`${message}: ${error.message}`);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, message);
+    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };

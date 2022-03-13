@@ -62,8 +62,8 @@ export const createUser = async (request: Request, response: Response) => {
   };
   const newUser = await userRepository.save(user);
 
-  const token = jwt.sign({ id: newUser.id }, config.secret, {
-    expiresIn: 86400 // 24 hours
+  const token = jwt.signJwtToken({ id: newUser.id }, config.jwt.secret, {
+    expiresIn: config.jwt.jwtExpiration
   });
 
   response.send({ token });

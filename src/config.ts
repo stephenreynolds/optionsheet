@@ -2,7 +2,6 @@ import fs from "fs";
 
 export default {
   isProduction: process.env.NODE_ENV === "production",
-  secret: process.env.SECRET,
   host: process.env.HOST || "localhost",
   http: {
     enabled: process.env.HTTP === "enabled",
@@ -13,5 +12,10 @@ export default {
     port: Number(process.env.HTTPS_PORT || 443),
     key: process.env.HTTPS_KEY ? fs.readFileSync(process.env.HTTPS_KEY) : "",
     cert: process.env.HTTPS_CERT ? fs.readFileSync(process.env.HTTPS_CERT) : ""
+  },
+  jwt: {
+    secret: process.env.SECRET,
+    jwtExpiration: 60, // 1 hour
+    jwtRefreshExpiration: 120 // 24 hours
   }
 };

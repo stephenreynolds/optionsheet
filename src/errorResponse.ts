@@ -12,3 +12,7 @@ export const sendError = (request: Request, response: Response, status: StatusCo
 
   response.status(errorResponse.status).send(errorResponse);
 };
+
+export const logError = (error, message) => {
+  console.log(`${message}: ${error.message}`);
+};

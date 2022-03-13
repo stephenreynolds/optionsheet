@@ -2,35 +2,33 @@ import axios from "axios";
 import { getAuthHeader } from "./auth";
 import { TradeCreateModel, TradeUpdateModel } from "./models/trade";
 import { ProjectCreateModel, ProjectUpdateModel } from "./models/project";
-
-const url =
-  process.env.NODE_ENV === "production" ? "" : "https://localhost:443";
+import { apiUrl } from "./api";
 
 export const getProjects = async (username: string) => {
-  return await axios.get(`${url}/api/projects/${username}`);
+  return await axios.get(`${apiUrl}/projects/${username}`);
 };
 
 export const getProjectByName = async (
   username: string,
   projectName: string
 ) => {
-  return await axios.get(`${url}/api/projects/${username}/${projectName}`);
+  return await axios.get(`${apiUrl}/projects/${username}/${projectName}`);
 };
 
 export const createProject = async (model: ProjectCreateModel) => {
-  return await axios.post(`${url}/api/projects`, model, {
+  return await axios.post(`${apiUrl}/projects`, model, {
     headers: getAuthHeader()
   });
 };
 
 export const updateProject = async (username: string, projectName: string, model: ProjectUpdateModel) => {
-  return await axios.patch(`${url}/api/projects/${username}/${projectName}`, model, {
+  return await axios.patch(`${apiUrl}/projects/${username}/${projectName}`, model, {
     headers: getAuthHeader()
   });
 };
 
 export const deleteProject = async (username: string, projectName: string) => {
-  return await axios.delete(`${url}/api/projects/${username}/${projectName}`, {
+  return await axios.delete(`${apiUrl}/projects/${username}/${projectName}`, {
     headers: getAuthHeader()
   });
 };
@@ -40,27 +38,27 @@ export const addTrade = async (
   projectName: string,
   trade: TradeCreateModel
 ) => {
-  return await axios.post(`${url}/api/projects/${username}/${projectName}`, trade, {
+  return await axios.post(`${apiUrl}/projects/${username}/${projectName}`, trade, {
     headers: getAuthHeader()
   });
 };
 
 export const getTrades = async (username: string, projectName: string) => {
-  return await axios.get(`${url}/api/projects/${username}/${projectName}/trades`);
+  return await axios.get(`${apiUrl}/projects/${username}/${projectName}/trades`);
 };
 
 export const getTradeById = async (id: string) => {
-  return await axios.get(`${url}/api/trades/${id}`);
+  return await axios.get(`${apiUrl}/trades/${id}`);
 };
 
 export const updateTradeById = async (id: string, model: TradeUpdateModel) => {
-  return await axios.patch(`${url}/api/trades/${id}`, model, {
+  return await axios.patch(`${apiUrl}/trades/${id}`, model, {
     headers: getAuthHeader()
   });
 };
 
 export const deleteTradeById = async (id: string) => {
-  return await axios.delete(`${url}/api/trades/${id}`, {
+  return await axios.delete(`${apiUrl}/trades/${id}`, {
     headers: getAuthHeader()
   });
 };

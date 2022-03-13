@@ -26,7 +26,10 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @ManyToMany(() => Role, (role) => role.users, { cascade: true })
+  @ManyToMany(() => Role, (role) => role.users, {
+    eager: true,
+    cascade: true
+  })
   @JoinTable()
   roles: Role[];
 
@@ -35,6 +38,15 @@ export class User {
   })
   projects?: Project[];
 
-  @Column({ nullable: true })
+  @Column()
   avatarUrl?: string;
+
+  @Column()
+  bio?: string;
+
+  @Column({ default: new Date() })
+  createdOn?: Date;
+
+  @Column({ default: new Date() })
+  updatedOn?: Date;
 }

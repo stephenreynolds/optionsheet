@@ -180,7 +180,7 @@ const Trades = () => {
   return (
     <Container>
       <div style={{
-        marginTop: "-2rem",
+        marginTop: "-2.8rem",
         marginBottom: "0.5rem",
         display: "grid",
         gridTemplateColumns: "1fr auto 1fr",

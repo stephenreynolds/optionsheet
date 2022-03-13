@@ -2,7 +2,7 @@ import {
   GET_PROJECTS_SUCCESS,
   GET_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
-  DELETE_PROJECT_SUCCESS
+  DELETE_PROJECT_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
 import { Project, ProjectSummaryModel } from "../../common/models/project";
 import _ from "lodash";
@@ -40,6 +40,10 @@ const projectReducer = produce((state, action) => {
     case DELETE_PROJECT_SUCCESS:
       delete state.project;
       break;
+    case LOGIN_FAIL:
+    case LOGOUT_SUCCESS:
+    case REGISTER_FAIL:
+      state = { };
   }
 
   return state;

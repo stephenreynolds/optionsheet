@@ -1,6 +1,6 @@
 import {
   GET_TRADE_SUCCESS,
-  GET_TRADES_SUCCESS,
+  GET_TRADES_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL,
   UPDATE_TRADE_SUCCESS
 } from "../actions/actionTypes";
 import { Trade } from "../../common/models/trade";
@@ -35,6 +35,10 @@ const tradeReducer = produce((state, action) => {
       state.trade = { ...state.trade, ...payload };
       state.trades[state.trades.findIndex((trade) => trade.id === state.trade.id)] = { ...state.trade, ...payload };
       break;
+    case LOGIN_FAIL:
+    case LOGOUT_SUCCESS:
+    case REGISTER_FAIL:
+      state = { };
   }
 
   return state;

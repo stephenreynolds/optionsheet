@@ -2,7 +2,7 @@ import produce from "immer";
 import {
   GET_AUTHENTICATED_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
-  DELETE_USER_SUCCESS
+  DELETE_USER_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
 import { User } from "../../common/models/user";
 
@@ -19,6 +19,10 @@ const userReducer = produce((state, action) => {
     case DELETE_USER_SUCCESS:
       state = initialState;
       break;
+    case LOGIN_FAIL:
+    case LOGOUT_SUCCESS:
+    case REGISTER_FAIL:
+      state = { };
   }
 
   return state;

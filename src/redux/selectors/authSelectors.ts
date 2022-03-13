@@ -1,3 +1,3 @@
 export const getIsLoggedIn = (state): boolean => {
-  return state.auth.isLoggedIn;
+  return state.auth.token;
 };

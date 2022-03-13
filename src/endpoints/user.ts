@@ -1,7 +1,9 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../data/entities/user";
 import { StatusCodes } from "http-status-codes";
+import { sendError } from "../errorResponse";
 
 interface UserDetails {
   username: string;
@@ -16,14 +18,10 @@ interface UserDetails {
   is_admin: boolean;
 }
 
-export const getAuthenticatedUser = async (request: Request, response: Response) => {
-  const id = request.body.userId;
-  const userRepository = getRepository(User);
-  const user = await userRepository.findOne(id);
-
+const getUserDetails = (user: User): UserDetails => {
   const isAdmin = !!user.roles.find(role => role.name === "admin");
 
-  const userDetails: UserDetails = {
+  return {
     username: user.username,
     url: `https://api.optionsheet.net/users/${user.username}`,
     html_url: `https://optionsheet.net/${user.username}`,
@@ -35,6 +33,107 @@ export const getAuthenticatedUser = async (request: Request, response: Response)
     updated_on: new Date(user.updatedOn),
     is_admin: isAdmin
   };
+};
 
-  response.status(StatusCodes.OK).send(userDetails);
+export const get = async (request: Request, response: Response) => {
+  try {
+    const id = request.body.userId;
+    const userRepository = getRepository(User);
+    const user = await userRepository.findOne(id);
+
+    const userDetails = getUserDetails(user);
+
+    response.status(StatusCodes.OK).send(userDetails);
+  }
+  catch (error) {
+    console.log(`Failed to get user: ${error.message}`);
+  }
+};
+
+interface UserUpdateModel {
+  username?: string;
+  email?: string;
+  bio?: string;
+  passwordHash?: string;
+}
+
+const passwordIsValid = (password: string) => {
+  const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/;
+  return password.length >= 8 && passwordRegex.test(password);
+};
+
+const emailIsValid = (email: string) => {
+  const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
+  return email.length <= 320 && emailRegex.test(email);
+};
+
+export const update = async (request: Request, response: Response) => {
+  try {
+    const id = request.body.userId;
+    const userRepository = getRepository(User);
+
+    let updateModel: UserUpdateModel = {};
+
+    // Change username if given.
+    const username = request.body.username;
+    if (username) {
+      // Check that no user already has that username.
+      const match = await userRepository.findOne({ username });
+      if (match) {
+        sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
+        return;
+      }
+
+      updateModel = { ...updateModel, username };
+    }
+
+    // Change password if given.
+    const password = request.body.password;
+    if (password) {
+      // Check for valid password.
+      if (!passwordIsValid(password)) {
+        sendError(request, response, StatusCodes.BAD_REQUEST, "Password is too weak.");
+        return;
+      }
+
+      const passwordHash = await bcrypt.hash(password, 12);
+      updateModel = { ...updateModel, passwordHash };
+    }
+
+    // Change email if given.
+    const email = request.body.email;
+    if (email) {
+      // Check for valid email address.
+      if (!emailIsValid(email)) {
+        sendError(request, response, StatusCodes.BAD_REQUEST, "Email is invalid.");
+        return;
+      }
+
+      // Check that no user already has that username.
+      const match = await userRepository.findOne({ email });
+      if (match) {
+        sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
+        return;
+      }
+
+      updateModel = { ...updateModel, email };
+    }
+
+    // Change bio if given.
+    const bio = request.body.bio;
+    if (bio) {
+      updateModel = { ...updateModel, bio };
+    }
+
+    await userRepository.update({ id }, updateModel);
+    const updatedUser = await userRepository.findOne({ id });
+
+    const userDetails = getUserDetails(updatedUser);
+
+    response.status(StatusCodes.OK).send(userDetails);
+  }
+  catch (error) {
+    console.log(`Failed to update user: ${error.message}`);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user.");
+  }
 };

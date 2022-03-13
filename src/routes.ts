@@ -8,12 +8,10 @@ import * as user from "./endpoints/user";
 
 export const attachRoutes = (app: Express) => {
   // Users
-  app.get("/user", [verifyJwtToken], user.getAuthenticatedUser);
+  app.get("/user", [verifyJwtToken], user.get);
+  app.patch("/user", [verifyJwtToken], user.update);
 
   // Session
-  app.post("/session/change_username", [verifyJwtToken], users.changeUsername);
-  app.post("/session/change_password", [verifyJwtToken], users.changePassword);
-  app.post("/session/change_email", [verifyJwtToken], users.changeEmail);
   app.post("/session/check_email_available", users.checkEmailAvailable);
   app.post("/session/check_username_available", users.checkUsernameAvailable);
 

@@ -137,3 +137,19 @@ export const update = async (request: Request, response: Response) => {
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user.");
   }
 };
+
+export const deleteAccount = async (request: Request, response: Response) => {
+  try {
+    const userRepository = getRepository(User);
+
+    const id = request.body.userId;
+
+    await userRepository.delete(id);
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    console.log(`Failed to delete user: ${error.message}`);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user.");
+  }
+};

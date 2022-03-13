@@ -81,30 +81,3 @@ export const checkEmailAvailable = async (request: Request, response: Response) 
     emailAvailable: !!user
   });
 };
-
-export const deleteAccount = async (request: Request, response: Response) => {
-  try {
-    const userRepository = getRepository(User);
-
-    const id = request.body.userId;
-    const username = request.params.username;
-
-    const user = await userRepository.findOne({ username });
-    if (!user) {
-      sendError(request, response, StatusCodes.NOT_FOUND, "User not found.");
-      return;
-    }
-    if (user.id !== id) {
-      sendError(request, response, StatusCodes.FORBIDDEN, "Failed to delete user.");
-      return;
-    }
-
-    await userRepository.delete(id);
-
-    response.sendStatus(StatusCodes.NO_CONTENT);
-  }
-  catch (error) {
-    console.log(error.message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user.");
-  }
-};

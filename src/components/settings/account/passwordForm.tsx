@@ -2,7 +2,7 @@ import { ErrorMessage, Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { changePassword } from "../../../redux/actions/userActions";
+import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
 
@@ -49,7 +49,7 @@ const PasswordForm = () => {
   const dispatch: PromiseDispatch = useDispatch();
 
   const onSubmit = (values, { resetForm }) => {
-    dispatch(changePassword(values.password, values.confirm))
+    dispatch(updateUser({ password: values.password }))
       .then(() => {
         toast.success("Password changed.");
       })

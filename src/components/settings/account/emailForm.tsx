@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkEmailAvailable } from "../../../common/userApi";
-import { changeEmail } from "../../../redux/actions/userActions";
+import { checkCredentials } from "../../../common/userApi";
+import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
 import { getEmail } from "../../../redux/selectors/userSelectors";
@@ -17,7 +17,7 @@ const validationSchema = yup.object({
     .test(
       "checkEmail",
       "That email is already in use.",
-      async (value) => value && !(await checkEmailAvailable(value))
+      async (value) => value && await checkCredentials({ email: value })
     )
 });
 
@@ -37,7 +37,7 @@ const EmailForm = () => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    dispatch(changeEmail(values.email))
+    dispatch(updateUser(values))
       .then(() => {
         toast.success("Email address changed.");
         setEmail(values.email);

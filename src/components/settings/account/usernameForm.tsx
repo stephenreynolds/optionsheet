@@ -2,8 +2,8 @@ import { ErrorMessage, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkUsernameAvailable } from "../../../common/userApi";
-import { changeUsername } from "../../../redux/actions/userActions";
+import { checkCredentials } from "../../../common/userApi";
+import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getUsername } from "../../../redux/selectors/userSelectors";
 import { HelpBlock } from "../utils";
@@ -27,12 +27,12 @@ const UsernameForm = () => {
       .test(
         "checkUsername",
         "That username is not available.",
-        async (value) => value && !(await checkUsernameAvailable(value) && value !== username)
+        async (value) => value && value !== username && await checkCredentials({ username: username })
       )
   });
 
   const onSubmit = (values) => {
-    dispatch(changeUsername(values.username))
+    dispatch(updateUser(values))
       .then(() => {
         toast.success("Username changed.");
       })

@@ -1,10 +1,9 @@
+import { UserUpdateModel } from "../../common/models/user";
 import * as userApi from "../../common/userApi";
 import {
-  CHANGE_EMAIL_SUCCESS,
-  CHANGE_PASSWORD_SUCCESS,
-  CHANGE_USERNAME_SUCCESS,
   DELETE_USER_SUCCESS,
   GET_AUTHENTICATED_USER_SUCCESS,
+  UPDATE_USER_SUCCESS,
   LOGIN_FAIL
 } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
@@ -25,12 +24,12 @@ export const getAuthenticatedUser = () => {
   };
 };
 
-export const changeUsername = (username: string) => {
+export const updateUser = (data: UserUpdateModel) => {
   return (dispatch) => {
     dispatch(beginApiCall());
-    return userApi.changeUsername(username)
-      .then(() => {
-        dispatch({ type: CHANGE_USERNAME_SUCCESS, payload: username });
+    return userApi.updateUser(data)
+      .then((response) => {
+        dispatch({ type: UPDATE_USER_SUCCESS, payload: response.data });
       })
       .catch((error) => {
         dispatch(apiCallError());
@@ -39,38 +38,10 @@ export const changeUsername = (username: string) => {
   };
 };
 
-export const changePassword = (password: string, confirm: string) => {
+export const deleteUser = () => {
   return (dispatch) => {
     dispatch(beginApiCall());
-    return userApi.changePassword(password, confirm)
-      .then(() => {
-        dispatch({ type: CHANGE_PASSWORD_SUCCESS });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
-
-export const changeEmail = (email: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.changeEmail(email)
-      .then(() => {
-        dispatch({ type: CHANGE_EMAIL_SUCCESS });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
-
-export const deleteUser = (username: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.deleteUser(username)
+    return userApi.deleteUser()
       .then(() => {
         dispatch({ type: DELETE_USER_SUCCESS });
         dispatch(logout());

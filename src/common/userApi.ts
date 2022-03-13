@@ -1,49 +1,33 @@
 import axios from "axios";
 import { getAuthHeader } from "./auth";
 import { apiUrl } from "./api";
+import { UserUpdateModel } from "./models/user";
 
 export const getAuthenticatedUser = () => {
   return axios.get(`${apiUrl}/user`, { headers: getAuthHeader() });
 };
 
-export const changeUsername = async (username: string) => {
-  return axios.post(`${apiUrl}/session/change_username`, { username }, {
+export const updateUser = async (data: UserUpdateModel) => {
+  return axios.patch(`${apiUrl}/user`, data, {
     headers: getAuthHeader()
   });
 };
 
-export const changeEmail = async (email: string) => {
-  return axios.post(`${apiUrl}/session/change_email`, { email }, {
+export const deleteUser = async () => {
+  return axios.delete(`${apiUrl}/user`, {
     headers: getAuthHeader()
   });
 };
 
-export const changePassword = async (password: string, confirm: string) => {
-  return axios.post(`${apiUrl}/session/change_password`, { password, confirm }, {
-    headers: getAuthHeader()
-  });
-};
+interface EmailUsername {
+  username?: string;
+  email?: string;
+}
 
-export const checkUsernameAvailable = async (
-  username: string
-): Promise<boolean> => {
-  const res = await axios.post(`${apiUrl}/session/check_username_available`, {
-    username
+export const checkCredentials = async (credentials: EmailUsername) => {
+  const res = await axios.get(`${apiUrl}/auth/check-credentials`, {
+    params: credentials
   });
 
-  return res.data.usernameAvailable;
-};
-
-export const checkEmailAvailable = async (email: string) => {
-  const res = await axios.post(`${apiUrl}/session/check_email_available`, {
-    email
-  });
-
-  return res.data.emailAvailable;
-};
-
-export const deleteUser = async (username: string) => {
-  return axios.delete(`${apiUrl}/users/${username}`, {
-    headers: getAuthHeader()
-  });
+  return res.data.available;
 };

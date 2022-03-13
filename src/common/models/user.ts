@@ -22,3 +22,10 @@ export interface User {
   updated_on: Date;
   is_admin: boolean;
 }
+
+export interface UserUpdateModel {
+  username?: string;
+  email?: string;
+  bio?: string;
+  password?: string;
+}

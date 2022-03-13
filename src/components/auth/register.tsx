@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { ErrorMessage, Formik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import * as authActions from "../../redux/actions/authActions";
 import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
-import { checkEmailAvailable, checkUsernameAvailable } from "../../common/userApi";
-import { useDispatch, useSelector } from "react-redux";
+import { checkCredentials } from "../../common/userApi";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -83,7 +83,7 @@ const validationSchema = yup.object({
     .test(
       "checkUsername",
       "That username is not available.",
-      async (value) => value && !(await checkUsernameAvailable(value))
+      async (value) => value && await checkCredentials({ username: value })
     ),
   email: yup
     .string()
@@ -92,7 +92,7 @@ const validationSchema = yup.object({
     .test(
       "checkEmail",
       "That email is already in use.",
-      async (value) => value && !(await checkEmailAvailable(value))
+      async (value) => value && await checkCredentials({ email: value })
     ),
   password: yup
     .string()

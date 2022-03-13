@@ -13,7 +13,7 @@ export const verifyJwtToken = (
   const token = request.headers["x-access-token"];
 
   if (!token) {
-    return response.status(HttpStatus.FORBIDDEN).send("No token provided");
+    return response.status(HttpStatus.UNAUTHORIZED).send("No token provided");
   }
 
   jwt.verify(token, config.secret, (error, decoded) => {

@@ -1,8 +1,8 @@
 import { Express } from "express";
 import { verifyJwtToken } from "./middleware/authentication";
 import * as auth from "./endpoints/auth";
-import * as projects from "./controllers/projectController";
-import * as trades from "./controllers/tradeController";
+import * as projects from "./endpoints/projects";
+import * as trades from "./endpoints/trades";
 import * as user from "./endpoints/user";
 import * as users from "./endpoints/users";
 

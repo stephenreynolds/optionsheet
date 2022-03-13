@@ -1,4 +1,4 @@
-import * as authApi from "../../common/authApi";
+import * as authApi from "../../common/api/auth";
 import { CreateUserModel, Credentials } from "../../common/models/user";
 import { LOGIN_FAIL, LOGIN_SUCCESS, LOGOUT_SUCCESS, REGISTER_FAIL, REGISTER_SUCCESS } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";

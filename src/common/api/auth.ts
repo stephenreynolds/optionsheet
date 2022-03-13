@@ -1,6 +1,6 @@
 import axios from "axios";
-import { CreateUserModel, Credentials } from "./models/user";
-import { apiUrl } from "./api";
+import { CreateUserModel, Credentials } from "../models/user";
+import { apiUrl } from "../api";
 
 export const register = async (user: CreateUserModel) => {
   return await axios.post(`${apiUrl}/users`, user);

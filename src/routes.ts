@@ -8,37 +8,37 @@ import { verifyJwtToken } from "./middleware/authentication";
 
 export const attachRoutes = (app: Express) => {
   // Session
-  app.get("/api/session/username", [verifyJwtToken], getMyUsername);
-  app.get("/api/session/email", [verifyJwtToken], users.getEmail);
-  app.post("/api/session/change_username", [verifyJwtToken], users.changeUsername);
-  app.post("/api/session/change_password", [verifyJwtToken], users.changePassword);
-  app.post("/api/session/change_email", [verifyJwtToken], users.changeEmail);
-  app.post("/api/session/check_email_available", users.checkEmailAvailable);
-  app.post("/api/session/check_username_available", users.checkUsernameAvailable);
+  app.get("/session/username", [verifyJwtToken], getMyUsername);
+  app.get("/session/email", [verifyJwtToken], users.getEmail);
+  app.post("/session/change_username", [verifyJwtToken], users.changeUsername);
+  app.post("/session/change_password", [verifyJwtToken], users.changePassword);
+  app.post("/session/change_email", [verifyJwtToken], users.changeEmail);
+  app.post("/session/check_email_available", users.checkEmailAvailable);
+  app.post("/session/check_username_available", users.checkUsernameAvailable);
 
   // Users
-  app.post("/api/users", users.createUser);
-  app.get("/api/users/:username", users.getUser);
-  app.delete("/api/users/:username", [verifyJwtToken], users.deleteAccount);
+  app.post("/users", users.createUser);
+  app.get("/users/:username", users.getUser);
+  app.delete("/users/:username", [verifyJwtToken], users.deleteAccount);
 
   // Authentication
-  app.post("/api/auth/authenticate", auth.authenticateUser);
+  app.post("/auth/authenticate", auth.authenticateUser);
 
   // Projects
-  app.post("/api/projects", [verifyJwtToken], projects.createProject);
-  app.get("/api/projects/:username", projects.getProjects);
-  app.get("/api/projects/:username/:project", projects.getProjectByName);
-  app.patch("/api/projects/:username/:project", [verifyJwtToken], projects.updateProject);
-  app.delete("/api/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
+  app.post("/projects", [verifyJwtToken], projects.createProject);
+  app.get("/projects/:username", projects.getProjects);
+  app.get("/projects/:username/:project", projects.getProjectByName);
+  app.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
+  app.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
   app.post(
-    "/api/projects/:username/:project",
+    "/projects/:username/:project",
     [verifyJwtToken],
     trades.addTrade
   );
-  app.get("/api/projects/:username/:project/trades", trades.getTrades);
+  app.get("/projects/:username/:project/trades", trades.getTrades);
 
   // Trades
-  app.get("/api/trades/:id", trades.getTradeById);
-  app.patch("/api/trades/:id", [verifyJwtToken], trades.updateTradeById);
-  app.delete("/api/trades/:id", [verifyJwtToken], trades.deleteTradeById);
+  app.get("/trades/:id", trades.getTradeById);
+  app.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
+  app.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
 };

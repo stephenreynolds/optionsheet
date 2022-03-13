@@ -1,0 +1,1 @@
+export type PromiseDispatch = (Object) => Promise<unknown>;

@@ -4,6 +4,10 @@ import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import startServer from "./server";
+import { createConnection } from "typeorm";
+import ormConfig from "./data/ormConfig";
+import { seedData } from "./data/seed";
+import { attachRoutes } from "./routes";
 
 const app = express();
 
@@ -18,8 +22,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
 
-app.get("/", (req, res) => {
-  res.send("Hello, world!");
-});
+attachRoutes(app);
 
-startServer(app);
+const connect = async () => {
+  const connection = await createConnection(ormConfig);
+  await seedData(connection);
+};
+
+connect().then(() => startServer(app));

@@ -28,8 +28,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "express-rate-limit": "^6.3.0",
+    "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
+    "pg": "^8.7.3",
+    "typeorm": "^0.2.45",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

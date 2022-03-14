@@ -1,13 +1,10 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getRepository } from "typeorm";
-import { Role } from "../data/entities/role";
-import { User } from "../data/entities/user";
+import { getRoleByName, getUserByEmail, getUserById, getUserByName, saveUser } from "../data/typeormDatabase";
 import { sendError } from "../errorResponse";
 
 export const createUser = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
   const username = request.body.username;
   const email = request.body.email;
   const password = request.body.password;
@@ -35,30 +32,30 @@ export const createUser = async (request: Request, response: Response) => {
   }
 
   // Check that username and email address are not in use.
-  let existingUser = await userRepository.findOne({ username });
+  let existingUser = await getUserByName(username);
   if (existingUser) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that username already exists.");
     return;
   }
-  existingUser = await userRepository.findOne({ email });
+  existingUser = await getUserByEmail(email);
   if (existingUser) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that email address already exists.");
     return;
   }
 
   // Save the new user to the database.
-  const roleRepository = getRepository(Role);
-  const role = await roleRepository.findOne({ name: "user" });
+  const role = await getRoleByName("user");
   const user = {
     username,
     email,
     passwordHash: await bcrypt.hash(password, 12), // Salt the password.
     roles: [role]
   };
-  const newUser = await userRepository.save(user);
+  const { id } = await saveUser(user);
+  const newUser = await getUserById(id);
 
-  const token = newUser.createToken();
-  const refreshToken = newUser.createRefreshToken();
+  const token = await newUser.createToken();
+  const refreshToken = await newUser.createRefreshToken();
 
   response.send({ token, refreshToken });
 };

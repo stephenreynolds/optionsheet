@@ -25,7 +25,7 @@ export const attachRoutes = (app: Express) => {
   app.get("/projects/:username", projects.getProjects);
   app.get("/projects/:username/:project", projects.getProjectByName);
   app.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
-  app.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
+  app.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProjectByName);
   app.post(
     "/projects/:username/:project",
     [verifyJwtToken],
@@ -34,7 +34,7 @@ export const attachRoutes = (app: Express) => {
   app.get("/projects/:username/:project/trades", trades.getTrades);
 
   // Trades
-  app.get("/trades/:id", trades.getTradeById);
+  app.get("/trades/:id", trades.getTrade);
   app.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
   app.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
 };

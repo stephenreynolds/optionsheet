@@ -1,8 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { User } from "../data/entities/user";
 import { StatusCodes } from "http-status-codes";
+import { deleteUserById, getUserByEmail, getUserById, getUserByName, updateUserById } from "../data/typeormDatabase";
 import { logError, sendError } from "../errorResponse";
 
 interface UserDetails {
@@ -18,7 +17,7 @@ interface UserDetails {
   is_admin: boolean;
 }
 
-const getUserDetails = (user: User): UserDetails => {
+const getUserDetails = (user): UserDetails => {
   const isAdmin = !!user.roles.find(role => role.name === "admin");
 
   return {
@@ -38,8 +37,7 @@ const getUserDetails = (user: User): UserDetails => {
 export const get = async (request: Request, response: Response) => {
   try {
     const id = request.body.userId;
-    const userRepository = getRepository(User);
-    const user = await userRepository.findOne(id);
+    const user = await getUserById(id);
 
     const userDetails = getUserDetails(user);
 
@@ -72,7 +70,6 @@ const emailIsValid = (email: string) => {
 export const update = async (request: Request, response: Response) => {
   try {
     const id = request.body.userId;
-    const userRepository = getRepository(User);
 
     let updateModel: UserUpdateModel = {};
 
@@ -80,7 +77,7 @@ export const update = async (request: Request, response: Response) => {
     const username = request.body.username;
     if (username) {
       // Check that no user already has that username.
-      const match = await userRepository.findOne({ username });
+      const match = await getUserByName(username);
       if (match) {
         sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
         return;
@@ -112,7 +109,7 @@ export const update = async (request: Request, response: Response) => {
       }
 
       // Check that no user already has that username.
-      const match = await userRepository.findOne({ email });
+      const match = await getUserByEmail(email);
       if (match) {
         sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
         return;
@@ -127,8 +124,8 @@ export const update = async (request: Request, response: Response) => {
       updateModel = { ...updateModel, bio };
     }
 
-    await userRepository.update({ id }, updateModel);
-    const updatedUser = await userRepository.findOne({ id });
+    await updateUserById(id, updateModel);
+    const updatedUser = await getUserById(id);
 
     const userDetails = getUserDetails(updatedUser);
 
@@ -143,11 +140,9 @@ export const update = async (request: Request, response: Response) => {
 
 export const deleteAccount = async (request: Request, response: Response) => {
   try {
-    const userRepository = getRepository(User);
-
     const id = request.body.userId;
 
-    await userRepository.delete(id);
+    await deleteUserById(id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

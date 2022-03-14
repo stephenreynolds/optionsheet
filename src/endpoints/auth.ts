@@ -1,10 +1,8 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getRepository } from "typeorm";
-import { User } from "../data/entities/user";
+import { getRefreshToken, getUserByEmail, getUserByName, removeRefreshToken } from "../data/typeormDatabase";
 import { logError, sendError } from "../errorResponse";
-import { RefreshToken } from "../data/entities/refreshToken";
 
 export const authenticate = async (request: Request, response: Response) => {
   try {
@@ -12,14 +10,13 @@ export const authenticate = async (request: Request, response: Response) => {
     const email = request.body.email;
     const password = request.body.password;
 
-    const userRepository = getRepository(User);
-    let user: User;
+    let user;
 
     if (username) {
-      user = await userRepository.findOne({ username });
+      user = await getUserByName(username);
     }
     else if (email) {
-      user = await userRepository.findOne({ email });
+      user = await getUserByEmail(email);
     }
     else {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
@@ -53,15 +50,14 @@ export const refreshToken = async (request: Request, response: Response) => {
       return;
     }
 
-    const refreshTokenRepository = await getRepository(RefreshToken);
-    const refreshToken = await refreshTokenRepository.findOne({ token: request.body.refreshToken });
+    const refreshToken = await getRefreshToken(request.body.refreshToken);
     if (!refreshToken) {
       sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid");
       return;
     }
 
     if (refreshToken.expired) {
-      await refreshTokenRepository.remove(refreshToken);
+      await removeRefreshToken(refreshToken);
       sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired");
       return;
     }
@@ -79,18 +75,17 @@ export const refreshToken = async (request: Request, response: Response) => {
 
 export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
   try {
-    const userRepository = getRepository(User);
     let available = true;
 
     if (request.query.email) {
       const email = request.query.email.toString();
-      const userWithEmail = await userRepository.findOne({ email });
+      const userWithEmail = await getUserByEmail(email);
       available = !userWithEmail;
     }
 
     if (request.query.username) {
       const username = request.query.username.toString();
-      const userWithName = await userRepository.findOne({ username });
+      const userWithName = await getUserByName(username);
       available = !userWithName;
     }
 

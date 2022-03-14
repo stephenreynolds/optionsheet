@@ -1,38 +1,37 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getRepository, Repository } from "typeorm";
-import { Leg } from "../data/entities/leg";
-import { Project } from "../data/entities/project";
-import { Trade } from "../data/entities/trade";
-import { User } from "../data/entities/user";
+import {
+  deleteTrade,
+  getProject,
+  getTradeById,
+  getTradesByProject,
+  getTradeWithProject,
+  getUserByName,
+  onProjectUpdated,
+  saveTrade
+} from "../data/typeormDatabase";
 import { logError, sendError } from "../errorResponse";
 
-const onProjectUpdated = async (project: Project, projectRepository: Repository<Project>) => {
-  await projectRepository.update({ id: project.id }, { lastEdited: new Date() });
-};
-
+// GET /projects/:username/:project/trades
 export const getTrades = async (request: Request, response: Response) => {
   try {
-    const userRepository = getRepository(User);
     const username = request.params.username;
-    const user = await userRepository.findOne({ username });
+    const user = await getUserByName(username);
 
     if (!user) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
       return;
     }
 
-    const projectRepository = getRepository(Project);
     const projectName = request.params.project;
-    const project = await projectRepository.findOne({ name: projectName });
+    const project = await getProject(user.id, projectName);
 
     if (!project) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "Project does not exist");
       return;
     }
 
-    const tradeRepository = getRepository(Trade);
-    const trades = await tradeRepository.find({ project });
+    const trades = await getTradesByProject(project);
 
     response.send(trades.map((trade) => {
       return {
@@ -56,11 +55,11 @@ export const getTrades = async (request: Request, response: Response) => {
   }
 };
 
-export const getTradeById = async (request: Request, response: Response) => {
+// GET /trades/:id
+export const getTrade = async (request: Request, response: Response) => {
   try {
-    const tradeRepository = getRepository(Trade);
     const id = Number(request.params.id);
-    const trade = await tradeRepository.findOne(id);
+    const trade = await getTradeById(id);
 
     if (!trade) {
       sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
@@ -87,39 +86,34 @@ export const getTradeById = async (request: Request, response: Response) => {
   }
 };
 
+// POST /projects/:username/:project
 export const addTrade = async (request: Request, response: Response) => {
-  const userRepository = getRepository(User);
   const username = request.params.username;
   const projectName = request.params.project;
 
-  const user = await userRepository.findOne({ username });
+  const user = await getUserByName(username);
   if (!user) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
     return;
   }
 
-  const projectRepository = getRepository(Project);
-  const project = await projectRepository.findOne({
-    user: user.id,
-    name: projectName
-  });
+  const project = await getProject(user.id, projectName);
   if (!project) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
     return;
   }
 
   try {
-    const tradeRepository = getRepository(Trade);
-    const legs: Leg[] = request.body.legs;
+    const legs = request.body.legs;
 
-    const trade: Trade = {
+    const trade = {
       ...request.body,
       legs,
       project
     };
-    await tradeRepository.save(trade);
+    await saveTrade(trade);
 
-    await onProjectUpdated(project, projectRepository);
+    await onProjectUpdated(project);
 
     response.sendStatus(StatusCodes.CREATED);
   }
@@ -129,10 +123,11 @@ export const addTrade = async (request: Request, response: Response) => {
   }
 };
 
+// PATCH /trades/:id
 export const updateTradeById = async (request: Request, response: Response) => {
-  const tradeRepository = getRepository(Trade);
   const id = Number(request.params.id);
-  let trade = await tradeRepository.findOne(id, { relations: ["project"] });
+  let trade = await getTradeWithProject(id);
+  console.log(trade);
 
   if (!trade) {
     sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
@@ -148,10 +143,9 @@ export const updateTradeById = async (request: Request, response: Response) => {
       ...updatedTrade
     };
 
-    await tradeRepository.save(trade);
+    await saveTrade(trade);
 
-    const projectRepository = getRepository(Project);
-    await onProjectUpdated(trade.project, projectRepository);
+    await onProjectUpdated(trade.project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -161,16 +155,15 @@ export const updateTradeById = async (request: Request, response: Response) => {
   }
 };
 
+// DELETE /trades/:id
 export const deleteTradeById = async (request: Request, response: Response) => {
-  const tradeRepository = getRepository(Trade);
   const id = Number(request.params.id);
-  const trade = await tradeRepository.findOne(id, { relations: ["project"] });
+  const trade = await getTradeWithProject(id);
 
   try {
-    await tradeRepository.delete(id);
+    await deleteTrade(id);
 
-    const projectRepository = getRepository(Project);
-    await onProjectUpdated(trade.project, projectRepository);
+    await onProjectUpdated(trade.project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

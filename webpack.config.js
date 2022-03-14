@@ -14,7 +14,7 @@ const config = {
   mode: "production",
   externals: [nodeExternals()],
   entry: {
-    server: path.resolve(paths.src, "index.ts")
+    server: path.resolve(paths.src, "app.ts")
   },
   output: {
     path: paths.build,

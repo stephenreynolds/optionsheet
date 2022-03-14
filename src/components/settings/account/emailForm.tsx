@@ -3,23 +3,11 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkCredentials } from "../../../common/api/user";
 import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
 import { getEmail } from "../../../redux/selectors/userSelectors";
-
-const validationSchema = yup.object({
-  email: yup
-    .string()
-    .email("Must be a valid email address.")
-    .required("Email address is required.")
-    .test(
-      "checkEmail",
-      "That email is already in use.",
-      async (value) => value && await checkCredentials({ email: value })
-    )
-});
+import { checkCredentials } from "../../../common/api/auth";
 
 const EmailForm = () => {
   const currentEmail = useSelector(state => getEmail(state));
@@ -28,7 +16,19 @@ const EmailForm = () => {
   const [email, setEmail] = useState(currentEmail);
   const [confirmed, setConfirmed] = useState(false);
 
-  if (!email.length) {
+  const validationSchema = yup.object({
+    email: yup
+      .string()
+      .email("Must be a valid email address.")
+      .required("Email address is required.")
+      .test(
+        "checkEmail",
+        "That email is already in use.",
+        async (value) => value && (value === currentEmail || await checkCredentials({ email: value }))
+      )
+  });
+
+  if (!(email && email.length)) {
     return null;
   }
 

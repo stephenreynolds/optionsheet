@@ -2,11 +2,11 @@ import { ErrorMessage, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { checkCredentials } from "../../../common/api/user";
 import { updateUser } from "../../../redux/actions/userActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getUsername } from "../../../redux/selectors/userSelectors";
 import { HelpBlock } from "../utils";
+import { checkCredentials } from "../../../common/api/auth";
 
 const UsernameForm = () => {
   const username = useSelector((state) => getUsername(state));
@@ -27,7 +27,7 @@ const UsernameForm = () => {
       .test(
         "checkUsername",
         "That username is not available.",
-        async (value) => value && value !== username && await checkCredentials({ username: username })
+        async (value) => value && (value === username || await checkCredentials({ username: value }))
       )
   });
 

@@ -1,32 +1,25 @@
-import axios from "axios";
 import { ProjectCreateModel, ProjectUpdateModel } from "../models/project";
-import { apiRoot, getAuthHeader } from "./api";
+import api from "./api";
 
 export const getProjects = async (username: string) => {
-  return await axios.get(`${apiRoot}/projects/${username}`);
+  return await api.get(`/projects/${username}`);
 };
 
 export const getProjectByName = async (
   username: string,
   projectName: string
 ) => {
-  return await axios.get(`${apiRoot}/projects/${username}/${projectName}`);
+  return await api.get(`/projects/${username}/${projectName}`);
 };
 
 export const createProject = async (model: ProjectCreateModel) => {
-  return await axios.post(`${apiRoot}/projects`, model, {
-    headers: getAuthHeader()
-  });
+  return await api.post(`/projects`, model);
 };
 
 export const updateProject = async (username: string, projectName: string, model: ProjectUpdateModel) => {
-  return await axios.patch(`${apiRoot}/projects/${username}/${projectName}`, model, {
-    headers: getAuthHeader()
-  });
+  return await api.patch(`/projects/${username}/${projectName}`, model);
 };
 
 export const deleteProject = async (username: string, projectName: string) => {
-  return await axios.delete(`${apiRoot}/projects/${username}/${projectName}`, {
-    headers: getAuthHeader()
-  });
+  return await api.delete(`/projects/${username}/${projectName}`);
 };

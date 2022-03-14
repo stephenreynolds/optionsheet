@@ -1,13 +1,12 @@
 import { TradeCreateModel, TradeUpdateModel } from "../models/trade";
-import axios from "axios";
-import { apiRoot, getAuthHeader } from "./api";
+import api from "./api";
 
 export const getTrades = async (username: string, projectName: string) => {
-  return await axios.get(`${apiRoot}/projects/${username}/${projectName}/trades`);
+  return await api.get(`/projects/${username}/${projectName}/trades`);
 };
 
 export const getTradeById = async (id: string) => {
-  return await axios.get(`${apiRoot}/trades/${id}`);
+  return await api.get(`/trades/${id}`);
 };
 
 export const addTrade = async (
@@ -15,19 +14,13 @@ export const addTrade = async (
   projectName: string,
   trade: TradeCreateModel
 ) => {
-  return await axios.post(`${apiRoot}/projects/${username}/${projectName}`, trade, {
-    headers: getAuthHeader()
-  });
+  return await api.post(`/projects/${username}/${projectName}`, trade);
 };
 
 export const updateTradeById = async (id: string, model: TradeUpdateModel) => {
-  return await axios.patch(`${apiRoot}/trades/${id}`, model, {
-    headers: getAuthHeader()
-  });
+  return await api.patch(`/trades/${id}`, model);
 };
 
 export const deleteTradeById = async (id: string) => {
-  return await axios.delete(`${apiRoot}/trades/${id}`, {
-    headers: getAuthHeader()
-  });
+  return await api.delete(`/trades/${id}`);
 };

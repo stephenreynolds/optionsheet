@@ -1,26 +1,25 @@
-import axios from "axios";
 import { CreateUserModel, Credentials } from "../models/user";
-import { apiRoot } from "./api";
+import api from "./api";
 
 export const register = async (user: CreateUserModel) => {
-  return axios
-    .post(`${apiRoot}/users`, user)
+  return api
+    .post(`/users`, user)
     .then((response) => {
-      if (response.data.token) {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-      }
+      const { token, refreshToken } = response.data;
+      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
       return response.data;
     });
 };
 
 export const login = async (credentials: Credentials) => {
-  return axios
-    .post(`${apiRoot}/auth`, credentials)
+  return api
+    .post(`/auth`, credentials)
     .then((response) => {
-      if (response.data.token) {
-        localStorage.setItem("token", JSON.stringify(response.data.token));
-      }
+      const { token, refreshToken } = response.data;
+      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("refreshToken", JSON.stringify(refreshToken));
 
       return response.data;
     });
@@ -28,4 +27,20 @@ export const login = async (credentials: Credentials) => {
 
 export const logout = async () => {
   localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+};
+
+export const refreshToken = async (refreshToken: string) => {
+  return api.post(`/auth/refresh`, { refreshToken });
+};
+
+interface EmailUsername {
+  username?: string;
+  email?: string;
+}
+
+export const checkCredentials = async (params: EmailUsername) => {
+  const res = await api.get(`/auth/check-credentials`, { params });
+
+  return res.data.available;
 };

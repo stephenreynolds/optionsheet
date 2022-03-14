@@ -6,7 +6,6 @@ import * as authActions from "../../redux/actions/authActions";
 import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
-import { checkCredentials } from "../../common/api/user";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -14,6 +13,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
+import { checkCredentials } from "../../common/api/auth";
 
 const RegisterContainer = styled(Container)`
   width: 400px;

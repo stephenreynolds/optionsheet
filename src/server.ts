@@ -1,28 +1,27 @@
 import config from "./config";
-import { Express } from "express";
 import http from "http";
 import https from "https";
+import connect from "./data/connect";
 import dataService from "./data/dataService";
 import routes from "./routes";
+import app from "./app";
 
-const startServer = (app: Express) => {
-  app.use(dataService, routes);
+connect().then();
 
-  if (config.http.enabled) {
-    const server = http.createServer(app);
+app.use(dataService, routes);
 
-    server.listen(config.http.port, config.host, () => {
-      console.log(`Server listening at http://${config.host}:${config.http.port}`);
-    });
-  }
+if (config.http.enabled) {
+  const server = http.createServer(app);
 
-  if (config.https.enabled) {
-    const server = https.createServer(config.https, app);
+  server.listen(config.http.port, config.host, () => {
+    console.log(`Server listening at http://${config.host}:${config.http.port}`);
+  });
+}
 
-    server.listen(config.https.port, config.host, () => {
-      console.log(`Server listening at https://${config.host}:${config.https.port}`);
-    });
-  }
-};
+if (config.https.enabled) {
+  const server = https.createServer(config.https, app);
 
-export default startServer;
+  server.listen(config.https.port, config.host, () => {
+    console.log(`Server listening at https://${config.host}:${config.https.port}`);
+  });
+}

@@ -3,8 +3,6 @@ import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
-import startServer from "./server";
-import connect from "./data/connect";
 
 const app = express();
 
@@ -18,7 +16,5 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
-
-connect().then(() => startServer(app));
 
 export default app;

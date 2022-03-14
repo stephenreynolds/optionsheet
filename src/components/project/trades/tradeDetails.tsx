@@ -152,7 +152,7 @@ const TradeDetails = () => {
           )}
         </div>
 
-        <OptionChart trade={trade} />
+        <OptionChart legs={trade.legs} />
       </div>
 
       <TradeForm trade={trade} close={showCloseTrade} show={showCloseTrade || showEditTrade}

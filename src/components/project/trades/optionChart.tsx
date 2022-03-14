@@ -4,7 +4,7 @@ import Highcharts from "highcharts/highstock";
 import _ from "lodash";
 import React from "react";
 import styled from "styled-components";
-import { PutCall, Side, Trade } from "../../../common/models/trade";
+import { Leg, PutCall, Side } from "../../../common/models/trade";
 import { tradeIsOption, usd } from "../../../common/tradeUtils";
 
 const ChartContainer = styled.div`
@@ -45,14 +45,14 @@ const ChartContainer = styled.div`
   }
 `;
 
-const calculateChart = (trade: Trade) => {
+const calculateChart = (legs: Leg[]) => {
   let points = [];
 
-  if (tradeIsOption(trade.legs)) {
-    const strikes = trade.legs.map((l) => l.strike);
+  if (tradeIsOption(legs)) {
+    const strikes = legs.map((l) => l.strike);
     const min = _.min(strikes);
     const max = _.max(strikes);
-    const width = strikes.length > 1 ? (max - min) / 2 : trade.legs[0].openPrice * 2;
+    const width = strikes.length > 1 ? (max - min) / 2 : legs[0].openPrice * 2;
 
     for (let price = min - width; price <= max + width; price += 0.01) {
       points = [...points, {
@@ -62,7 +62,7 @@ const calculateChart = (trade: Trade) => {
       }];
     }
 
-    for (const leg of trade.legs) {
+    for (const leg of legs) {
       const optionType = leg.putCall === PutCall.Call ? "put" : "call";
       const side = leg.side === Side.Buy ? 1 : -1;
 
@@ -78,8 +78,8 @@ const calculateChart = (trade: Trade) => {
     }
   }
   else {
-    const min = trade.legs[0].openPrice * 0.75;
-    const max = trade.legs[0].openPrice * 1.25;
+    const min = legs[0].openPrice * 0.75;
+    const max = legs[0].openPrice * 1.25;
 
     for (let price = min; price <= max; price += 0.01) {
       points = [...points, {
@@ -89,7 +89,7 @@ const calculateChart = (trade: Trade) => {
     }
 
     for (let i = 0; i < points.length; ++i) {
-      const leg = trade.legs[0];
+      const leg = legs[0];
       const side = leg.side === Side.Buy ? 1 : -1;
       const pl = (points[i].x - leg.openPrice) * leg.quantity * side;
       points[i] = {
@@ -103,7 +103,7 @@ const calculateChart = (trade: Trade) => {
   return points;
 };
 
-const OptionChart = ({ trade }: { trade: Trade }) => {
+const OptionChart = ({ legs }: { legs: Leg[] }) => {
   const options = {
     chart: {
       type: "area",
@@ -124,7 +124,7 @@ const OptionChart = ({ trade }: { trade: Trade }) => {
     },
     series: [
       {
-        data: calculateChart(trade),
+        data: calculateChart(legs),
         color: "#1b7c1f",
         negativeColor: "#cb0707",
         fillOpacity: 0.5,

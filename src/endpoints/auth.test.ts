@@ -91,4 +91,11 @@ describe("POST /auth/refresh", () => {
       expect(response.body.refreshToken).toBeDefined();
     });
   });
+
+  describe("when refresh token not provided", () => {
+    it("should respond with 403 status code", async () => {
+      const response = await request(app).post("/auth/refresh").send();
+      expect(response.status).toEqual(403);
+    });
+  });
 });

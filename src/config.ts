@@ -15,7 +15,7 @@ export default {
   },
   jwt: {
     secret: process.env.SECRET,
-    jwtExpiration: 120, // 1 hour
-    jwtRefreshExpiration: 300 // 24 hours
+    jwtExpiration: 3600, // 1 hour
+    jwtRefreshExpiration: 86400 // 24 hours
   }
 };

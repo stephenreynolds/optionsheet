@@ -9,10 +9,6 @@ beforeAll(() => {
 
 describe("POST /auth", () => {
   describe("given valid credentials", () => {
-
-    // should send a jwt token if user was authenticated
-    // should create a refresh token and send if the user was authenticated
-
     it("should respond with 200 status code", async () => {
       const credentials = { username: "username", password: "password" };
       const response = await request(app).post("/auth").send(credentials);
@@ -37,6 +33,14 @@ describe("POST /auth", () => {
   describe("when neither username nor email are provided", () => {
     it("should respond with 400 status code", async () => {
       const response = await request(app).post("/auth").send();
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("when no password is provided", () => {
+    it("should respond with 400 status code", async () => {
+      const credentials = { username: "username" };
+      const response = await request(app).post("/auth").send(credentials);
       expect(response.status).toEqual(400);
     });
   });

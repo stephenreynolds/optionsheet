@@ -98,4 +98,11 @@ describe("POST /auth/refresh", () => {
       expect(response.status).toEqual(403);
     });
   });
+
+  describe("when refresh token is invalid", () => {
+    it("should respond with 403 status code", async () => {
+      const response = await request(app).post("/auth/refresh").send({ refreshToken: "invalid" });
+      expect(response.status).toEqual(403);
+    });
+  });
 });

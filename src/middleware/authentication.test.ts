@@ -47,7 +47,7 @@ describe("verifyJwtToken", () => {
   });
 
   describe("if token expired", () => {
-    const expiredToken = jwt.sign({ id: 0 }, "test", {
+    const expiredToken = jwt.sign({}, "test", {
       expiresIn: -1
     });
 

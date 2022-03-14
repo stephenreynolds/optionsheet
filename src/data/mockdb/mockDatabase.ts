@@ -107,7 +107,10 @@ export default class MockDatabase implements Database {
 
   // Trade
   public async getTradesByProject(project) {
-    return [];
+    if (project.name === "empty") {
+      return [];
+    }
+    return [{ legs: [] }];
   }
 
   public async getTradeById(id: number) {

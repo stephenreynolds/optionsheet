@@ -10,21 +10,27 @@ beforeAll(async () => {
   app.use(mockDataService, routes);
   config.jwt.secret = "test";
 
-  const tokenResponse = await request(app).post("/auth").send({ username: "username", password: "password" });
+  const tokenResponse = await request(app)
+    .post("/auth")
+    .send({ username: "username", password: "password" });
   token = tokenResponse.body.token;
 });
 
 describe("GET /user", () => {
   describe("when user is authenticated", () => {
     it("should respond with 200 status code", async () => {
-      const response = await request(app).get("/user").set({ "x-access-token": token });
+      const response = await request(app)
+        .get("/user")
+        .set({ "x-access-token": token });
       expect(response.status).toEqual(200);
     });
   });
 
   describe("when user is not authenticated", () => {
     it("should respond with 401 status code", async () => {
-      const response = await request(app).get("/user").send();
+      const response = await request(app)
+        .get("/user")
+        .send();
       expect(response.status).toEqual(401);
     });
   });
@@ -46,6 +52,7 @@ describe("PATCH /user", () => {
           .patch("/user")
           .send({ username: "undefined" })
           .set({ "x-access-token": token });
+
         expect(response.body.username).toBeDefined();
         expect(response.body.url).toBeDefined();
         expect(response.body.html_url).toBeDefined();
@@ -159,6 +166,25 @@ describe("PATCH /user", () => {
           .set({ "x-access-token": token });
         expect(response.status).toEqual(400);
       });
+    });
+  });
+});
+
+describe("DELETE /users", () => {
+  describe("delete successful", () => {
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/user")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("when user not authorized", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .delete("/user");
+      expect(response.status).toEqual(401);
     });
   });
 });

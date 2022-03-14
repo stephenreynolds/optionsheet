@@ -52,3 +52,38 @@ describe("GET /projects/:username", () => {
     });
   });
 });
+
+describe("GET /projects/:username/:project", () => {
+  describe("given a valid username and project name", () => {
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .get("/projects/username/project");
+      expect(response.status).toEqual(200);
+    });
+
+    it("should respond with project details", async () => {
+      const response = await request(app)
+        .get("/projects/username/project");
+      expect(response.body.name).toBeDefined();
+      expect(response.body.description).toBeDefined();
+      expect(response.body.tags).toBeDefined();
+      expect(response.body.lastEdited).toBeDefined();
+    });
+  });
+
+  describe("when the username is invalid", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .get("/projects/undefined/project");
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("when the given user does not have a project with given name", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .get("/projects/username/undefined");
+      expect(response.status).toEqual(400);
+    });
+  });
+});

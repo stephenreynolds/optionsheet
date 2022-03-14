@@ -21,7 +21,7 @@ export default class MockDatabase implements Database {
     }
 
     return {
-      id: username === "username" ? 0: 1,
+      id: username === "username" ? 0 : 1,
       passwordHash: "$2a$12$8KoGjvw/AiJeeQ99qpPg5.ukdbEJuMTHTyaHi7JX1FDruID3CyVtq"
     };
   }
@@ -81,7 +81,16 @@ export default class MockDatabase implements Database {
   }
 
   public async getProject(userId: number, name: string) {
-    return {};
+    if (name === "undefined") {
+      return undefined;
+    }
+
+    return {
+      name,
+      description: "",
+      tags: [],
+      lastEdited: new Date()
+    };
   }
 
   public async saveProject(project) {

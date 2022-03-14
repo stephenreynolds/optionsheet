@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
@@ -26,7 +26,6 @@ import { Container } from "../../styles";
 import DeleteTrade from "./deleteTrade";
 import OptionChart from "./optionChart";
 import TradeForm from "./tradeForm";
-import { apiCallsInProgress } from "../../../redux/selectors/apiSelectors";
 
 const DetailsSection = styled.div`
   margin-top: 1.5em;
@@ -38,7 +37,6 @@ const DetailsSection = styled.div`
 
 const TradeDetails = () => {
   const trade = useSelector((state) => getTrade(state));
-  const loading = useSelector((state) => apiCallsInProgress(state));
   const dispatch: PromiseDispatch = useDispatch();
 
   const { username, projectName, id } = useParams<{
@@ -50,14 +48,14 @@ const TradeDetails = () => {
   const [showEditTrade, setShowEditTrade] = useState(false);
   const [showDeleteTrade, setShowDeleteTrade] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     dispatch(tradeActions.getTradeById(id))
       .catch((error) => {
         toast.error(error.message);
       });
   }, [dispatch, id]);
 
-  if (!trade || loading) {
+  if (!trade) {
     return null;
   }
 

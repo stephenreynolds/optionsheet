@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../error";
 import Request from "../request";
 
+// POST /users
 export const createUser = async (request: Request, response: Response) => {
   try {
     const username = request.body.username;

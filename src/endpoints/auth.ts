@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../error";
 import Request from "../request";
 
+// POST /auth
 export const authenticate = async (request: Request, response: Response) => {
   try {
     const username = request.body.username;
@@ -48,6 +49,7 @@ export const authenticate = async (request: Request, response: Response) => {
   }
 };
 
+// POST /auth/refresh
 export const refreshToken = async (request: Request, response: Response) => {
   try {
     if (!request.body.refreshToken) {
@@ -80,6 +82,7 @@ export const refreshToken = async (request: Request, response: Response) => {
   }
 };
 
+// GET /auth/check-credentials
 export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;

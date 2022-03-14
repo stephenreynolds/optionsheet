@@ -7,10 +7,10 @@ import userReducer from "./userReducer";
 
 const rootReducer = combineReducers({
   apiCallsInProgress: apiStatusReducer,
-  projects: projectReducer,
-  trades: tradeReducer,
+  auth: authenticateReducer,
   user: userReducer,
-  auth: authenticateReducer
+  projects: projectReducer,
+  trades: tradeReducer
 });
 
 export default rootReducer;

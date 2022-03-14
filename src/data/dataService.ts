@@ -1,6 +1,6 @@
-import { TypeORMDatabase } from "./typeormDatabase";
+import { OrmDatabase } from "./ormDatabase";
 
-const database = new TypeORMDatabase();
+const database = new OrmDatabase();
 
 const dataService = async (request, response, next) => {
   request.dataService = database;

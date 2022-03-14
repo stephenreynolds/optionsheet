@@ -9,7 +9,7 @@ import { Role } from "./entities/role";
 import { Trade } from "./entities/trade";
 import { User } from "./entities/user";
 
-export class TypeORMDatabase implements Database {
+export class OrmDatabase implements Database {
   // User
   public async getUserById(id: number) {
     const repository = await getRepository(User);

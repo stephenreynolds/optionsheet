@@ -73,3 +73,22 @@ describe("POST /auth", () => {
     });
   });
 });
+
+describe("POST /auth/refresh", () => {
+  describe("given valid refresh token", () => {
+    it("should respond with 200 status code", async () => {
+      const response = await request(app).post("/auth/refresh").send({ refreshToken: "token" });
+      expect(response.status).toEqual(200);
+    });
+
+    it("should respond with an access token", async () => {
+      const response = await request(app).post("/auth/refresh").send({ refreshToken: "token" });
+      expect(response.body.token).toBeDefined();
+    });
+
+    it("should respond with a refresh token", async () => {
+      const response = await request(app).post("/auth/refresh").send({ refreshToken: "token" });
+      expect(response.body.refreshToken).toBeDefined();
+    });
+  });
+});

@@ -41,7 +41,7 @@ export default class MockDatabase implements Database {
 
   // Refresh token
   public async getRefreshToken(refreshToken: string) {
-    return "";
+    return { token: refreshToken, expired: false };
   }
 
   public async removeRefreshToken(refreshToken) {

@@ -73,6 +73,12 @@ export class User {
     expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
 
     const refreshTokenRepository = getRepository(RefreshToken);
+
+    const existing = await refreshTokenRepository.findOne({ user: this });
+    if (existing) {
+      await refreshTokenRepository.remove(existing);
+    }
+
     const refreshToken = await refreshTokenRepository.save({
       token: uuidv4(),
       expiry: expiredAt,

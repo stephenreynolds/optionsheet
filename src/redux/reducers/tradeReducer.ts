@@ -39,6 +39,7 @@ const tradeReducer = produce((state, action) => {
     case LOGOUT_SUCCESS:
     case REGISTER_FAIL:
       state = { };
+      break;
   }
 
   return state;

@@ -1,9 +1,12 @@
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import config from "../../config";
 import { Database } from "../database";
 
 export default class MockDatabase implements Database {
   // User
   public async getUserById(id: number) {
-    return {};
+    return { roles: [] };
   }
 
   public async getUserByName(username: string) {
@@ -96,10 +99,12 @@ export default class MockDatabase implements Database {
 
   // Tokens
   public async createToken(user) {
-    return "";
+    return jwt.sign({ id: 0 }, config.jwt.secret, {
+      expiresIn: config.jwt.jwtExpiration
+    });
   }
 
   public async createRefreshToken(user) {
-    return "";
+    return uuidv4();
   }
 }

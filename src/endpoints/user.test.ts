@@ -9,16 +9,13 @@ beforeAll(() => {
   config.jwt.secret = "test";
 });
 
-describe("/POST /users", () => {
-  describe("given valid credentials", () => {
+describe("GET /user", () => {
+  describe("when user is authenticated", () => {
     it("should respond with 200 status code", async () => {
-      const credentials = {
-        username: "undefined",
-        email: "undefined@test.com",
-        password: "Passw0rd!",
-        confirm: "Passw0rd!"
-      };
-      const response = await request(app).post("/users").send(credentials);
+      const tokenResponse = await request(app).post("/auth").send({ username: "username", password: "password" });
+      const { token } = tokenResponse.body;
+
+      const response = await request(app).get("/user").set({ "x-access-token": token });
       expect(response.status).toEqual(200);
     });
   });

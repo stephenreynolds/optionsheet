@@ -1,10 +1,12 @@
 import request from "supertest";
 import app from "../app";
+import config from "../config";
 import routes from "../routes";
 import mockDataService from "../data/mockdb/mockDataService";
 
 beforeAll(() => {
   app.use(mockDataService, routes);
+  config.jwt.secret = "test";
 });
 
 describe("POST /auth", () => {

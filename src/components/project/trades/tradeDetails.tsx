@@ -20,7 +20,6 @@ import {
 } from "../../../common/tradeUtils";
 import * as tradeActions from "../../../redux/actions/tradeActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { apiCallsInProgress } from "../../../redux/selectors/apiSelectors";
 import { getTrade } from "../../../redux/selectors/tradeSelectors";
 import { PLPill, TagPill } from "../../shared/pill";
 import { Container } from "../../styles";
@@ -37,7 +36,6 @@ const DetailsSection = styled.div`
 `;
 
 const TradeDetails = () => {
-  const loading = useSelector((state) => apiCallsInProgress(state));
   const trade = useSelector((state) => getTrade(state));
   const dispatch: PromiseDispatch = useDispatch();
 
@@ -57,7 +55,7 @@ const TradeDetails = () => {
       });
   }, [dispatch, id]);
 
-  if (!trade || loading) {
+  if (!trade) {
     return null;
   }
 

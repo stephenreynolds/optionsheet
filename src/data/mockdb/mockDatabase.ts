@@ -7,10 +7,18 @@ export default class MockDatabase implements Database {
   }
 
   public async getUserByName(username: string) {
+    if (username === "invalid") {
+      return undefined;
+    }
+
     return { passwordHash: "$2a$12$8KoGjvw/AiJeeQ99qpPg5.ukdbEJuMTHTyaHi7JX1FDruID3CyVtq" };
   }
 
   public async getUserByEmail(email: string) {
+    if (email === "invalid") {
+      return undefined;
+    }
+
     return {};
   }
 

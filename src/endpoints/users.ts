@@ -57,8 +57,8 @@ export const createUser = async (request: Request, response: Response) => {
     const { id } = await dataService.saveUser(user);
     const newUser = await dataService.getUserById(id);
 
-    const token = await newUser.createToken();
-    const refreshToken = await newUser.createRefreshToken();
+    const token = await dataService.createToken(newUser);
+    const refreshToken = await dataService.createRefreshToken(newUser);
 
     response.send({ token, refreshToken });
   }

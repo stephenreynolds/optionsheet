@@ -27,4 +27,8 @@ export interface Database {
   getTradeWithProject(id: number);
   saveTrade(trade);
   deleteTrade(id: number);
+
+  // Tokens
+  createToken(user): Promise<string>
+  createRefreshToken(user): Promise<string>;
 }

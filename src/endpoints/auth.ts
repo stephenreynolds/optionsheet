@@ -32,8 +32,8 @@ export const authenticate = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
     }
 
-    const token = await user.createToken();
-    const refreshToken = await user.createRefreshToken();
+    const token = await dataService.createToken(user);
+    const refreshToken = await dataService.createRefreshToken(user);
 
     response.status(StatusCodes.OK).send({ token, refreshToken });
   }
@@ -66,7 +66,7 @@ export const refreshToken = async (request: Request, response: Response) => {
     }
 
     const user = refreshToken.user;
-    const newToken = await user.createToken();
+    const newToken = await dataService.createToken(user);
     response.send({ token: newToken, refreshToken: refreshToken.token });
   }
   catch (error) {

@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import config from "../../config";
 import { Database } from "../database";
 import { Project } from "./project";
 import { RefreshToken } from "./refreshToken";
@@ -199,5 +202,32 @@ export default class MockDatabase implements Database {
     const oldTrade = this.trades.findIndex((t) => t.id === trade.id);
     this.trades = this.trades.filter((t) => t.id !== trade.id);
     return oldTrade;
+  }
+
+  // Tokens
+  public async createToken(user: User): Promise<string> {
+    return jwt.sign({ id: user.id }, config.jwt.secret, {
+      expiresIn: config.jwt.jwtExpiration
+    });
+  }
+
+  public async createRefreshToken(user: User): Promise<string> {
+    const expiredAt = new Date();
+    expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
+
+    const existing = MockDatabase.refreshTokens.find((r) => r.user.id === user.id);
+    if (existing) {
+      MockDatabase.refreshTokens = MockDatabase.refreshTokens.filter((r) => r.token !== existing.token);
+    }
+
+    const refreshToken = {
+      token: uuidv4(),
+      expiry: expiredAt,
+      user
+    };
+
+    MockDatabase.refreshTokens.push(refreshToken);
+
+    return refreshToken.token;
   }
 }

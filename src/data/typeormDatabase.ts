@@ -1,4 +1,7 @@
+import jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
 import { getRepository } from "typeorm";
+import config from "../config";
 import { Database } from "./database";
 import { Project } from "./entities/project";
 import { RefreshToken } from "./entities/refreshToken";
@@ -105,5 +108,32 @@ export class TypeORMDatabase implements Database {
   public async deleteTrade(id: number) {
     const repository = await getRepository(Trade);
     return repository.delete(id);
+  }
+
+  // Tokens
+  public async createToken(user: User): Promise<string> {
+    return jwt.sign({ id: user.id }, config.jwt.secret, {
+      expiresIn: config.jwt.jwtExpiration
+    });
+  }
+
+  public async createRefreshToken(user: User): Promise<string> {
+    const expiredAt = new Date();
+    expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
+
+    const refreshTokenRepository = getRepository(RefreshToken);
+
+    const existing = await refreshTokenRepository.findOne({ user });
+    if (existing) {
+      await refreshTokenRepository.remove(existing);
+    }
+
+    const refreshToken = await refreshTokenRepository.save({
+      token: uuidv4(),
+      expiry: expiredAt,
+      user
+    });
+
+    return refreshToken.token;
   }
 }

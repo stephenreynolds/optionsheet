@@ -37,7 +37,7 @@ instance.interceptors.response.use(
   },
   async (error) => {
     const originalConfig = error.config;
-    if (error.response.status === 401 && !originalConfig._retry) {
+    if (error.response.status === 401 && !originalConfig._retry && getToken()) {
       originalConfig._retry = true;
       try {
         const response = await instance.post("/auth/refresh", {

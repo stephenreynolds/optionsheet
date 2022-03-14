@@ -4,7 +4,6 @@ import ProjectList from "./projectList";
 
 const SidebarContainer = styled.aside`
   background-color: ${props => props.theme.dark.bg};
-  border-left: 1px solid ${props => props.theme.dark.input.border};
   padding: 32px;
   width: 200px;
   

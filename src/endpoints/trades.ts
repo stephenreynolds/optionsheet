@@ -97,6 +97,13 @@ export const addTrade = async (request: Request, response: Response) => {
     return;
   }
 
+  const { symbol, openDate, legs } = request.body;
+
+  if (!(symbol && openDate && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].openPrice >= 0)) {
+    sendError(request, response, StatusCodes.BAD_REQUEST, "A trade was not provided.");
+    return;
+  }
+
   try {
     const legs = request.body.legs;
 

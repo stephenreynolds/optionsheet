@@ -81,3 +81,84 @@ describe("GET /trades/:id", () => {
     });
   });
 });
+
+describe("POST /projects/:username/:project", () => {
+  describe("given valid username, project name, and body", () => {
+    it("should respond with 201 status code", async () => {
+      const body = { symbol: "symbol", openDate: new Date(), legs: [{ side: "Buy", quantity: 1, openPrice: 0 }] };
+      const response = await request(app)
+        .post("/projects/username/project")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(201);
+    });
+  });
+
+  describe("if no user exists with the given username", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .post("/projects/undefined/project")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no project exists with the given name", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .post("/projects/username/undefined")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no trade body is provided", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .post("/projects/username/project")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no symbol was provided", () => {
+    it("should respond with 400 status code", async () => {
+      const body = { openDate: new Date(), legs: [{ side: "Buy", quantity: 1, openPrice: 0 }] };
+      const response = await request(app)
+        .post("/projects/username/project")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no open date was provided", () => {
+    it("should respond with 400 status code", async () => {
+      const body = { symbol: "symbol", legs: [{ side: "Buy", quantity: 1, openPrice: 0 }] };
+      const response = await request(app)
+        .post("/projects/username/project")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no legs were provided", () => {
+    it("should respond with 400 status code", async () => {
+      const body = { symbol: "symbol", openDate: new Date() };
+      const response = await request(app)
+        .post("/projects/username/project")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .post("/projects/username/project");
+      expect(response.status).toEqual(401);
+    });
+  });
+});

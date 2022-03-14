@@ -20,6 +20,18 @@ describe("POST /auth", () => {
       const response = await request(app).post("/auth").send(credentials);
       expect(response.headers["content-type"]).toEqual(expect.stringContaining("json"));
     });
+
+    it("should respond with an access token", async () => {
+      const credentials = { username: "username", password: "password" };
+      const response = await request(app).post("/auth").send(credentials);
+      expect(response.body.token).toBeDefined();
+    });
+
+    it("should respond with a refresh token", async () => {
+      const credentials = { username: "username", password: "password" };
+      const response = await request(app).post("/auth").send(credentials);
+      expect(response.body.refreshToken).toBeDefined();
+    });
   });
 
   describe("given an invalid password", () => {

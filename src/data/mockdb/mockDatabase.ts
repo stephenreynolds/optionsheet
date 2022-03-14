@@ -6,7 +6,13 @@ import { Database } from "../database";
 export default class MockDatabase implements Database {
   // User
   public async getUserById(id: number) {
-    return { roles: [] };
+    return {
+      username: "username",
+      email: "email",
+      avatarUrl: "avatar_url",
+      bio: "bio",
+      roles: []
+    };
   }
 
   public async getUserByName(username: string) {

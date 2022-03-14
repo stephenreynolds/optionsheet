@@ -38,8 +38,9 @@ export default class MockDatabase implements Database {
     }
     const newUser = {
       ...user,
-      id: Math.max(...this.users.map((u) => u.id)) + 1
+      id: this.users.length > 0 ? Math.max(...this.users.map((u) => u.id)) + 1 : 0
     };
+
     this.users.push(newUser);
     return newUser;
   }
@@ -118,7 +119,7 @@ export default class MockDatabase implements Database {
     }
     const newProject = {
       ...project,
-      id: Math.max(...this.projects.map((p) => p.id)) + 1
+      id: this.projects.length > 0 ? Math.max(...this.projects.map((p) => p.id)) + 1 : 0
     };
     this.projects.push(newProject);
     return newProject;
@@ -178,8 +179,18 @@ export default class MockDatabase implements Database {
     }
     const newTrade = {
       ...trade,
-      id: Math.max(...this.trades.map((t) => t.id)) + 1
+      id: this.trades.length > 0 ? Math.max(...this.trades.map((t) => t.id)) + 1 : 0
     };
+    if (trade.legs) {
+      trade.legs = trade.legs.map((leg) => {
+        return {
+          ...leg,
+          id: this.legs.length > 0 ? Math.max(...this.projects.map((p) => p.id)) + 1 : 0
+        };
+      });
+      newTrade.legs = trade.legs;
+    }
+
     this.trades.push(newTrade);
     return newTrade;
   }

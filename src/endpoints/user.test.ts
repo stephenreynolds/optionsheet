@@ -170,7 +170,7 @@ describe("PATCH /user", () => {
   });
 
   describe("when changing bio", () => {
-    describe("it successful", () => {
+    describe("if successful", () => {
       it("should respond with 200 status code", async () => {
         const response = await request(app)
           .patch("/user")

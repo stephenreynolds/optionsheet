@@ -23,6 +23,10 @@ export const authenticate = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
     }
 
+    if (!password) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "Need password to authenticate.");
+    }
+
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }

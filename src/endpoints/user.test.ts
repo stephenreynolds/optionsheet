@@ -19,4 +19,11 @@ describe("GET /user", () => {
       expect(response.status).toEqual(200);
     });
   });
+
+  describe("when user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app).get("/user").send();
+      expect(response.status).toEqual(401);
+    });
+  });
 });

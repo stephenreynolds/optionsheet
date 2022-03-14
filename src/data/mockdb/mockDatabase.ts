@@ -20,7 +20,10 @@ export default class MockDatabase implements Database {
       return undefined;
     }
 
-    return { passwordHash: "$2a$12$8KoGjvw/AiJeeQ99qpPg5.ukdbEJuMTHTyaHi7JX1FDruID3CyVtq" };
+    return {
+      id: username === "username" ? 0: 1,
+      passwordHash: "$2a$12$8KoGjvw/AiJeeQ99qpPg5.ukdbEJuMTHTyaHi7JX1FDruID3CyVtq"
+    };
   }
 
   public async getUserByEmail(email: string) {
@@ -63,6 +66,17 @@ export default class MockDatabase implements Database {
 
   // Project
   public async getProjectsByUserId(userId: number) {
+    if (userId === 0) {
+      return [
+        {
+          name: "",
+          description: "",
+          tags: [],
+          lastEdited: new Date()
+        }
+      ];
+    }
+
     return [];
   }
 

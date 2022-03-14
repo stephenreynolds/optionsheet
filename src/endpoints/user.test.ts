@@ -168,6 +168,18 @@ describe("PATCH /user", () => {
       });
     });
   });
+
+  describe("when changing bio", () => {
+    describe("it successful", () => {
+      it("should respond with 200 status code", async () => {
+        const response = await request(app)
+          .patch("/user")
+          .send({ bio: "" })
+          .set({ "x-access-token": token });
+        expect(response.status).toEqual(200);
+      });
+    });
+  });
 });
 
 describe("DELETE /users", () => {

@@ -3,7 +3,6 @@ import { Express } from "express";
 import http from "http";
 import https from "https";
 import dataService from "./data/dataService";
-import mockDataService from "./data/mockdb/mockDataService";
 import routes from "./routes";
 
 const startServer = (app: Express) => {

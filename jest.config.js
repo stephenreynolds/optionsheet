@@ -9,6 +9,7 @@ module.exports = {
     "node_modules",
     "build",
     "jest.config.js",
-    "webpack.config.js"
+    "webpack.config.js",
+    "mockdb"
   ]
 };

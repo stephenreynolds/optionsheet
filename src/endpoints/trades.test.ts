@@ -162,3 +162,33 @@ describe("POST /projects/:username/:project", () => {
     });
   });
 });
+
+describe("PATCH /trades/:id", () => {
+  describe("given valid id and body", () => {
+    it("should respond with 204 status code", async () => {
+      const body = {};
+      const response = await request(app)
+        .patch("/trades/0")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("if user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .patch("/trades/0");
+      expect(response.status).toEqual(401);
+    });
+  });
+
+  describe("if trade with given id does not exist", () => {
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .patch("/trades/-1")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(404);
+    });
+  });
+});

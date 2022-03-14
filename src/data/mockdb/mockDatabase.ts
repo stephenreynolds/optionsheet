@@ -122,6 +122,9 @@ export default class MockDatabase implements Database {
   }
 
   public async getTradeWithProject(id: number) {
+    if (id < 0) {
+      return undefined;
+    }
     return {};
   }
 

@@ -17,10 +17,16 @@ const BrandLink = styled(Link)`
   color: ${props => props.theme.dark.text};
   text-decoration: none;
   transition: opacity 0.4s ease;
+  display: flex;
+  align-items: center;
 
   &:hover {
     opacity: 0.75;
     text-decoration: none;
+  }
+  
+  img {
+    max-height: 2em;
   }
 `;
 
@@ -34,7 +40,10 @@ const Header = () => {
 
   return (
     <StyledHeader>
-      <BrandLink to="/"><h2 className="m-0">OptionSheet</h2></BrandLink>
+      <BrandLink to="/">
+        <img src="/logo192.png" alt="OptionSheet"/>
+        <h2 className="m-0">OptionSheet</h2>
+      </BrandLink>
       <Search />
       <RightMenu>
         {isLoggedIn ? <UserMenu /> : <LoginMenu />}

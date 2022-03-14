@@ -23,3 +23,5 @@ app.use(morgan("tiny"));
 attachRoutes(app);
 
 connect().then(() => startServer(app));
+
+export default app;

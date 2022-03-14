@@ -15,12 +15,6 @@ describe("POST /auth", () => {
       expect(response.status).toEqual(200);
     });
 
-    it("should specify json in the content type header", async () => {
-      const credentials = { username: "username", password: "password" };
-      const response = await request(app).post("/auth").send(credentials);
-      expect(response.headers["content-type"]).toEqual(expect.stringContaining("json"));
-    });
-
     it("should respond with an access token", async () => {
       const credentials = { username: "username", password: "password" };
       const response = await request(app).post("/auth").send(credentials);

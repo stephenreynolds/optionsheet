@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { PromiseDispatch } from "redux/promiseDispatch";
+import { PromiseDispatch } from "../../redux/promiseDispatch";
 import styled from "styled-components";
 import * as projectActions from "../../redux/actions/projectActions";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";

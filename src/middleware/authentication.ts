@@ -1,14 +1,10 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import jwt from "jsonwebtoken";
-import config from "../config";
+import jwt, { TokenExpiredError } from "jsonwebtoken";
 import { sendError } from "../errorResponse";
+import config from "../config";
 
-export const verifyJwtToken = (
-  request: Request,
-  response: Response,
-  next
-) => {
+export const verifyJwtToken = (request: Request, response: Response, next) => {
   const token = request.headers["x-access-token"];
 
   if (!token) {
@@ -16,9 +12,13 @@ export const verifyJwtToken = (
     return;
   }
 
-  jwt.verify(token, config.secret, (error, decoded) => {
+  jwt.verify(token, config.jwt.secret, (error, decoded) => {
     if (error) {
-      sendError(request, response, StatusCodes.UNAUTHORIZED, "Requires authentication");
+      let message = "Unauthorized";
+      if (error instanceof TokenExpiredError) {
+        message = "Token expired";
+      }
+      sendError(request, response, StatusCodes.UNAUTHORIZED, message);
       return;
     }
 

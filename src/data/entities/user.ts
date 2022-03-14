@@ -1,13 +1,19 @@
+import jwt from "jsonwebtoken";
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
+  Entity,
+  getRepository,
+  JoinTable,
   ManyToMany,
-  OneToMany
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn
 } from "typeorm";
-import { Role } from "./role";
-import { JoinTable } from "typeorm";
+import { v4 as uuidv4 } from "uuid";
+import config from "../../config";
 import { Project } from "./project";
+import { RefreshToken } from "./refreshToken";
+import { Role } from "./role";
 
 @Entity()
 export class User {
@@ -49,4 +55,30 @@ export class User {
 
   @Column({ default: new Date() })
   updatedOn?: Date;
+
+  @OneToOne(() => RefreshToken, refreshToken => refreshToken.user, {
+    cascade: true,
+    onDelete: "CASCADE"
+  })
+  refreshToken?: RefreshToken;
+
+  async createToken(): Promise<string> {
+    return jwt.sign({ id: this.id }, config.jwt.secret, {
+      expiresIn: config.jwt.jwtExpiration
+    });
+  }
+
+  async createRefreshToken(): Promise<string> {
+    const expiredAt = new Date();
+    expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
+
+    const refreshTokenRepository = getRepository(RefreshToken);
+    const refreshToken = await refreshTokenRepository.save({
+      token: uuidv4(),
+      expiry: expiredAt,
+      user: this
+    });
+
+    return refreshToken.token;
+  }
 }

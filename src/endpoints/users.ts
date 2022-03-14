@@ -1,12 +1,10 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getRepository } from "typeorm";
 import { Role } from "../data/entities/role";
 import { User } from "../data/entities/user";
 import { sendError } from "../errorResponse";
-import config from "../config";
 
 export const createUser = async (request: Request, response: Response) => {
   const userRepository = getRepository(User);
@@ -48,23 +46,19 @@ export const createUser = async (request: Request, response: Response) => {
     return;
   }
 
-  // Salt the password.
-  const passwordHash = await bcrypt.hash(request.body.password, 12);
-
   // Save the new user to the database.
   const roleRepository = getRepository(Role);
   const role = await roleRepository.findOne({ name: "user" });
-  const user: User = {
-    username: username,
-    email: email,
-    passwordHash,
+  const user = {
+    username,
+    email,
+    passwordHash: await bcrypt.hash(password, 12), // Salt the password.
     roles: [role]
   };
   const newUser = await userRepository.save(user);
 
-  const token = jwt.signJwtToken({ id: newUser.id }, config.jwt.secret, {
-    expiresIn: config.jwt.jwtExpiration
-  });
+  const token = newUser.createToken();
+  const refreshToken = newUser.createRefreshToken();
 
-  response.send({ token });
+  response.send({ token, refreshToken });
 };

@@ -1,11 +1,10 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getRepository } from "typeorm";
 import { User } from "../data/entities/user";
 import { logError, sendError } from "../errorResponse";
-import config from "../config";
+import { RefreshToken } from "../data/entities/refreshToken";
 
 export const authenticate = async (request: Request, response: Response) => {
   try {
@@ -35,16 +34,46 @@ export const authenticate = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
     }
 
-    const token = jwt.signJwtToken({id: user.id}, config.jwt.secret, {
-      expiresIn: config.jwt.jwtExpiration
-    });
+    const token = await user.createToken();
+    const refreshToken = await user.createRefreshToken();
 
-    response.status(StatusCodes.OK).send({ token });
+    response.status(StatusCodes.OK).send({ token, refreshToken });
   }
   catch (error) {
     const message = "Failed to authenticate";
     logError(error, message);
     return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+export const refreshToken = async (request: Request, response: Response) => {
+  try {
+    if (!request.body.refreshToken) {
+      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token not provided");
+      return;
+    }
+
+    const refreshTokenRepository = await getRepository(RefreshToken);
+    const refreshToken = await refreshTokenRepository.findOne({ token: request.body.refreshToken });
+    if (!refreshToken) {
+      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid");
+      return;
+    }
+
+    if (refreshToken.expired) {
+      await refreshTokenRepository.remove(refreshToken);
+      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired");
+      return;
+    }
+
+    const user = refreshToken.user;
+    const newToken = await user.createToken();
+    response.send({ token: newToken, refreshToken: refreshToken.token });
+  }
+  catch (error) {
+    const message = "Failed to refresh token";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
 

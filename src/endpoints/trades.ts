@@ -129,7 +129,6 @@ export const updateTradeById = async (request: Request, response: Response) => {
   const dataService = request.dataService;
   const id = Number(request.params.id);
   let trade = await dataService.getTradeWithProject(id);
-  console.log(trade);
 
   if (!trade) {
     sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
@@ -162,6 +161,11 @@ export const deleteTradeById = async (request: Request, response: Response) => {
   const dataService = request.dataService;
   const id = Number(request.params.id);
   const trade = await dataService.getTradeWithProject(id);
+
+  if (!trade) {
+    response.sendStatus(StatusCodes.NO_CONTENT);
+    return;
+  }
 
   try {
     await dataService.deleteTrade(id);

@@ -192,3 +192,31 @@ describe("PATCH /trades/:id", () => {
     });
   });
 });
+
+describe("DELETE /trades/:id", () => {
+  describe("given valid id", () => {
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/trades/0")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("if no trade exists with given id", () => {
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/trades/-1")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("if user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .delete("/trades/0");
+      expect(response.status).toEqual(401);
+    });
+  });
+});

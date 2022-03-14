@@ -59,7 +59,7 @@ describe("POST /auth", () => {
 
   describe("when no user exists with given username", () => {
     it("should respond with 404 status code", async () => {
-      const credentials = { username: "invalid", password: "password" };
+      const credentials = { username: "undefined", password: "password" };
       const response = await request(app).post("/auth").send(credentials);
       expect(response.status).toEqual(404);
     });
@@ -67,7 +67,7 @@ describe("POST /auth", () => {
 
   describe("when no user exists with given email", () => {
     it("should respond with 404 status code", async () => {
-      const credentials = { email: "invalid", password: "password" };
+      const credentials = { email: "undefined@test.com", password: "password" };
       const response = await request(app).post("/auth").send(credentials);
       expect(response.status).toEqual(404);
     });

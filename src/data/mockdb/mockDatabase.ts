@@ -7,7 +7,7 @@ export default class MockDatabase implements Database {
   }
 
   public async getUserByName(username: string) {
-    if (username === "invalid") {
+    if (username === "undefined") {
       return undefined;
     }
 
@@ -15,7 +15,7 @@ export default class MockDatabase implements Database {
   }
 
   public async getUserByEmail(email: string) {
-    if (email === "invalid") {
+    if (email === "undefined@test.com") {
       return undefined;
     }
 

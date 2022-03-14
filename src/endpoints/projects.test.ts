@@ -168,3 +168,40 @@ describe("PATH /projects/:username/:project", () => {
     });
   });
 });
+
+describe("DELETE /projects/:username/:project", () => {
+  describe("given valid username and project name", () => {
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/projects/username/project")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("if the user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .delete("/projects/username/project");
+      expect(response.status).toEqual(401);
+    });
+  });
+
+  describe("if no user exists with the given username", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .delete("/projects/undefined/project")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if no project exists with the given name", () => {
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/projects/username/undefined")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
+    });
+  });
+});

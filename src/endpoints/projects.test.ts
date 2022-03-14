@@ -109,14 +109,6 @@ describe("POST /projects", () => {
     });
   });
 
-  describe("if user is unauthenticated", () => {
-    it("should respond with 401 status code", async () => {
-      const response = await request(app)
-        .post("/projects");
-      expect(response.status).toEqual(401);
-    });
-  });
-
   describe("if project name is missing", () => {
     it("should respond with 400 status code", async () => {
       const response = await request(app)
@@ -134,6 +126,14 @@ describe("POST /projects", () => {
         .send(body)
         .set({ "x-access-token": token });
       expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if user is unauthenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .post("/projects");
+      expect(response.status).toEqual(401);
     });
   });
 });
@@ -179,11 +179,12 @@ describe("DELETE /projects/:username/:project", () => {
     });
   });
 
-  describe("if the user is not authenticated", () => {
-    it("should respond with 401 status code", async () => {
+  describe("if no project exists with the given name", () => {
+    it("should respond with 204 status code", async () => {
       const response = await request(app)
-        .delete("/projects/username/project");
-      expect(response.status).toEqual(401);
+        .delete("/projects/username/undefined")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(204);
     });
   });
 
@@ -196,12 +197,11 @@ describe("DELETE /projects/:username/:project", () => {
     });
   });
 
-  describe("if no project exists with the given name", () => {
-    it("should respond with 204 status code", async () => {
+  describe("if the user is not authenticated", () => {
+    it("should respond with 401 status code", async () => {
       const response = await request(app)
-        .delete("/projects/username/undefined")
-        .set({ "x-access-token": token });
-      expect(response.status).toEqual(204);
+        .delete("/projects/username/project");
+      expect(response.status).toEqual(401);
     });
   });
 });

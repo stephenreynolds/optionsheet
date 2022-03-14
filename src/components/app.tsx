@@ -23,7 +23,7 @@ const App = () => {
   return (
     <>
       <Header />
-      <AppRoutes isLoggedIn={isLoggedIn} />
+      <AppRoutes />
     </>
   );
 };

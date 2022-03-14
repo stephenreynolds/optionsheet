@@ -1,7 +1,7 @@
 import { ErrorMessage, Formik } from "formik";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, Navigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import * as yup from "yup";
@@ -12,6 +12,7 @@ import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import { getProjectTags } from "../../redux/selectors/projectSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
+import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 
 const NewProjectContainer = styled.div`
   margin: 0 auto;
@@ -72,11 +73,13 @@ const initialValues = {
 };
 
 const NewProject = () => {
+  const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
   const loading = useSelector((state) => apiCallsInProgress(state));
   const username = useSelector((state) => getUsername(state));
   const tagSuggestions = useSelector((state) => getProjectTags(state));
   const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (username && !tagSuggestions) {
@@ -86,6 +89,10 @@ const NewProject = () => {
         });
     }
   }, [dispatch, tagSuggestions, username]);
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" state={location.pathname} />;
+  }
 
   if (loading) {
     return null;

@@ -7,8 +7,8 @@ import * as authActions from "../../redux/actions/authActions";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { ErrorMessage, Formik } from "formik";
 import * as yup from "yup";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+import { Navigate, useLocation } from "react-router";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,7 +24,7 @@ const LoginContainer = styled(Container)`
     width: 100%;
     background-color: ${props => color(props.theme.dark.invalid).darken(0.5)};
     border-radius: 5px;
-    
+
     .error-icon {
       margin-right: 1ch;
     }
@@ -68,14 +68,12 @@ const validationScheme = yup.object({
 const Login = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
   const dispatch: PromiseDispatch = useDispatch();
-  const navigate = useNavigate();
+  const { state } = useLocation();
   const [loginError, setLoginError] = useState("");
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn, navigate]);
+  if (isLoggedIn) {
+    return <Navigate to={state ? state : "/"} />
+  }
 
   const handleSubmit = (credentials: Credentials) => {
     dispatch(authActions.login(credentials))

@@ -1,5 +1,10 @@
 import Sidebar from "./sidebar";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
+import { lazy } from "react";
+
+const Home = lazy(() => import (/* webpackChunkName: "home" */ "../home/home"));
 
 const DashboardContainer = styled.div`
   background-color: ${props => props.theme.dark.input.bg};
@@ -12,6 +17,12 @@ const DashboardContent = styled.div`
 `;
 
 const Dashboard = () => {
+  const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
+
+  if (!isLoggedIn) {
+    return <Home />;
+  }
+
   return (
     <DashboardContainer>
       <Sidebar />

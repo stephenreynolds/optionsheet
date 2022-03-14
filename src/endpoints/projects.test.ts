@@ -87,3 +87,53 @@ describe("GET /projects/:username/:project", () => {
     });
   });
 });
+
+describe("POST /projects", () => {
+  describe("given valid project input", () => {
+    it("should respond with 200 status code", async () => {
+      const body = { name: "undefined" };
+      const response = await request(app)
+        .post("/projects")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(200);
+    });
+
+    it("should respond with a url to the new project", async () => {
+      const body = { name: "undefined" };
+      const response = await request(app)
+        .post("/projects")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.body.projectUrl).toBeDefined();
+    });
+  });
+
+  describe("if user is unauthenticated", () => {
+    it("should respond with 401 status code", async () => {
+      const response = await request(app)
+        .post("/projects");
+      expect(response.status).toEqual(401);
+    });
+  });
+
+  describe("if project name is missing", () => {
+    it("should respond with 400 status code", async () => {
+      const response = await request(app)
+        .post("/projects")
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+
+  describe("if a project with the given name already exists", () => {
+    it("should respond with 400 status code", async () => {
+      const body = { name: "project" };
+      const response = await request(app)
+        .post("/projects")
+        .send(body)
+        .set({ "x-access-token": token });
+      expect(response.status).toEqual(400);
+    });
+  });
+});

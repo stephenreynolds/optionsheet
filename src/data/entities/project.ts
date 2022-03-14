@@ -5,8 +5,8 @@ import { Tag } from "./tag";
 
 @Entity()
 export class Project {
-  @PrimaryGeneratedColumn("uuid")
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;

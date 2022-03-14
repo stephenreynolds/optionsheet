@@ -57,3 +57,27 @@ describe("GET /projects/:username/:project/trades", () => {
     });
   });
 });
+
+describe("GET /trades/:id", () => {
+  describe("given valid id", () => {
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .get("/trades/0");
+      expect(response.status).toEqual(200);
+    });
+
+    it("should respond with a trade object", async () => {
+      const response = await request(app)
+        .get("/trades/0");
+      expect(response.body.legs).toBeDefined();
+    });
+  });
+
+  describe("given an invalid id", () => {
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .get("/trades/-1");
+      expect(response.status).toEqual(404);
+    });
+  });
+});

@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { deleteUserById, getUserByEmail, getUserById, getUserByName, updateUserById } from "../data/typeormDatabase";
-import { logError, sendError } from "../errorResponse";
+import { logError, sendError } from "../error";
+import Request from "../request";
 
 interface UserDetails {
   username: string;
@@ -36,8 +36,9 @@ const getUserDetails = (user): UserDetails => {
 
 export const get = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     const id = request.body.userId;
-    const user = await getUserById(id);
+    const user = await dataService.getUserById(id);
 
     const userDetails = getUserDetails(user);
 
@@ -69,6 +70,7 @@ const emailIsValid = (email: string) => {
 
 export const update = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     const id = request.body.userId;
 
     let updateModel: UserUpdateModel = {};
@@ -77,7 +79,7 @@ export const update = async (request: Request, response: Response) => {
     const username = request.body.username;
     if (username) {
       // Check that no user already has that username.
-      const match = await getUserByName(username);
+      const match = await dataService.getUserByName(username);
       if (match) {
         sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
         return;
@@ -109,7 +111,7 @@ export const update = async (request: Request, response: Response) => {
       }
 
       // Check that no user already has that username.
-      const match = await getUserByEmail(email);
+      const match = await dataService.getUserByEmail(email);
       if (match) {
         sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
         return;
@@ -124,8 +126,8 @@ export const update = async (request: Request, response: Response) => {
       updateModel = { ...updateModel, bio };
     }
 
-    await updateUserById(id, updateModel);
-    const updatedUser = await getUserById(id);
+    await dataService.updateUserById(id, updateModel);
+    const updatedUser = await dataService.getUserById(id);
 
     const userDetails = getUserDetails(updatedUser);
 
@@ -140,9 +142,10 @@ export const update = async (request: Request, response: Response) => {
 
 export const deleteAccount = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     const id = request.body.userId;
 
-    await deleteUserById(id);
+    await dataService.deleteUserById(id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

@@ -1,22 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import {
-  deleteTrade,
-  getProject,
-  getTradeById,
-  getTradesByProject,
-  getTradeWithProject,
-  getUserByName,
-  onProjectUpdated,
-  saveTrade
-} from "../data/typeormDatabase";
-import { logError, sendError } from "../errorResponse";
+import { logError, sendError } from "../error";
+import Request from "../request";
 
 // GET /projects/:username/:project/trades
 export const getTrades = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     const username = request.params.username;
-    const user = await getUserByName(username);
+    const user = await dataService.getUserByName(username);
 
     if (!user) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
@@ -24,14 +16,14 @@ export const getTrades = async (request: Request, response: Response) => {
     }
 
     const projectName = request.params.project;
-    const project = await getProject(user.id, projectName);
+    const project = await dataService.getProject(user.id, projectName);
 
     if (!project) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "Project does not exist");
       return;
     }
 
-    const trades = await getTradesByProject(project);
+    const trades = await dataService.getTradesByProject(project);
 
     response.send(trades.map((trade) => {
       return {
@@ -58,8 +50,9 @@ export const getTrades = async (request: Request, response: Response) => {
 // GET /trades/:id
 export const getTrade = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     const id = Number(request.params.id);
-    const trade = await getTradeById(id);
+    const trade = await dataService.getTradeById(id);
 
     if (!trade) {
       sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
@@ -88,16 +81,17 @@ export const getTrade = async (request: Request, response: Response) => {
 
 // POST /projects/:username/:project
 export const addTrade = async (request: Request, response: Response) => {
+  const dataService = request.dataService;
   const username = request.params.username;
   const projectName = request.params.project;
 
-  const user = await getUserByName(username);
+  const user = await dataService.getUserByName(username);
   if (!user) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
     return;
   }
 
-  const project = await getProject(user.id, projectName);
+  const project = await dataService.getProject(user.id, projectName);
   if (!project) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
     return;
@@ -111,9 +105,9 @@ export const addTrade = async (request: Request, response: Response) => {
       legs,
       project
     };
-    await saveTrade(trade);
+    await dataService.saveTrade(trade);
 
-    await onProjectUpdated(project);
+    await dataService.onProjectUpdated(project);
 
     response.sendStatus(StatusCodes.CREATED);
   }
@@ -125,8 +119,9 @@ export const addTrade = async (request: Request, response: Response) => {
 
 // PATCH /trades/:id
 export const updateTradeById = async (request: Request, response: Response) => {
+  const dataService = request.dataService;
   const id = Number(request.params.id);
-  let trade = await getTradeWithProject(id);
+  let trade = await dataService.getTradeWithProject(id);
   console.log(trade);
 
   if (!trade) {
@@ -143,9 +138,9 @@ export const updateTradeById = async (request: Request, response: Response) => {
       ...updatedTrade
     };
 
-    await saveTrade(trade);
+    await dataService.saveTrade(trade);
 
-    await onProjectUpdated(trade.project);
+    await dataService.onProjectUpdated(trade.project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -157,13 +152,14 @@ export const updateTradeById = async (request: Request, response: Response) => {
 
 // DELETE /trades/:id
 export const deleteTradeById = async (request: Request, response: Response) => {
+  const dataService = request.dataService;
   const id = Number(request.params.id);
-  const trade = await getTradeWithProject(id);
+  const trade = await dataService.getTradeWithProject(id);
 
   try {
-    await deleteTrade(id);
+    await dataService.deleteTrade(id);
 
-    await onProjectUpdated(trade.project);
+    await dataService.onProjectUpdated(trade.project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

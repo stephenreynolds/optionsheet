@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getRoleByName, getUserByEmail, getUserById, getUserByName, saveUser } from "../data/typeormDatabase";
-import { sendError } from "../errorResponse";
+import { sendError } from "../error";
+import Request from "../request";
 
 export const createUser = async (request: Request, response: Response) => {
   const username = request.body.username;
@@ -31,28 +31,30 @@ export const createUser = async (request: Request, response: Response) => {
     return;
   }
 
+  const dataService = request.dataService;
+
   // Check that username and email address are not in use.
-  let existingUser = await getUserByName(username);
+  let existingUser = await dataService.getUserByName(username);
   if (existingUser) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that username already exists.");
     return;
   }
-  existingUser = await getUserByEmail(email);
+  existingUser = await dataService.getUserByEmail(email);
   if (existingUser) {
     sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that email address already exists.");
     return;
   }
 
   // Save the new user to the database.
-  const role = await getRoleByName("user");
+  const role = await dataService.getRoleByName("user");
   const user = {
     username,
     email,
     passwordHash: await bcrypt.hash(password, 12), // Salt the password.
     roles: [role]
   };
-  const { id } = await saveUser(user);
-  const newUser = await getUserById(id);
+  const { id } = await dataService.saveUser(user);
+  const newUser = await dataService.getUserById(id);
 
   const token = await newUser.createToken();
   const refreshToken = await newUser.createRefreshToken();

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import jwt, { TokenExpiredError } from "jsonwebtoken";
-import { sendError } from "../errorResponse";
+import { sendError } from "../error";
 import config from "../config";
 
 export const verifyJwtToken = (request: Request, response: Response, next) => {

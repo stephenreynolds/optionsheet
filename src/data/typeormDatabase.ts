@@ -1,106 +1,109 @@
 import { getRepository } from "typeorm";
+import { Database } from "./database";
 import { Project } from "./entities/project";
 import { RefreshToken } from "./entities/refreshToken";
 import { Role } from "./entities/role";
 import { Trade } from "./entities/trade";
 import { User } from "./entities/user";
 
-// User
-export const getUserById = async (id: number) => {
-  const repository = await getRepository(User);
-  return repository.findOne({ id });
-};
+export class TypeORMDatabase implements Database {
+  // User
+  public async getUserById(id: number) {
+    const repository = await getRepository(User);
+    return repository.findOne({ id });
+  }
 
-export const getUserByName = async (username: string) => {
-  const repository = await getRepository(User);
-  return repository.findOne({ username });
-};
+  public async getUserByName(username: string) {
+    const repository = await getRepository(User);
+    return repository.findOne({ username });
+  }
 
-export const getUserByEmail = async (email: string) => {
-  const repository = await getRepository(User);
-  return repository.findOne({ email });
-};
+  public async getUserByEmail(email: string) {
+    const repository = await getRepository(User);
+    return repository.findOne({ email });
+  }
 
-export const saveUser = async (user: Partial<User>) => {
-  const repository = await getRepository(User);
-  return repository.save(user);
-};
+  public async saveUser(user: Partial<User>) {
+    const repository = await getRepository(User);
+    return repository.save(user);
+  }
 
-export const updateUserById = async (id: number, user: Partial<User>) => {
-  const repository = await getRepository(User);
-  return repository.update(id, user);
-};
+  public async updateUserById(id: number, user: Partial<User>) {
+    const repository = await getRepository(User);
+    return repository.update(id, user);
+  }
 
-export const deleteUserById = async (id: number) => {
-  const repository = await getRepository(User);
-  return repository.delete(id);
-};
+  public async deleteUserById(id: number) {
+    const repository = await getRepository(User);
+    return repository.delete(id);
+  }
 
-// Role
-export const getRoleByName = async (name: string) => {
-  const repository = await getRepository(Role);
-  return repository.findOne({ name });
-};
+  // Role
+  public async getRoleByName(name: string) {
+    const repository = await getRepository(Role);
+    return repository.findOne({ name });
+  }
 
-// Refresh token
-export const getRefreshToken = async (refreshToken: string) => {
-  const repository = await getRepository(RefreshToken);
-  return repository.findOne({ token: refreshToken });
-};
+  // Refresh token
+  public async getRefreshToken(refreshToken: string) {
+    const repository = await getRepository(RefreshToken);
+    return repository.findOne({ token: refreshToken });
+  }
 
-export const removeRefreshToken = async (refreshToken: RefreshToken) => {
-  const repository = await getRepository(RefreshToken);
-  return repository.remove(refreshToken);
-};
+  public async removeRefreshToken(refreshToken: RefreshToken) {
+    const repository = await getRepository(RefreshToken);
+    return repository.remove(refreshToken);
+  }
 
-// Project
-export const getProjectsByUserId = async (userId: number) => {
-  const repository = await getRepository(Project);
-  return repository.find({ user: userId });
-};
+  // Project
+  public async getProjectsByUserId(userId: number) {
+    const repository = await getRepository(Project);
+    return repository.find({ user: userId });
+  }
 
-export const getProject = async (userId: number, name: string) => {
-  const repository = await getRepository(Project);
-  return repository.findOne({ user: userId, name });
-};
+  public async getProject(userId: number, name: string) {
+    const repository = await getRepository(Project);
+    return repository.findOne({ user: userId, name });
+  }
 
-export const saveProject = async (project: Partial<Project>) => {
-  const repository = await getRepository(Project);
-  return repository.save(project);
-};
+  public async saveProject(project: Partial<Project>) {
+    const repository = await getRepository(Project);
+    return repository.save(project);
+  }
 
-export const deleteProject = async (project: Project) => {
-  const repository = await getRepository(Project);
-  return repository.remove(project);
-};
+  public async deleteProject(project: Project) {
+    const repository = await getRepository(Project);
+    return repository.remove(project);
+  }
 
-export const onProjectUpdated = async (project: Project) => {
-  const repository = await getRepository(Project);
-  return repository.update({ id: project.id }, { lastEdited: new Date() });
-};
+  public async onProjectUpdated(project: Project) {
+    const repository = await getRepository(Project);
+    return repository.update({ id: project.id }, { lastEdited: new Date() });
+  }
 
-// Trade
-export const getTradesByProject = async (project: Project) => {
-  const repository = await getRepository(Trade);
-  return repository.find({ project });
-};
+  // Trade
+  public async getTradesByProject(project: Project) {
+    const repository = await getRepository(Trade);
+    return repository.find({ project });
+  }
 
-export const getTradeById = async (id: number) => {
-  const repository = await getRepository(Trade);
-  return repository.findOne(id);
-};
+  public async getTradeById(id: number) {
+    const repository = await getRepository(Trade);
+    return repository.findOne(id);
+  }
 
-export const getTradeWithProject = async (id: number) => {
-  const repository = await getRepository(Trade);
-  return repository.findOne(id, { relations: ["project"] });
-};
+  public async getTradeWithProject(id: number) {
+    const repository = await getRepository(Trade);
+    return repository.findOne(id, { relations: ["project"] });
+  }
 
-export const saveTrade = async (trade: Partial<Trade>) => {
-  const repository = await getRepository(Trade);
-  return repository.save(trade);
-};
+  public async saveTrade(trade: Partial<Trade>) {
+    const repository = await getRepository(Trade);
+    return repository.save(trade);
+  }
 
-export const deleteTrade = async (id: number) => {
-  const repository = await getRepository(Trade);
-  return repository.delete(id);
-};
+  public async deleteTrade(id: number) {
+    const repository = await getRepository(Trade);
+    return repository.delete(id);
+  }
+}

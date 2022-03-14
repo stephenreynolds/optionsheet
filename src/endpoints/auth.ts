@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getRefreshToken, getUserByEmail, getUserByName, removeRefreshToken } from "../data/typeormDatabase";
-import { logError, sendError } from "../errorResponse";
+import { logError, sendError } from "../error";
+import Request from "../request";
 
 export const authenticate = async (request: Request, response: Response) => {
   try {
@@ -12,11 +12,12 @@ export const authenticate = async (request: Request, response: Response) => {
 
     let user;
 
+    const dataService = request.dataService;
     if (username) {
-      user = await getUserByName(username);
+      user = await dataService.getUserByName(username);
     }
     else if (email) {
-      user = await getUserByEmail(email);
+      user = await dataService.getUserByEmail(email);
     }
     else {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
@@ -50,14 +51,16 @@ export const refreshToken = async (request: Request, response: Response) => {
       return;
     }
 
-    const refreshToken = await getRefreshToken(request.body.refreshToken);
+    const dataService = request.dataService;
+
+    const refreshToken = await dataService.getRefreshToken(request.body.refreshToken);
     if (!refreshToken) {
       sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid");
       return;
     }
 
     if (refreshToken.expired) {
-      await removeRefreshToken(refreshToken);
+      await dataService.removeRefreshToken(refreshToken);
       sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired");
       return;
     }
@@ -75,17 +78,18 @@ export const refreshToken = async (request: Request, response: Response) => {
 
 export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
   try {
+    const dataService = request.dataService;
     let available = true;
 
     if (request.query.email) {
       const email = request.query.email.toString();
-      const userWithEmail = await getUserByEmail(email);
+      const userWithEmail = await dataService.getUserByEmail(email);
       available = !userWithEmail;
     }
 
     if (request.query.username) {
       const username = request.query.username.toString();
-      const userWithName = await getUserByName(username);
+      const userWithName = await dataService.getUserByName(username);
       available = !userWithName;
     }
 

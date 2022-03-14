@@ -34,6 +34,7 @@ const getUserDetails = (user): UserDetails => {
   };
 };
 
+// GET /user
 export const get = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
@@ -68,6 +69,7 @@ const emailIsValid = (email: string) => {
   return email.length <= 320 && emailRegex.test(email);
 };
 
+// PATCH /user
 export const update = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
@@ -140,6 +142,7 @@ export const update = async (request: Request, response: Response) => {
   }
 };
 
+// DELETE /user
 export const deleteAccount = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;

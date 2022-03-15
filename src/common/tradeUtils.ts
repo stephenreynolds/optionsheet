@@ -1,5 +1,6 @@
 import { Leg, PutCall, Side, Trade } from "./models/trade";
 import { getStrategyFromLegs, Strategy } from "./strategy";
+import _ from "lodash";
 
 export const getTradeQuantity = (legs: Leg[]) => {
   if (!legs.length) {
@@ -38,7 +39,7 @@ export const formatPrice = (price: number, digits = 2) => {
 };
 
 export const tradeIsOption = (legs: Leg[]) => {
-  return !!legs[0].putCall;
+  return _.every(legs, (leg) => leg.putCall && leg.strike >= 0 && leg.expiration);
 };
 
 export const getNetCost = (legs: Leg[]) => {

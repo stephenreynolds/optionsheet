@@ -1,5 +1,5 @@
-import { formatPrice, getFirstExpiration, getTradeQuantity } from "./tradeUtils";
-import { Leg, Side } from "./models/trade";
+import { formatPrice, getFirstExpiration, getTradeQuantity, tradeIsOption, usd } from "./tradeUtils";
+import { Leg, PutCall, Side } from "./models/trade";
 
 describe("getTradeQuantity", () => {
   it("should return the lowest quantity out of all legs", () => {
@@ -151,6 +151,98 @@ describe("formatPrice", () => {
     it("should return '1'", () => {
       const result = formatPrice(1, 0);
       expect(result).toEqual("1");
+    });
+  });
+});
+
+describe("tradeIsOption", () => {
+  describe("given a leg with put/call, strike, and expiration", () => {
+    it("should return true", () => {
+      const leg = {
+        side: Side.Buy,
+        quantity: 0,
+        openPrice: 0,
+        putCall: PutCall.Call,
+        strike: 0,
+        expiration: new Date()
+      };
+      const isOption = tradeIsOption([leg]);
+      expect(isOption).toEqual(true);
+    });
+  });
+
+  describe("given a leg with no put/call, strike, or expirations", () => {
+    it("should return false", () => {
+      const leg = {
+        side: Side.Buy,
+        quantity: 0,
+        openPrice: 0
+      };
+      const isOption = tradeIsOption([leg]);
+      expect(isOption).toEqual(false);
+    });
+  });
+
+  describe("given a leg with one option property missing", () => {
+    it("should return false", () => {
+      const leg = {
+        side: Side.Buy,
+        quantity: 0,
+        openPrice: 0,
+        putCall: PutCall.Call,
+        strike: 0
+      };
+      const isOption = tradeIsOption([leg]);
+      expect(isOption).toEqual(false);
+    });
+  });
+
+  describe("a leg later in the array is missing one option property", () => {
+    it("should return false", () => {
+      const legs = [
+        {
+          side: Side.Buy,
+          quantity: 0,
+          openPrice: 0,
+          putCall: PutCall.Call,
+          strike: 0,
+          expiration: new Date()
+        },
+        {
+          side: Side.Buy,
+          quantity: 0,
+          openPrice: 0,
+          putCall: PutCall.Call,
+          strike: 0
+        }
+      ];
+      const isOption = tradeIsOption(legs);
+      expect(isOption).toEqual(false);
+    });
+  });
+});
+
+describe("usd.format", () => {
+  describe("given 100", () => {
+    it("should return '$100.00'", () => {
+      const value = 100;
+      const str = usd.format(value);
+      expect(str).toEqual("$100.00");
+    });
+  });
+
+  describe("given 0", () => {
+    it("should return '$0.00'", () => {
+      const value = 0;
+      const str = usd.format(value);
+      expect(str).toEqual("$0.00");
+    });
+  });
+
+  describe("given NaN", () => {
+    it("should return NaN", () => {
+      const str = usd.format(NaN);
+      expect(str).toEqual("$NaN");
     });
   });
 });

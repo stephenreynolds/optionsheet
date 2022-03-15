@@ -2,6 +2,10 @@ import { Leg, PutCall, Side, Trade } from "./models/trade";
 import { getStrategyFromLegs, Strategy } from "./strategy";
 
 export const getTradeQuantity = (legs: Leg[]) => {
+  if (!legs.length) {
+    return 0;
+  }
+
   const quantities = legs.map(l => l.quantity);
   return Math.min(...quantities);
 };

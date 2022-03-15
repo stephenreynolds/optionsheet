@@ -12,10 +12,10 @@ export enum PutCall {
 
 export interface Leg {
   side: Side;
-  putCall: PutCall;
+  putCall?: PutCall;
   quantity: number;
-  expiration: Date;
-  strike: number;
+  expiration?: Date;
+  strike?: number;
   openPrice: number;
   closePrice?: number;
 }

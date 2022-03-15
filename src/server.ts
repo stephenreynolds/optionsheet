@@ -1,15 +1,23 @@
-import config from "./config";
 import http from "http";
 import https from "https";
-import connect from "./data/connect";
-import dataService from "./data/dataService";
-import routes from "./routes";
 import app from "./app";
+import config from "./config";
+import connect from "./data/connect";
+import { OrmDatabase } from "./data/ormDatabase";
+import Request from "./request";
+import routes from "./routes";
 
-connect().then();
+// Connect to the database and inject a wrapper into every request.
+connect().then((connection) => {
+  const database = new OrmDatabase(connection);
 
-app.use(dataService, routes);
+  app.use(async (req: Request, res, next) => {
+    req.dataService = database;
+    next();
+  }, routes);
+});
 
+// USE HTTP if enabled.
 if (config.http.enabled) {
   const server = http.createServer(app);
 
@@ -18,6 +26,7 @@ if (config.http.enabled) {
   });
 }
 
+// Use HTTPS if enabled.
 if (config.https.enabled) {
   const server = https.createServer(config.https, app);
 

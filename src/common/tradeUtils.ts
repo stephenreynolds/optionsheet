@@ -11,7 +11,19 @@ export const getTradeQuantity = (legs: Leg[]) => {
 };
 
 export const getFirstExpiration = (legs: Leg[]) => {
-  return new Date(legs.map((l) => l.expiration.getTime()).sort((a, b) => a - b)[0]);
+  if (!legs.length) {
+    return undefined;
+  }
+
+  const invalidLegs = legs.find((leg) => !leg.expiration);
+  if (invalidLegs) {
+    return undefined;
+  }
+
+  const optionLegs = legs.filter((leg) => leg.expiration);
+  const expirations = optionLegs.map((l) => l.expiration.getTime());
+
+  return new Date(expirations.sort((a, b) => a - b)[0]);
 };
 
 export const formatPrice = (price: number) => {

@@ -1,4 +1,4 @@
-import { getFirstExpiration, getTradeQuantity } from "./tradeUtils";
+import { formatPrice, getFirstExpiration, getTradeQuantity } from "./tradeUtils";
 import { Leg, Side } from "./models/trade";
 
 describe("getTradeQuantity", () => {
@@ -93,6 +93,64 @@ describe("getFirstExpiration", () => {
         const firstExpiration = getFirstExpiration(legs);
         expect(firstExpiration).toEqual(undefined);
       });
+    });
+  });
+});
+
+describe("formatPrice", () => {
+  describe("price is zero", () => {
+    it("should return '0.00'", () => {
+      const result = formatPrice(0);
+      expect(result).toEqual("0.00");
+    });
+  });
+
+  describe("price is one", () => {
+    it("should return '1.00'", () => {
+      const result = formatPrice(1);
+      expect(result).toEqual("1.00");
+    });
+  });
+
+  describe("price is 100", () => {
+    it("should return '100.00'", () => {
+      const result = formatPrice(100);
+      expect(result).toEqual("100.00");
+    });
+  });
+
+  describe("price is negative", () => {
+    it("should return '-1.00'", () => {
+      const result = formatPrice(-1);
+      expect(result).toEqual("-1.00");
+    });
+  });
+
+  describe("price is NaN", () => {
+    it("should return '--'", () => {
+      const result = formatPrice(NaN);
+      expect(result).toEqual("--");
+    });
+  });
+
+  describe("price is Infinity", () => {
+    it("should return '--'", () => {
+      const result = formatPrice(Infinity);
+      expect(result).toEqual("Unlimited");
+    });
+  });
+
+  describe("price is -Infinity", () => {
+    it("should return '--'", () => {
+      const result = formatPrice(-Infinity);
+      expect(result).toEqual("Unlimited");
+    });
+  });
+
+  describe("given 1 and zero digits", () => {
+    it("should return '1'", () => {
+      const result = formatPrice(1, 0);
+      expect(result).toEqual("1");
     });
   });
 });

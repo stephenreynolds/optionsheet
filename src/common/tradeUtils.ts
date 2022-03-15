@@ -26,12 +26,15 @@ export const getFirstExpiration = (legs: Leg[]) => {
   return new Date(expirations.sort((a, b) => a - b)[0]);
 };
 
-export const formatPrice = (price: number) => {
+export const formatPrice = (price: number, digits = 2) => {
   if (isNaN(price)) {
     return "--";
   }
+  if (!isFinite(price)) {
+    return "Unlimited";
+  }
 
-  return price.toFixed(2);
+  return price.toFixed(digits);
 };
 
 export const tradeIsOption = (legs: Leg[]) => {

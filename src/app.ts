@@ -1,6 +1,7 @@
 import compression from "compression";
 import cors from "cors";
 import express from "express";
+import helmet from "helmet";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 
@@ -13,6 +14,7 @@ app.use(rateLimit({
 }));
 app.use(compression());
 app.use(cors());
+app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("tiny"));

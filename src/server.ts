@@ -1,5 +1,3 @@
-import http from "http";
-import https from "https";
 import app from "./app";
 import config from "./config";
 import connect from "./data/connect";
@@ -17,20 +15,6 @@ connect().then((connection) => {
   }, routes);
 });
 
-// USE HTTP if enabled.
-if (config.http.enabled) {
-  const server = http.createServer(app);
-
-  server.listen(config.http.port, config.host, () => {
-    console.log(`Server listening at http://${config.host}:${config.http.port}`);
-  });
-}
-
-// Use HTTPS if enabled.
-if (config.https.enabled) {
-  const server = https.createServer(config.https, app);
-
-  server.listen(config.https.port, config.host, () => {
-    console.log(`Server listening at https://${config.host}:${config.https.port}`);
-  });
-}
+app.listen(config.port, config.host, () => {
+  console.log(`Server listening at ${config.host}:${config.port}`);
+});

@@ -2,6 +2,7 @@ import app from "./app";
 import config from "./config";
 import connect from "./data/connect";
 import { OrmDatabase } from "./data/ormDatabase";
+import logger from "./logger";
 import Request from "./request";
 import routes from "./routes";
 
@@ -16,5 +17,5 @@ connect().then((connection) => {
 });
 
 app.listen(config.port, config.host, () => {
-  console.log(`Server listening at ${config.host}:${config.port}`);
+  logger.info(`Server listening at ${config.host}:${config.port}`);
 });

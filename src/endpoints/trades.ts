@@ -119,8 +119,9 @@ export const addTrade = async (request: Request, response: Response) => {
     response.sendStatus(StatusCodes.CREATED);
   }
   catch (error) {
-    console.log(error.message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to add trade.");
+    const message = "Failed to add trade";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
 
@@ -151,8 +152,9 @@ export const updateTradeById = async (request: Request, response: Response) => {
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    console.log(error.message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update trade.");
+    const message = "Failed to update trade";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
 
@@ -175,7 +177,8 @@ export const deleteTradeById = async (request: Request, response: Response) => {
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    console.log(error.message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete trade.");
+    const message = "Failed to delete trade";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };

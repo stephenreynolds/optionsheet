@@ -3,21 +3,46 @@ import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../error";
 import Request from "../request";
 
-export const searchTrades = async (request: Request, response: Response) => {
+export const searchAll = async (request: Request, response: Response) => {
   try {
     const query = request.query;
-    const symbol = query.symbol.toString().toUpperCase();
-    const limit = Number(query.limit) ?? 20;
-    const page = Number(query.page) ?? 1;
+    const term = query.q ? query.q.toString() : undefined;
+
+    if (!term) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "Missing search terms");
+    }
+
+    const type = query.type ? query.type.toString() : undefined;
+    const limit = query.limit ? Number(query.limit) : 20;
+    const page = query.page ? Number(query.page) : 1;
 
     const dataService = request.dataService;
 
-    const symbols = await dataService.getTradesBySymbol(symbol.toString(), limit, page - 1);
+    let items = [];
 
-    response.send(symbols);
+    if (type === "trade" || !type) {
+      items = await dataService.getTradesBySymbol(term, limit, page - 1);
+    }
+    else if (type === "project") {
+      items = await dataService.getProjectsByName(term, limit, page - 1);
+    }
+    else if (type === "user") {
+      items = await dataService.getUsersByUsername(term, limit, page - 1);
+    }
+
+    const counts = {
+      trades: await dataService.getTradeMatches(term),
+      projects: await dataService.getProjectMatches(term),
+      users: await dataService.getUserMatches(term)
+    };
+
+    response.send({
+      items,
+      counts
+    });
   }
   catch (error) {
-    const message = "Failed to search trades";
+    const message = "Failed to search";
     logError(error, message);
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }

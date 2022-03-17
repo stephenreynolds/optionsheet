@@ -41,6 +41,6 @@ router.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
 router.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
 
 // Search
-router.get("/search/trades", search.searchTrades);
+router.get("/search", search.searchAll);
 
 export default router;

@@ -40,6 +40,16 @@ export class OrmDatabase implements Database {
     return this.users.findOne({ email });
   }
 
+  public async getUsersByUsername(username: string, limit?: number, offset?: number) {
+    return this.users
+      .createQueryBuilder("user")
+      .select(["user.username", "user.avatarUrl", "user.bio", "user.updatedOn"])
+      .where("lower(user.username) LIKE lower(:username)", { username })
+      .skip(limit * offset)
+      .take(limit)
+      .getMany();
+  }
+
   public async saveUser(user: Partial<User>) {
     return this.users.save(user);
   }
@@ -71,6 +81,19 @@ export class OrmDatabase implements Database {
     return this.projects.find({ user: userId });
   }
 
+  public async getProjectsByName(name: string, limit?: number, offset = 0) {
+    return this.projects
+      .createQueryBuilder("project")
+      .leftJoin("project.user", "user")
+      .leftJoin("project.tags", "tags")
+      .loadRelationCountAndMap("project.trades", "project.trades")
+      .select(["project.id", "project.name", "project.description", "project.lastEdited", "user.username", "tags"])
+      .where("lower(project.name) LIKE lower(:name)", { name })
+      .skip(limit * offset)
+      .take(limit)
+      .getMany();
+  }
+
   public async getProject(userId: number, name: string) {
     return this.projects.findOne({ user: userId, name });
   }
@@ -84,7 +107,8 @@ export class OrmDatabase implements Database {
   }
 
   public async onProjectUpdated(project: Project) {
-    return this.projects.update({ id: project.id }, { lastEdited: new Date() });
+    await this.projects.update({ id: project.id }, { lastEdited: new Date() });
+    await this.users.update({ id: project.user }, { updatedOn: new Date() });
   }
 
   // Trade
@@ -99,9 +123,12 @@ export class OrmDatabase implements Database {
   public async getTradesBySymbol(symbol: string, limit?: number, offset = 0) {
     return this.trades
       .createQueryBuilder("trade")
-      .leftJoinAndSelect("trade.legs", "legs")
-      .leftJoinAndSelect("trade.project", "project")
-      .where("symbol = :symbol", { symbol: symbol.toUpperCase().trim() })
+      .leftJoin("trade.legs", "legs")
+      .leftJoin("trade.tags", "tags")
+      .leftJoin("trade.project", "project")
+      .leftJoin("project.user", "user")
+      .select(["trade", "legs", "tags", "project.name", "user.username"])
+      .where("UPPER(symbol) = UPPER(:symbol)", { symbol })
       .orderBy({ "trade.openDate": "DESC", "trade.closeDate": "DESC" })
       .skip(limit * offset)
       .take(limit)
@@ -143,5 +170,36 @@ export class OrmDatabase implements Database {
     });
 
     return refreshToken.token;
+  }
+
+  // Search
+  public async getTradeMatches(term: string) {
+    const { count } = await this.trades
+      .createQueryBuilder("trade")
+      .select("COUNT(trade)")
+      .where("UPPER(symbol) = UPPER(:symbol)", { symbol: term })
+      .getRawOne();
+
+    return count;
+  }
+
+  public async getProjectMatches(term: string) {
+    const { count } = await this.projects
+      .createQueryBuilder("project")
+      .select("COUNT(project)")
+      .where("lower(name) LIKE lower(:name)", { name: term })
+      .getRawOne();
+
+    return count;
+  }
+
+  public async getUserMatches(term: string) {
+    const { count } = await this.users
+      .createQueryBuilder("user")
+      .select("COUNT(user)")
+      .where("lower(username) LIKE lower(:username)", { username: term })
+      .getRawOne();
+
+    return count;
   }
 }

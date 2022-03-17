@@ -24,7 +24,6 @@ export interface Database {
   // Trade
   getTradesByProject(project);
   getTradeById(id: number);
-  getTradesBySymbol(symbol: string, limit?: number, offset?: number);
   getTradeWithProject(id: number);
   saveTrade(trade);
   deleteTrade(id: number);
@@ -32,4 +31,12 @@ export interface Database {
   // Tokens
   createToken(user): Promise<string>
   createRefreshToken(user): Promise<string>;
+
+  // Search
+  getTradesBySymbol(symbol: string, limit?: number, offset?: number);
+  getProjectsByName(name: string, limit?: number, offset?: number);
+  getUsersByUsername(username: string, limit?: number, offset?: number);
+  getTradeMatches(term: string);
+  getProjectMatches(term: string);
+  getUserMatches(term: string);
 }

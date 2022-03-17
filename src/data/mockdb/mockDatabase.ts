@@ -34,6 +34,10 @@ export default class MockDatabase implements Database {
     return {};
   }
 
+  public async getUsersByUsername(username: string, limit?: number, offset?: number) {
+    return [];
+  }
+
   public async saveUser(user) {
     return {};
   }
@@ -77,6 +81,10 @@ export default class MockDatabase implements Database {
       ];
     }
 
+    return [];
+  }
+
+  public async getProjectsByName(name: string, limit?: number, offset = 0) {
     return [];
   }
 
@@ -149,5 +157,18 @@ export default class MockDatabase implements Database {
 
   public async createRefreshToken(user) {
     return uuidv4();
+  }
+
+  // Search
+  public async getTradeMatches(term: string) {
+    return 0;
+  }
+
+  public async getProjectMatches(term: string) {
+    return 0;
+  }
+
+  public async getUserMatches(term: string) {
+    return 0;
   }
 }

@@ -8,6 +8,7 @@ const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "./dashb
 const NewProject = lazy(() => import(/* webpackChunkName: "new-project" */ "./project/newProject"));
 const Project = lazy(() => import(/* webpackChunkName: "project" */ "./project/project"));
 const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "./settings/settings"));
+const Search = lazy(() => import(/* webpackChunkName: "search" */ "./search/search"));
 const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ "./errors/notFound"));
 
 const AppRoutes = () => (
@@ -18,6 +19,7 @@ const AppRoutes = () => (
       <Route path="register" element={<Register />} />
       <Route path="new" element={<NewProject />} />
       <Route path="settings/*" element={<Settings />} />
+      <Route path="search/*" element={<Search />} />
       <Route path=":username/:projectName/*" element={<Project />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -20,6 +20,7 @@ export const PLPill = styled.span`
 
 export const TagPill = styled.span`
   background-color: #31363d;
+  display: inline-block;
   margin-right: 0.25rem;
   padding: 0.15rem 0.4rem;
   border-radius: 5px;

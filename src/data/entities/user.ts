@@ -40,10 +40,10 @@ export class User {
   })
   projects?: Project[];
 
-  @Column({ default: "" })
+  @Column()
   avatarUrl?: string;
 
-  @Column({ default: "" })
+  @Column()
   bio?: string;
 
   @Column({ default: new Date() })

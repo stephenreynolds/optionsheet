@@ -28,7 +28,7 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @ManyToMany(() => Role, (role) => role.users, {
+  @ManyToMany(() => Role, {
     eager: true,
     cascade: true
   })

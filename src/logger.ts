@@ -2,9 +2,16 @@ import * as path from "path";
 import winston from "winston";
 import config from "./config";
 
+const customFormat = winston.format.printf(({ level, message, timestamp }) => {
+  return `${timestamp} ${level}: ${message}`;
+});
+
 const logger = winston.createLogger({
   level: "info",
-  format: winston.format.simple(),
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    customFormat
+  ),
   defaultMeta: { service: "optionsheet" },
   transports: [
     new winston.transports.File({ filename: path.resolve(__dirname, "error.log"), level: "error" }),
@@ -19,7 +26,8 @@ if (!config.isProduction) {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
-      winston.format.simple()
+      winston.format.timestamp(),
+      customFormat
     )
   }));
 }

@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "build": "webpack",
-    "start": "pm2 start build/server.js --name optionsheet",
-    "stop": "pm2 stop optionsheet",
+    "start": "node build/server.js",
     "build:dev": "webpack -w --mode development",
     "start:dev": "nodemon build/server.js",
     "lint": "eslint",

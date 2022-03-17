@@ -24,6 +24,7 @@ export interface Database {
   // Trade
   getTradesByProject(project);
   getTradeById(id: number);
+  getTradesBySymbol(symbol: string, limit?: number, offset?: number);
   getTradeWithProject(id: number);
   saveTrade(trade);
   deleteTrade(id: number);

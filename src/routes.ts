@@ -2,6 +2,7 @@ import { Router } from "express";
 import { verifyJwtToken } from "./middleware/authentication";
 import * as auth from "./endpoints/auth";
 import * as projects from "./endpoints/projects";
+import * as search from "./endpoints/search";
 import * as trades from "./endpoints/trades";
 import * as user from "./endpoints/user";
 import * as users from "./endpoints/users";
@@ -38,5 +39,8 @@ router.get("/projects/:username/:project/trades", trades.getTrades);
 router.get("/trades/:id", trades.getTrade);
 router.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
 router.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
+
+// Search
+router.get("/search/trades", search.searchTrades);
 
 export default router;

@@ -121,6 +121,10 @@ export default class MockDatabase implements Database {
     return { legs: [] };
   }
 
+  public async getTradesBySymbol(symbol: string, limit?: number, offset?: number) {
+    return [];
+  }
+
   public async getTradeWithProject(id: number) {
     if (id < 0) {
       return undefined;

@@ -96,6 +96,18 @@ export class OrmDatabase implements Database {
     return this.trades.findOne(id);
   }
 
+  public async getTradesBySymbol(symbol: string, limit?: number, offset = 0) {
+    return this.trades
+      .createQueryBuilder("trade")
+      .leftJoinAndSelect("trade.legs", "legs")
+      .leftJoinAndSelect("trade.project", "project")
+      .where("symbol = :symbol", { symbol: symbol.toUpperCase().trim() })
+      .orderBy({ "trade.openDate": "DESC", "trade.closeDate": "DESC" })
+      .skip(limit * offset)
+      .take(limit)
+      .getMany();
+  }
+
   public async getTradeWithProject(id: number) {
     return this.trades.findOne(id, { relations: ["project"] });
   }

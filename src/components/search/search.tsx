@@ -33,7 +33,7 @@ const Search = () => {
   const [counts, setCounts] = useState({ trades: 0, projects: 0, users: 0 });
   const [index, setIndex] = useState(searchParams.get("page") ?? 1);
   const [increment] = useState(1);
-  const [limit] = useState(20);
+  const [limit] = useState(searchParams.get("limit") ?? 20);
 
   const searchType = searchParams.get("type") ?? "trade";
 
@@ -49,6 +49,7 @@ const Search = () => {
       const updatedSearchParams = new URLSearchParams(searchParams.toString());
       updatedSearchParams.set("page", index.toString());
       setSearchParams(updatedSearchParams.toString());
+      window.scrollTo(0, 0);
     }
   }, [index]);
 

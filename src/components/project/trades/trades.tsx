@@ -1,6 +1,6 @@
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
@@ -143,6 +143,10 @@ const Trades = () => {
   const [sortMethod, setSortMethod] = useState({ property: "openDate", direction: SortDirection.Descending });
   const [index, setIndex] = useState(0);
   const [count, setCount] = useState(50);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [index]);
 
   if (!trades) {
     return null;

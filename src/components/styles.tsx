@@ -1,6 +1,10 @@
 import styled, { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
+  :root {
+    color-scheme: dark;
+  }
+  
   html, body {
     margin: 0;
     font-family: system-ui, sans-serif;

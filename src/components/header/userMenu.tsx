@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/authActions";
-import { getUsername } from "../../redux/selectors/userSelectors";
+import { getUser } from "../../redux/selectors/userSelectors";
 // import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,8 +9,14 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
 
+const ProfileImage = styled.img`
+  border-radius: 999px;
+  max-height: 24px;
+`;
+
 const StyledIcon = styled(FontAwesomeIcon)`
-  color: #fff;
+  color: ${props => props.theme.dark.text};
+  font-size: 10px;
   margin: auto 0.5rem;
 
   &:hover {
@@ -73,13 +79,13 @@ const DropdownMenu = styled.div`
 `;
 
 const UserMenu = () => {
-  const username = useSelector((state) => getUsername(state));
+  const user = useSelector((state) => getUser(state));
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  if (!username) {
+  if (!user) {
     return null;
   }
 
@@ -102,8 +108,10 @@ const UserMenu = () => {
     <>
       {/*<StyledIcon icon={faBell} />*/}
       <Dropdown onClick={onToggleUserDropdown}>
-        {username}
-        <StyledIcon icon={faCaretDown} />
+        <div className="d-flex">
+          <ProfileImage src={user.avatar_url} alt={user.username} />
+          <StyledIcon icon={faCaretDown} />
+        </div>
       </Dropdown>
       {showUserDropdown && (
         <DetectClickOutside closeDropdown={onToggleUserDropdown}>

@@ -170,7 +170,7 @@ const Register = () => {
                 className={touched.username && errors.username && "invalid"}
                 {...getFieldProps("username")}
               />
-              {errors.username && (
+              {touched.username && errors.username && (
                 <div id="usernameHelpBlock" className="help-block text-red">
                   <ErrorMessage name="username" />
                 </div>
@@ -187,7 +187,7 @@ const Register = () => {
                 className={touched.email && errors.email && "invalid"}
                 {...getFieldProps("email")}
               />
-              {errors.email && (
+              {touched.email && errors.email && (
                 <div id="emailHelpBlock" className="help-block text-red">
                   <ErrorMessage name="email" />
                 </div>
@@ -204,7 +204,7 @@ const Register = () => {
                 className={touched.password && errors.password && "invalid"}
                 {...getFieldProps("password")}
               />
-              {errors.password && (
+              {touched.password && errors.password && (
                 <div id="passwordHelpBlock" className="help-block text-red">
                   <ErrorMessage name="password" />
                 </div>
@@ -221,7 +221,7 @@ const Register = () => {
                 className={touched.confirm && errors.confirm && "invalid"}
                 {...getFieldProps("confirm")}
               />
-              {errors.confirm && (
+              {touched.confirm && errors.confirm && (
                 <div id="confirmHelpBlock" className="help-block text-red">
                   <ErrorMessage name="confirm" />
                 </div>

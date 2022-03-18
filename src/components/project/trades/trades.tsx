@@ -179,21 +179,23 @@ const Trades = () => {
 
   return (
     <Container>
-      <div style={{
-        marginTop: "-2.8rem",
-        marginBottom: "0.5rem",
-        display: "grid",
-        gridTemplateColumns: "1fr auto 1fr",
-        justifyItems: "center"
-      }}>
-        <div style={{ gridColumnStart: 2 }}>
-          <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
+      {trades.length > count && (
+        <div style={{
+          marginTop: "-2.8rem",
+          marginBottom: "0.5rem",
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          justifyItems: "center"
+        }}>
+          <div style={{ gridColumnStart: 2 }}>
+            <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
+          </div>
+          <div style={{ marginLeft: "auto" }}>
+            <PageSizeSelect currentCount={count} max={trades.length}
+                            options={[25, 50, 100, 200, 500, 1000, trades.length]} setCount={setCount} />
+          </div>
         </div>
-        <div style={{ marginLeft: "auto" }}>
-          <PageSizeSelect currentCount={count} max={trades.length}
-                          options={[25, 50, 100, 200, 500, 1000, trades.length]} setCount={setCount} />
-        </div>
-      </div>
+      )}
 
       <Table>
         <thead>
@@ -252,9 +254,11 @@ const Trades = () => {
         </tbody>
       </Table>
 
-      <div style={{ margin: "0 auto", marginTop: "0.5rem", width: "fit-content" }}>
-        <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
-      </div>
+      {trades.length > count && (
+        <div style={{ margin: "0 auto", marginTop: "0.5rem", width: "fit-content" }}>
+          <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
+        </div>
+      )}
     </Container>
   );
 };

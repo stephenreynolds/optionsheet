@@ -88,7 +88,7 @@ const TradeCard = ({ trade }: { trade: TradeProps }) => {
             <b>Closing note:</b><br />
             <span>{trade.closingNote}</span>
           </p>
-        ) : (
+        ) : trade.closingNote && (
           <p>
             <b>Opening note:</b><br />
             <span>{trade.openingNote}</span>

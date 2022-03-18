@@ -16,6 +16,7 @@ import { getNetProfit } from "../../redux/selectors/tradeSelectors";
 import LoadingProgress from "../shared/loadingProgress";
 import { PLPill, TagPill } from "../shared/pill";
 import TradeForm from "./trades/tradeForm";
+import { getUsername } from "../../redux/selectors/userSelectors";
 
 const Trades = lazy(() => import(/* webpackChunkName: "project-trades" */ "./trades/trades"));
 const TradeDetails = lazy(() => import(/* webpackChunkName: "trade-details" */ "./trades/tradeDetails"));
@@ -105,6 +106,7 @@ const Project = () => {
   const loading = useSelector((state) => apiCallsInProgress(state));
   const project = useSelector((state) => getProject(state));
   const netProfit = useSelector((state) => getNetProfit(state));
+  const myUsername = useSelector((state) => getUsername(state));
   const dispatch: PromiseDispatch = useDispatch();
 
   const { username, projectName } = useParams<{
@@ -138,6 +140,8 @@ const Project = () => {
     setShowNewTradeModel(!showNewTradeModel);
   };
 
+  const myProject = username === myUsername;
+
   return (
     <>
       <TitleBar>
@@ -169,20 +173,26 @@ const Project = () => {
               <span data-content="Report">Report</span>
             </NavLink>
           </li>
-          <li>
-            <NavLink to="settings" className={activeClassName}>
-              <StyledIcon icon={faGear} />
-              <span data-content="Settings">Settings</span>
-            </NavLink>
-          </li>
-          <li>
-            <button className="btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
-          </li>
+          {myProject && (
+            <li>
+              <NavLink to="settings" className={activeClassName}>
+                <StyledIcon icon={faGear} />
+                <span data-content="Settings">Settings</span>
+              </NavLink>
+            </li>
+          )}
+          {myProject && (
+            <li>
+              <button className="btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
+            </li>
+          )}
         </ul>
       </PageTabs>
 
-      <TradeForm username={username} projectName={projectName}
-                show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel} />
+      {myProject && (
+        <TradeForm username={username} projectName={projectName}
+                   show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel} />
+      )}
 
       <Suspense fallback={<LoadingProgress />}>
         <Routes>
@@ -192,7 +202,7 @@ const Project = () => {
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Route>
           <Route path="analytics" element={<Report project={project} loading={loading} />} />
-          <Route path="settings" element={<Settings username={username} />} />
+          <Route path="settings" element={myProject ? <Settings username={username} /> : <Navigate to="/notfound" />} />
           <Route path="*" element={<Navigate to="/notfound" />} />
         </Routes>
       </Suspense>

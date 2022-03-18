@@ -11,7 +11,6 @@ const ChartContainer = styled.div`
   background-color: ${props => props.theme.dark.fg};
   border: 1px solid ${props => props.theme.dark.border};
   border-radius: 5px;
-  margin-left: 1rem;
   padding: 0.5rem;
 
   .highcharts-button {

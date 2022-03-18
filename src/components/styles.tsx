@@ -146,6 +146,10 @@ export default createGlobalStyle`
   .d-flex {
     display: flex;
   }
+  
+  .flex-end {
+    justify-content: flex-end;
+  }
 
   .space-between {
     justify-content: space-between;

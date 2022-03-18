@@ -109,7 +109,7 @@ const UserMenu = () => {
       {/*<StyledIcon icon={faBell} />*/}
       <Dropdown onClick={onToggleUserDropdown}>
         <div className="d-flex">
-          <ProfileImage src={user.avatar_url} alt={user.username} />
+          <ProfileImage src={user.avatar_url ?? "/img/profile.png"} alt={user.username} />
           <StyledIcon icon={faCaretDown} />
         </div>
       </Dropdown>

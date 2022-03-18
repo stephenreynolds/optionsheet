@@ -187,7 +187,7 @@ const Trades = () => {
         justifyItems: "center"
       }}>
         <div style={{ gridColumnStart: 2 }}>
-          <Pagination count={count} index={index} setIndex={setIndex} max={trades.length} />
+          <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
         </div>
         <div style={{ marginLeft: "auto" }}>
           <PageSizeSelect currentCount={count} max={trades.length}
@@ -253,7 +253,7 @@ const Trades = () => {
       </Table>
 
       <div style={{ margin: "0 auto", marginTop: "0.5rem", width: "fit-content" }}>
-        <Pagination count={count} index={index} setIndex={setIndex} max={trades.length} />
+        <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
       </div>
     </Container>
   );

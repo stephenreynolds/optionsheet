@@ -29,7 +29,7 @@ export enum Strategy {
 }
 
 const sameExpiration = (legs: Leg[]) => {
-  return legs.map(l => l.expiration.getTime()).every((val, i, arr) => val === arr[0]);
+  return legs.map(l => new Date(l.expiration).getTime()).every((val, i, arr) => val === arr[0]);
 };
 
 const sameOptionType = (legs: Leg[]) => {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import numeral from "numeral";
 import { search } from "../../common/api/search";
 import { Container } from "../styles";
 import TradeCard from "./tradeCard";
@@ -7,6 +8,7 @@ import SearchSidebar from "./searchSidebar";
 import styled from "styled-components";
 import ProjectCard from "./projectCard";
 import UserCard from "./userCard";
+import { Pagination } from "../shared/pagination";
 
 const SearchContainer = styled(Container)`
   display: flex;
@@ -17,13 +19,22 @@ const SearchContainer = styled(Container)`
     h2 {
       font-weight: 600;
     }
+
+    .pagination {
+      width: fit-content;
+      margin: 0 auto;
+    }
   }
 `;
 
 const Search = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchResults, setSearchResults] = useState([]);
   const [counts, setCounts] = useState({ trades: 0, projects: 0, users: 0 });
+  const [index, setIndex] = useState(searchParams.get("page") ?? 1);
+  const [increment] = useState(1);
+
+  const searchType = searchParams.get("type") ?? "trade";
 
   useEffect(() => {
     search(searchParams).then((result) => {
@@ -32,13 +43,21 @@ const Search = () => {
     });
   }, [searchParams]);
 
-  const searchType = searchParams.get("type") ?? "trade";
+  useEffect(() => {
+    if (searchResults.length) {
+      const updatedSearchParams = new URLSearchParams(searchParams.toString());
+      updatedSearchParams.set("page", index.toString());
+      setSearchParams(updatedSearchParams.toString());
+    }
+  }, [index]);
+
+  const resultCount = counts[`${searchType}s`];
 
   return (
     <SearchContainer>
       <SearchSidebar searchParams={searchParams} counts={counts} />
       <div className="search-items">
-        <h2>{searchResults.length} {searchType} result{searchResults.length === 1 ? "" : "s"}</h2>
+        <h2>{numeral(resultCount).format("0,0")} {searchType} result{searchResults.length === 1 ? "" : "s"}</h2>
 
         {searchResults.map((result, i) => {
           switch (searchType) {
@@ -50,6 +69,8 @@ const Search = () => {
               return <UserCard key={i} user={result} />;
           }
         })}
+
+        <Pagination increment={increment} index={index} setIndex={setIndex} min={1} max={Math.ceil(resultCount / 20) + 1} />
       </div>
     </SearchContainer>
   );

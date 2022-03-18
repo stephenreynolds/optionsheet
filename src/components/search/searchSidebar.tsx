@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import color from "color";
+import numeral from "numeral";
 
 const SidebarNav = styled.nav`
   border: 1px solid ${props => props.theme.dark.border};
@@ -69,19 +70,19 @@ const SearchSidebar = ({ searchParams, counts }: SearchSidebarProps) => {
       <NavLink to={`/search?${tradeUrl}`} className={searchType === "trade" ? "selected" : ""}>
         Trades
         <ResultCount className="result-count" count={counts.trades}>
-          {counts.trades}
+          {numeral(counts.trades).format("0a")}
         </ResultCount>
       </NavLink>
       <NavLink to={`/search?${projectUrl}`} className={searchType === "project" ? "selected" : ""}>
         Projects
         <ResultCount className="result-count" count={counts.projects}>
-          {counts.projects}
+          {numeral(counts.projects).format("0a")}
         </ResultCount>
       </NavLink>
       <NavLink to={`/search?${userUrl}`} className={searchType === "user" ? "selected" : ""}>
         Users
         <ResultCount className="result-count" count={counts.users}>
-          {counts.users}
+          {numeral(counts.users).format("0a")}
         </ResultCount>
       </NavLink>
     </SidebarNav>

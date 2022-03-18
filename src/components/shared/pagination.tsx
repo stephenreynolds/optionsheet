@@ -16,29 +16,29 @@ const PaginationContainer = styled.div`
   }
 `;
 
-export const Pagination = ({ count, index, setIndex, max }) => {
+export const Pagination = ({ increment, index, setIndex, min = 0, max }) => {
   const onFirst = () => {
-    setIndex(0);
+    setIndex(min);
   };
 
   const onPrevious = () => {
-    setIndex(prevState => Math.max(0, prevState - count));
+    setIndex(prevState => Math.max(min, prevState - increment));
   };
 
   const onNext = () => {
-    setIndex(prevState => Math.min(prevState + count, max - count));
+    setIndex(prevState => Math.min(prevState + increment, max - increment));
   };
 
   const onLast = () => {
-    setIndex(max - count);
+    setIndex(max - increment);
   };
 
   return (
-    <PaginationContainer>
-      <button onClick={onFirst} disabled={index === 0} className="page-first">First</button>
-      <button onClick={onPrevious} disabled={index === 0} className="page-prev">Previous</button>
-      <button onClick={onNext} disabled={index + count > max - count} className="page-next">Next</button>
-      <button onClick={onLast} disabled={index + count > max - count} className="page-last">Last</button>
+    <PaginationContainer className="pagination">
+      <button onClick={onFirst} disabled={index === min} className="page-first">First</button>
+      <button onClick={onPrevious} disabled={index === min} className="page-prev">Previous</button>
+      <button onClick={onNext} disabled={index + increment > max - increment} className="page-next">Next</button>
+      <button onClick={onLast} disabled={index + increment > max - increment} className="page-last">Last</button>
     </PaginationContainer>
   );
 };

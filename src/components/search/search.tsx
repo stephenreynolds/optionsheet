@@ -33,6 +33,7 @@ const Search = () => {
   const [counts, setCounts] = useState({ trades: 0, projects: 0, users: 0 });
   const [index, setIndex] = useState(searchParams.get("page") ?? 1);
   const [increment] = useState(1);
+  const [limit] = useState(20);
 
   const searchType = searchParams.get("type") ?? "trade";
 
@@ -70,7 +71,9 @@ const Search = () => {
           }
         })}
 
-        <Pagination increment={increment} index={index} setIndex={setIndex} min={1} max={Math.ceil(resultCount / 20) + 1} />
+        {resultCount > limit && (
+          <Pagination increment={increment} index={index} setIndex={setIndex} min={1} max={Math.ceil(resultCount / 20) + 1} />
+        )}
       </div>
     </SearchContainer>
   );

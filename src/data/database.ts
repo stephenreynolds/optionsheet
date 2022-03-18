@@ -32,6 +32,9 @@ export interface Database {
   createToken(user): Promise<string>
   createRefreshToken(user): Promise<string>;
 
+  // Tags
+  createTag(name: string);
+
   // Search
   getTradesBySymbol(symbol: string, limit?: number, offset?: number);
   getProjectsByName(name: string, limit?: number, offset?: number);

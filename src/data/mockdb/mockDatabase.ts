@@ -159,6 +159,11 @@ export default class MockDatabase implements Database {
     return uuidv4();
   }
 
+  // Tag
+  public async createTag(name: string) {
+    return { name };
+  }
+
   // Search
   public async getTradeMatches(term: string) {
     return 0;

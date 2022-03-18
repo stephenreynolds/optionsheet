@@ -6,7 +6,7 @@ import { Tag } from "./tag";
 @Entity()
 export class Project {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column()
   name: string;
@@ -20,7 +20,7 @@ export class Project {
   })
   trades?: Trade[];
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @ManyToMany(() => Tag, (tag) => tag.projects, {

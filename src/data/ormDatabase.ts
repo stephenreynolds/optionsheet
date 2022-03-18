@@ -172,6 +172,11 @@ export class OrmDatabase implements Database {
     return refreshToken.token;
   }
 
+  // Tags
+  public async createTag(name: string) {
+    await this.tags.save({ name });
+  }
+
   // Search
   public async getTradeMatches(term: string) {
     const { count } = await this.trades

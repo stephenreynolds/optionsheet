@@ -116,7 +116,7 @@ const UserMenu = () => {
       {showUserDropdown && (
         <DetectClickOutside closeDropdown={onToggleUserDropdown}>
           <DropdownMenu>
-            <DropdownItem onClick={e => navigateTo(e, "/account")}>Profile</DropdownItem>
+            <DropdownItem onClick={e => navigateTo(e, `/${user.username}`)}>Profile</DropdownItem>
             <DropdownItem onClick={e => navigateTo(e, "/settings/profile")}>Settings</DropdownItem>
             <hr className="m-0" />
             <DropdownItem onClick={onLogout}>Sign out</DropdownItem>

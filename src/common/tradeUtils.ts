@@ -1,6 +1,7 @@
 import { Leg, PutCall, Side, Trade } from "./models/trade";
 import { getStrategyFromLegs, Strategy } from "./strategy";
 import _ from "lodash";
+import numeral from "numeral";
 
 export const getTradeQuantity = (legs: Leg[]) => {
   if (!legs.length) {
@@ -35,7 +36,7 @@ export const formatPrice = (price: number, digits = 2) => {
     return "Unlimited";
   }
 
-  return price.toFixed(digits);
+  return numeral(price).format(`$0,0.${"0".repeat(digits)}`);
 };
 
 export const tradeIsOption = (legs: Leg[]) => {

@@ -465,7 +465,7 @@ export const getSharpeRatio = (trades: Trade[], startingBalance: number) => {
   const days = getTradingPeriodDays(closedTrades);
   const riskFreeRate = (treasury10Y / 365) * days;
 
-  return (portfolioReturn - riskFreeRate) / std(excessReturns);
+  return (portfolioReturn - riskFreeRate) / std(...excessReturns);
 };
 
 export const getKellyPercentage = (percentProfitable: number, averageGain: number, averageLoss: number) => {

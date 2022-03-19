@@ -181,6 +181,14 @@ const Trades = () => {
     return cost;
   };
 
+  if (trades.length === 0) {
+    return (
+      <Container>
+        <h2 className="text-center">No trades yet...</h2>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       {trades.length > count && (

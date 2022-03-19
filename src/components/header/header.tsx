@@ -5,6 +5,7 @@ import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import UserMenu from "./userMenu";
 import LoginMenu from "./loginMenu";
 import Search from "./search";
+import NavLinks from "./navLinks";
 
 const StyledHeader = styled.header`
   background-color: ${props => props.theme.dark.fg};
@@ -45,6 +46,7 @@ const Header = () => {
         <h2 className="m-0">OptionSheet</h2>
       </BrandLink>
       <Search />
+      <NavLinks />
       <RightMenu>
         {isLoggedIn ? <UserMenu /> : <LoginMenu />}
       </RightMenu>

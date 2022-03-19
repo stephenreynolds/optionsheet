@@ -8,6 +8,7 @@ import { Container } from "../../styles";
 import { AnalyticsSnapshot, calculateAnalyticsHistory } from "./analyticsUtils";
 import { StatisticDropdown, StatisticItem } from "./statisticItem";
 import { usd } from "../../../common/tradeUtils";
+import numeral from "numeral";
 
 interface Props {
   project: Project;
@@ -289,10 +290,10 @@ const Report = ({ project, loading }: Props) => {
                          valueTransform={(n) => Math.round(n)} valueTextTransform={(n) => `${n} days`}>
         <StatisticItem>
           <div className="statistic-name">Avg. trade length</div>
-          <div className="all-trades">{Math.round(current.averageDurationDays)} days</div>
-          <div className="long-trades">{Math.round(current.long.averageDurationDays)} days</div>
-          <div className="short-trades">{Math.round(current.short.averageDurationDays)} days</div>
-          <div className="neutral-trades">{Math.round(current.neutral.averageDurationDays)} days</div>
+          <div className="all-trades">{numeral(current.averageDurationDays).format("0,0")} days</div>
+          <div className="long-trades">{numeral(current.long.averageDurationDays).format("0,0")} days</div>
+          <div className="short-trades">{numeral(current.short.averageDurationDays).format("0,0")} days</div>
+          <div className="neutral-trades">{numeral(current.neutral.averageDurationDays).format("0,0")} days</div>
         </StatisticItem>
       </StatisticDropdown>
 

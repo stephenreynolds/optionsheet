@@ -5,6 +5,10 @@ export const getAuthenticatedUser = () => {
   return api.get(`/user`);
 };
 
+export const getUser = (username: string) => {
+  return api.get(`/users/${username}`);
+};
+
 export const updateUser = async (data: UserUpdateModel) => {
   return api.patch(`/user`, data);
 };

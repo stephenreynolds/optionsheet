@@ -82,19 +82,19 @@ const ProfileTabs = () => {
     <PageTabs>
       <ul>
         <li onClick={resetTab}>
-          <a className={(!currentTab || currentTab !== "projects" && currentTab !== "stars") && "selected"}>
+          <a className={(!currentTab || currentTab !== "projects" && currentTab !== "stars") ? "selected" : undefined}>
             <StyledIcon icon={faBookOpen} />
             <span>Overview</span>
           </a>
         </li>
         <li onClick={() => goToTab("projects")}>
-          <a className={currentTab === "projects" && "selected"}>
+          <a className={currentTab === "projects" ? "selected" : undefined}>
             <StyledIcon icon={faDiagramProject} />
             <span>Projects</span>
           </a>
         </li>
         <li onClick={() => goToTab("stars")}>
-          <a className={currentTab === "stars" && "selected"}>
+          <a className={currentTab === "stars" ? "selected" : undefined}>
             <StyledIcon icon={faStar} />
             <span>Stars</span>
           </a>

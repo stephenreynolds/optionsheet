@@ -5,14 +5,14 @@ const Overview = lazy(() => import(/* webpackChunkName: "profile-overview" */ ".
 const Projects = lazy(() => import(/* webpackChunkName: "profile-projects" */ "./projects"));
 const Stars = lazy(() => import(/* webpackChunkName: "profile-stars" */ "./stars"));
 
-const ProfileTab = () => {
+const ProfileTab = ({ user }) => {
   const [params] = useSearchParams();
 
   const currentTab = params.get("tab");
 
 
   if (currentTab === "projects") {
-    return <Projects />;
+    return <Projects user={user} />;
   }
 
   if (currentTab === "stars") {

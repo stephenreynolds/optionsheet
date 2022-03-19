@@ -24,6 +24,20 @@ export const getAuthenticatedUser = () => {
   };
 };
 
+export const getUser = (username: string) => {
+  return (dispatch) => {
+    dispatch(beginApiCall());
+    return userApi.getUser(username)
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => {
+        dispatch(apiCallError());
+        throw error.response.data;
+      });
+  };
+};
+
 export const updateUser = (data: UserUpdateModel) => {
   return (dispatch) => {
     dispatch(beginApiCall());

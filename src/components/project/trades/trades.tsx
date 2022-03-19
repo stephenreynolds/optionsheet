@@ -266,11 +266,11 @@ const Trades = () => {
         </tbody>
       </Table>
 
-      {trades.length > count && (
-        <div style={{ margin: "0 auto", marginTop: "0.5rem", width: "fit-content" }}>
+      <div style={{ margin: "0 auto", marginTop: "0.5rem", width: "fit-content" }}>
+        {trades.length > count && (
           <Pagination increment={count} index={index} setIndex={setIndex} max={trades.length} />
-        </div>
-      )}
+        )}
+      </div>
     </Container>
   );
 };

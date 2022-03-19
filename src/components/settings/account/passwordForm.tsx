@@ -7,11 +7,15 @@ import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
 
 const initialValues = {
+  currentPassword: "",
   password: "",
   confirm: ""
 };
 
 const validationSchema = yup.object({
+  currentPassword: yup
+    .string()
+    .required("Please enter your current password."),
   password: yup
     .string()
     .min(8, "Password must be at least 8 characters.")
@@ -42,14 +46,16 @@ const validationSchema = yup.object({
 });
 
 const isValid = (values, errors) => {
-  return values.password.length && values.confirm.length && !errors.password && !errors.confirm;
+  return values.currentPassword.length && values.password.length &&
+    values.confirm.length && !errors.currentPassword &&
+    !errors.password && !errors.confirm;
 };
 
 const PasswordForm = () => {
   const dispatch: PromiseDispatch = useDispatch();
 
   const onSubmit = (values, { resetForm }) => {
-    dispatch(updateUser({ password: values.password }))
+    dispatch(updateUser(values))
       .then(() => {
         toast.success("Password changed.");
       })
@@ -67,6 +73,21 @@ const PasswordForm = () => {
     >
       {({ getFieldProps, handleSubmit, values, touched, errors }) => (
         <form onSubmit={handleSubmit}>
+          <label>Current Password</label>
+          <input
+            type="password"
+            name="currentPassword"
+            placeholder="Enter your current password..."
+            aria-describedby="currentPasswordHelpBlock"
+            className={touched.currentPassword && errors.currentPassword && "invalid"}
+            {...getFieldProps("currentPassword")}
+          />
+          {touched.currentPassword && errors.currentPassword && (
+            <HelpBlock id="currentPasswordHelpBlock" className="help-block text-red">
+              <ErrorMessage name="currentPassword" />
+            </HelpBlock>
+          )}
+
           <label>Password</label>
           <input
             type="password"
@@ -76,7 +97,7 @@ const PasswordForm = () => {
             className={touched.password && errors.password && "invalid"}
             {...getFieldProps("password")}
           />
-          {errors.password && (
+          {touched.password && errors.password && (
             <HelpBlock id="passwordHelpBlock" className="help-block text-red">
               <ErrorMessage name="password" />
             </HelpBlock>
@@ -91,7 +112,7 @@ const PasswordForm = () => {
             className={touched.confirm && errors.confirm && "invalid"}
             {...getFieldProps("confirm")}
           />
-          {errors.confirm && (
+          {touched.confirm && errors.confirm && (
             <HelpBlock id="confirmHelpBlock" className="help-block text-red">
               <ErrorMessage name="confirm" />
             </HelpBlock>

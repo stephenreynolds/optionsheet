@@ -146,9 +146,17 @@ export default createGlobalStyle`
   .fw-normal {
     font-weight: normal;
   }
+  
+  .fw-bold {
+    font-weight: 600;
+  }
 
   .d-flex {
     display: flex;
+  }
+  
+  .d-inline-block {
+    display: inline-block;
   }
   
   .flex-end {
@@ -201,6 +209,10 @@ export default createGlobalStyle`
 
   .w-100 {
     width: 100%;
+  }
+  
+  .w-fit-content {
+    width: fit-content !important;
   }
 
   .btn-green {

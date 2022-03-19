@@ -27,7 +27,7 @@ const NavLinks = () => {
           <Link to="/trending">Trending</Link>
         </li>
         <li>
-          <Link to="/portfolio-assistant">Portfolio Assistant</Link>
+          <Link to="/strategy-assistant">Strategy Assistant</Link>
         </li>
       </ul>
     </StyledNav>

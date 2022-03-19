@@ -25,7 +25,9 @@ export enum Strategy {
   DoubleDiagonal = "Double Diagonal",
   Strangle = "Strangle",
   Straddle = "Straddle",
-  Ratio = "Ratio"
+  Ratio = "Ratio",
+  JadeLizard = "Jade Lizard",
+  IronFly = "Iron Fly"
 }
 
 const sameExpiration = (legs: Leg[]) => {

@@ -9,7 +9,7 @@ const NewProject = lazy(() => import(/* webpackChunkName: "new-project" */ "./pr
 const Project = lazy(() => import(/* webpackChunkName: "project" */ "./project/project"));
 const Settings = lazy(() => import(/* webpackChunkName: "settings" */ "./settings/settings"));
 const Search = lazy(() => import(/* webpackChunkName: "search" */ "./search/search"));
-const PortfolioAssistant = lazy(() => import(/* webpackChunkName: "portfolio-assistant" */ "./portfolio/assistant"));
+const StrategyAssistant = lazy(() => import(/* webpackChunkName: "portfolio-assistant" */ "./portfolio/assistant"));
 const NotFound = lazy(() => import(/* webpackChunkName: "not-found" */ "./errors/notFound"));
 
 const AppRoutes = () => (
@@ -21,7 +21,7 @@ const AppRoutes = () => (
       <Route path="new" element={<NewProject />} />
       <Route path="settings/*" element={<Settings />} />
       <Route path="search/*" element={<Search />} />
-      <Route path="portfolio-assistant" element={<PortfolioAssistant />} />
+      <Route path="strategy-assistant" element={<StrategyAssistant />} />
       <Route path=":username/:projectName/*" element={<Project />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -132,7 +132,7 @@ const Project = () => {
     }
   }, [dispatch, projectName, username]);
 
-  if (!project) {
+  if (!project || loading) {
     return null;
   }
 
@@ -145,9 +145,15 @@ const Project = () => {
   return (
     <>
       <TitleBar>
-        <Link to={`/${username}/${projectName}`} className="project-link">
-          <h2 className="m-0">{project.name}</h2>
-        </Link>
+        <h2 className="m-0">
+          <Link to={`/${username}`} className="project-link">
+            {username}
+          </Link>
+          <span> / </span>
+          <Link to={`/${username}/${projectName}`} className="project-link">
+            {project.name}
+          </Link>
+        </h2>
         <div className="tags">
           <PLPill value={netProfit.toString()} style={{marginRight: "0.25rem"}}>
             {formatPrice(netProfit)}

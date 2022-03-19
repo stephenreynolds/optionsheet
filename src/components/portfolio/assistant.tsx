@@ -98,7 +98,7 @@ const StrategyAssistant = () => {
     <Container>
       <h1>Strategy Assistant</h1>
       <p>
-        A step-by-step guide to make decisions in an options portfolio.
+        A systematic method choosing strategies for your options portfolio.
       </p>
 
       <br />

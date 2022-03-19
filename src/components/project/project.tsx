@@ -132,7 +132,7 @@ const Project = () => {
     }
   }, [dispatch, projectName, username]);
 
-  if (!project || loading) {
+  if (!project) {
     return null;
   }
 

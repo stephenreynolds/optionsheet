@@ -15,6 +15,7 @@ router.patch("/user", [verifyJwtToken], user.update);
 router.delete("/user", [verifyJwtToken], user.deleteAccount);
 
 // Users
+router.get("/users/:username", users.getUser);
 router.post("/users", users.createUser);
 
 // Auth

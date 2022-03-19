@@ -3,6 +3,7 @@ import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../error";
 import Request from "../request";
+import { getUserDetails } from "./user";
 
 // POST /users
 export const createUser = async (request: Request, response: Response) => {
@@ -65,6 +66,24 @@ export const createUser = async (request: Request, response: Response) => {
   }
   catch (error) {
     const message = "Failed to create user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+// GET /users/:username
+export const getUser = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const username = request.params.username;
+    const user = await dataService.getUserByName(username);
+
+    const userDetails = getUserDetails(user);
+
+    response.status(StatusCodes.OK).send(userDetails);
+  }
+  catch (error) {
+    const message = "Failed to get user";
     logError(error, message);
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }

@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../error";
 import Request from "../request";
 
-interface UserDetails {
+export interface UserDetails {
   username: string;
   url: string;
   html_url: string;
@@ -17,7 +17,7 @@ interface UserDetails {
   is_admin: boolean;
 }
 
-const getUserDetails = (user): UserDetails => {
+export const getUserDetails = (user): UserDetails => {
   const isAdmin = !!user.roles.find(role => role.name === "admin");
 
   return {

@@ -92,7 +92,19 @@ export const update = async (request: Request, response: Response) => {
 
     // Change password if given.
     const password = request.body.password;
+    const confirmPassword = request.body.confirm;
+    const currentPassword = request.body.currentPassword;
     if (password) {
+      if (password !== confirmPassword) {
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "Password and confirmation do not match.");
+      }
+
+      const user = await dataService.getUserById(id);
+      const validated = await bcrypt.compare(currentPassword, user.passwordHash);
+      if (!validated) {
+        return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
+      }
+
       // Check for valid password.
       if (!passwordIsValid(password)) {
         sendError(request, response, StatusCodes.BAD_REQUEST, "Password is too weak.");

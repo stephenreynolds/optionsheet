@@ -22,7 +22,7 @@ const Profile = () => {
       .catch(error => {
         toast.error(error.message);
       });
-  }, []);
+  }, [username]);
 
   return (
     <>

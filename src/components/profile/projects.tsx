@@ -34,10 +34,10 @@ const ProfileProjects = ({ user }) => {
   return (
     <div>
       {projects.map((project, key) => (
-        <>
+        <div key={key}>
           <hr style={{marginTop: "2rem", marginBottom: "1.5rem"}} />
-          <ProjectItem key={key} username={user.username} project={project} />
-        </>
+          <ProjectItem username={user.username} project={project} />
+        </div>
       ))}
     </div>
   );

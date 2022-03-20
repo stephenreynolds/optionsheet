@@ -16,3 +16,15 @@ export const updateUser = async (data: UserUpdateModel) => {
 export const deleteUser = async () => {
   return api.delete(`/user`);
 };
+
+export const starProject = async (ownerUsername: string, projectName: string) => {
+  return await api.put(`/user/starred/${ownerUsername}/${projectName}`);
+};
+
+export const unStarProject = async (ownerUsername: string, projectName: string) => {
+  return await api.delete(`/user/starred/${ownerUsername}/${projectName}`);
+};
+
+export const checkProjectStarred = async (ownerUsername: string, projectName: string) => {
+  return await api.get(`/user/starred/${ownerUsername}/${projectName}`);
+};

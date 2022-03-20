@@ -4,7 +4,7 @@ import {
   DELETE_USER_SUCCESS,
   GET_AUTHENTICATED_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
-  LOGIN_FAIL
+  LOGIN_FAIL, GET_USER_SUCCESS
 } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
 import { logout } from "./authActions";
@@ -29,6 +29,7 @@ export const getUser = (username: string) => {
     dispatch(beginApiCall());
     return userApi.getUser(username)
       .then(response => {
+        dispatch({ type: GET_USER_SUCCESS });
         return response.data;
       })
       .catch(error => {

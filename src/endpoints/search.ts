@@ -24,7 +24,17 @@ export const searchAll = async (request: Request, response: Response) => {
       items = await dataService.getTradesBySymbol(term, limit, page - 1);
     }
     else if (type === "project") {
-      items = await dataService.getProjectsByName(term, limit, page - 1);
+      const projects = await dataService.getProjectsByName(term, limit, page - 1);
+      items = projects.map((project) => {
+        return {
+          name: project.name,
+          description: project.description,
+          tags: project.tags,
+          lastEdited: new Date(project.lastEdited),
+          username: project.user.username,
+          trades: project.trades
+        };
+      });
     }
     else if (type === "user") {
       items = await dataService.getUsersByUsername(term, limit, page - 1);

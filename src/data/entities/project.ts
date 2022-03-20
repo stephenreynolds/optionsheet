@@ -38,4 +38,7 @@ export class Project {
 
   @Column({ default: new Date() })
   lastEdited: Date;
+
+  @ManyToMany(() => User, (user) => user.starredProjects)
+  starredUsers?: User[];
 }

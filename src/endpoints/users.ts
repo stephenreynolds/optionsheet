@@ -88,3 +88,19 @@ export const getUser = async (request: Request, response: Response) => {
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };
+
+// GET /users/starred
+export const getStarredProjects = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const username = request.params.username;
+    const user = await dataService.getUserByName(username);
+
+    return response.send(user.starredProjects);
+  }
+  catch (error) {
+    const message = "Failed to get starred projects";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};

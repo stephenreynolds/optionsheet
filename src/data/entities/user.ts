@@ -40,6 +40,13 @@ export class User {
   })
   projects?: Project[];
 
+  @ManyToMany(() => Project, (project) => project.starredUsers, {
+    eager: true,
+    cascade: true
+  })
+  @JoinTable()
+  starredProjects?: Project[];
+
   @Column({ nullable: true })
   avatarUrl?: string;
 

@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import _ from "lodash";
 import { logError, sendError } from "../error";
 import Request from "../request";
 
@@ -166,6 +167,127 @@ export const deleteAccount = async (request: Request, response: Response) => {
   }
   catch (error) {
     const message = "Failed to delete user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+// GET /user/starred
+export const getStarredProjects = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+
+    const userId = request.body.userId;
+    const user = await dataService.getUserById(userId);
+
+    return response.send(user.starredProjects);
+  }
+  catch (error) {
+    const message = "Failed to get starred projects";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+// GET /user/starred/:owner/:project
+export const isProjectStarred = async (request: Request, response: Response) => {
+  try {
+    const ownerUsername = request.params.owner;
+    const projectName = request.params.project;
+
+    const dataService = request.dataService;
+    const owner = await dataService.getUserByName(ownerUsername);
+    if (!owner) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
+
+    const project = await dataService.getProject(owner.id, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
+    }
+
+    const userId = request.body.userId;
+    const user = await dataService.getUserById(userId);
+
+    const isStarred = _.some(user.starredProjects, (p) => p.id === project.id);
+    if (!isStarred) {
+      return response.sendStatus(StatusCodes.NOT_FOUND);
+    }
+
+    return response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    const message = "Failed to check if project is starred by user";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+// PUT /user/starred/:owner/:project
+export const starProject = async (request: Request, response: Response) => {
+  try {
+    const ownerUsername = request.params.owner;
+    const projectName = request.params.project;
+
+    const dataService = request.dataService;
+    const owner = await dataService.getUserByName(ownerUsername);
+    if (!owner) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
+
+    const project = await dataService.getProject(owner.id, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
+    }
+
+    const userId = request.body.userId;
+    const user = await dataService.getUserById(userId);
+
+    await dataService.saveUser({
+      ...user,
+      starredProjects: [...user.starredProjects, project]
+    });
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    const message = "Failed to star project";
+    logError(error, message);
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+  }
+};
+
+// DELETE /user/starred/:owner/:project
+export const unStarProject = async (request: Request, response: Response) => {
+  try {
+    const ownerUsername = request.params.owner;
+    const projectName = request.params.project;
+
+    const dataService = request.dataService;
+    const owner = await dataService.getUserByName(ownerUsername);
+    if (!owner) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
+
+    const project = await dataService.getProject(owner.id, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
+    }
+
+    const userId = request.body.userId;
+    const user = await dataService.getUserById(userId);
+
+    const starredProjects = user.starredProjects;
+    _.remove(starredProjects, { id: project.id });
+    await dataService.saveUser({
+      ...user,
+      starredProjects
+    });
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    const message = "Failed to un-star project";
     logError(error, message);
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }

@@ -6,6 +6,7 @@ import { Database } from "./database";
 import { Project } from "./entities/project";
 import { RefreshToken } from "./entities/refreshToken";
 import { Role } from "./entities/role";
+import { StarredProject } from "./entities/starredProject";
 import { Tag } from "./entities/tag";
 import { Trade } from "./entities/trade";
 import { User } from "./entities/user";
@@ -17,6 +18,7 @@ export class OrmDatabase implements Database {
   private readonly tags: Repository<Tag>;
   private readonly projects: Repository<Project>;
   private readonly trades: Repository<Trade>;
+  private readonly starredProjects: Repository<StarredProject>;
 
   constructor(connection: Connection) {
     this.users = connection.getRepository(User);
@@ -25,6 +27,7 @@ export class OrmDatabase implements Database {
     this.tags = connection.getRepository(Tag);
     this.projects = connection.getRepository(Project);
     this.trades = connection.getRepository(Trade);
+    this.starredProjects = connection.getRepository(StarredProject);
   }
 
   // User
@@ -78,7 +81,14 @@ export class OrmDatabase implements Database {
 
   // Project
   public async getProjectsByUserId(userId: number) {
-    return this.projects.find({ user: userId });
+    return this.projects
+      .createQueryBuilder("project")
+      .leftJoin("project.user", "user")
+      .leftJoin("project.tags", "tags")
+      .loadRelationCountAndMap("project.trades", "project.trades")
+      .select(["project.id", "project.name", "project.description", "project.lastEdited", "user.username", "tags"])
+      .where("user.id = :id", { id: userId })
+      .getMany();
   }
 
   public async getProjectsByName(name: string, limit?: number, offset = 0) {
@@ -96,6 +106,16 @@ export class OrmDatabase implements Database {
 
   public async getProject(userId: number, name: string) {
     return this.projects.findOne({ user: userId, name });
+  }
+
+  public async getProjectById(id: number) {
+    return this.projects
+      .createQueryBuilder("project")
+      .leftJoin("project.user", "user")
+      .leftJoin("project.tags", "tags")
+      .select(["project.id", "project.name", "project.description", "project.lastEdited", "user.username", "tags"])
+      .where("project.id = :id", { id })
+      .getOne();
   }
 
   public async saveProject(project: Partial<Project>) {
@@ -206,5 +226,22 @@ export class OrmDatabase implements Database {
       .getRawOne();
 
     return count;
+  }
+
+  // Stars
+  public async starProject(userId: number, projectId: number) {
+    return this.starredProjects.save({ userId, projectId });
+  }
+
+  public async unStarProject(userId: number, projectId: number) {
+    return this.starredProjects.remove({ userId, projectId });
+  }
+
+  public async getStarredProject(userId: number, projectId: number) {
+    return this.starredProjects.findOne({ userId, projectId });
+  }
+
+  public async getStarredProjects(userId: number) {
+    return this.starredProjects.find({ userId });
   }
 }

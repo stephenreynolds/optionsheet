@@ -3,6 +3,7 @@ import { Leg } from "./entities/leg";
 import { Project } from "./entities/project";
 import { RefreshToken } from "./entities/refreshToken";
 import { Role } from "./entities/role";
+import { StarredProject } from "./entities/starredProject";
 import { Tag } from "./entities/tag";
 import { Trade } from "./entities/trade";
 import { User } from "./entities/user";
@@ -16,7 +17,7 @@ const ormConfig: ConnectionOptions = {
   password: process.env.DB_PASSWORD || "optionsheet",
   synchronize: true,
   logging: false,
-  entities: [User, Role, RefreshToken, Trade, Leg, Project, Tag],
+  entities: [User, Role, RefreshToken, Trade, Leg, Project, Tag, StarredProject],
   migrations: [`${__dirname}/migrations/**/*.ts`],
   subscribers: [`${__dirname}/subscribers/**/*.ts`],
   cli: {

@@ -22,7 +22,8 @@ export const getProjects = async (request: Request, response: Response) => {
         name: project.name,
         description: project.description,
         tags: project.tags,
-        lastEdited: new Date(project.lastEdited)
+        lastEdited: new Date(project.lastEdited),
+        username: project.user.username
       };
     });
 

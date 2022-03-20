@@ -178,9 +178,21 @@ export const getStarredProjects = async (request: Request, response: Response) =
     const dataService = request.dataService;
 
     const userId = request.body.userId;
-    const user = await dataService.getUserById(userId);
 
-    return response.send(user.starredProjects);
+    const stars = await dataService.getStarredProjects(userId);
+
+    const starredProjects = await Promise.all(stars.map(async (star) => {
+      const project = await dataService.getProjectById(star.projectId);
+      return {
+        name: project.name,
+        description: project.description,
+        tags: project.tags,
+        lastEdited: new Date(project.lastEdited),
+        username: project.user.username
+      };
+    }));
+
+    return response.send(starredProjects);
   }
   catch (error) {
     const message = "Failed to get starred projects";
@@ -207,9 +219,8 @@ export const isProjectStarred = async (request: Request, response: Response) => 
     }
 
     const userId = request.body.userId;
-    const user = await dataService.getUserById(userId);
 
-    const isStarred = _.some(user.starredProjects, (p) => p.id === project.id);
+    const isStarred = await dataService.getStarredProject(userId, project.id);
     if (!isStarred) {
       return response.sendStatus(StatusCodes.NOT_FOUND);
     }
@@ -241,12 +252,8 @@ export const starProject = async (request: Request, response: Response) => {
     }
 
     const userId = request.body.userId;
-    const user = await dataService.getUserById(userId);
 
-    await dataService.saveUser({
-      ...user,
-      starredProjects: [...user.starredProjects, project]
-    });
+    await dataService.starProject(userId, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -275,14 +282,8 @@ export const unStarProject = async (request: Request, response: Response) => {
     }
 
     const userId = request.body.userId;
-    const user = await dataService.getUserById(userId);
 
-    const starredProjects = user.starredProjects;
-    _.remove(starredProjects, { id: project.id });
-    await dataService.saveUser({
-      ...user,
-      starredProjects
-    });
+    await dataService.unStarProject(userId, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

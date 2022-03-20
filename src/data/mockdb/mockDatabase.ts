@@ -101,6 +101,15 @@ export default class MockDatabase implements Database {
     };
   }
 
+  public async getProjectById(id: number) {
+    return {
+      id,
+      description: "",
+      tags: [],
+      lastEdited: new Date()
+    };
+  }
+
   public async saveProject(project) {
     return {};
   }
@@ -175,5 +184,22 @@ export default class MockDatabase implements Database {
 
   public async getUserMatches(term: string) {
     return 0;
+  }
+
+  // Stars
+  public async starProject(userId: number, projectId: number) {
+    return {};
+  }
+
+  public async unStarProject(userId: number, projectId: number) {
+    return {};
+  }
+
+  public async getStarredProject(userId: number, projectId: number) {
+    return {};
+  }
+
+  public async getStarredProjects(userId: number) {
+    return [];
   }
 }

@@ -89,14 +89,27 @@ export const getUser = async (request: Request, response: Response) => {
   }
 };
 
-// GET /users/starred
+// GET /users/:username/starred
 export const getStarredProjects = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
     const username = request.params.username;
-    const user = await dataService.getUserByName(username);
 
-    return response.send(user.starredProjects);
+    const user = await dataService.getUserByName(username);
+    const stars = await dataService.getStarredProjects(user.id);
+
+    const starredProjects = await Promise.all(stars.map(async (star) => {
+      const project = await dataService.getProjectById(star.projectId);
+      return {
+        name: project.name,
+        description: project.description,
+        tags: project.tags,
+        lastEdited: new Date(project.lastEdited),
+        username: project.user.username
+      };
+    }));
+
+    return response.send(starredProjects);
   }
   catch (error) {
     const message = "Failed to get starred projects";

@@ -17,6 +17,7 @@ export interface Database {
   // Project
   getProjectsByUserId(userId: number);
   getProject(userId: number, name: string);
+  getProjectById(id: number);
   saveProject(project);
   deleteProject(project);
   onProjectUpdated(project);
@@ -42,4 +43,10 @@ export interface Database {
   getTradeMatches(term: string);
   getProjectMatches(term: string);
   getUserMatches(term: string);
+
+  // Stars
+  starProject(userId: number, projectId: number);
+  unStarProject(userId: number, projectId: number);
+  getStarredProject(userId: number, projectId: number);
+  getStarredProjects(userId: number);
 }

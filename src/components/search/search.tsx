@@ -6,7 +6,7 @@ import { Container } from "../styles";
 import TradeCard from "./tradeCard";
 import SearchSidebar from "./searchSidebar";
 import styled from "styled-components";
-import ProjectCard from "./projectCard";
+import ProjectCard from "../shared/projectCard";
 import UserCard from "./userCard";
 import { Pagination } from "../shared/pagination";
 

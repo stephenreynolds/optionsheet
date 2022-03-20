@@ -1,14 +1,13 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { Tag } from "../../common/models/tag";
-import { TagPill } from "../shared/pill";
+import { TagPill } from "./pill";
 import moment from "moment";
 
 const ProjectCardDiv = styled.div`
-  margin: 0.5rem 0.5rem 0.5rem 0;
-  padding: 1rem 1rem 1rem 0;
+  margin: 0.5rem 0.5rem 1.5rem 0;
+  padding: 1rem 1rem 0 0;
   border-top: 1px solid ${props => props.theme.dark.border};
-  border-radius: 5px;
   transition: background-color 0.2s ease;
 
   &:first-child {
@@ -34,27 +33,24 @@ const ProjectCardDiv = styled.div`
 `;
 
 export interface ProjectCardProps {
-  id: number;
   name: string;
   description: string;
   lastEdited: Date;
-  user: {
-    username: string;
-  }
+  username: string;
   tags: Tag[];
   trades: number;
 }
 
 const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
-  if (!(project && project.user)) {
+  if (!(project && project.username)) {
     return null;
   }
 
   return (
     <ProjectCardDiv>
       {/* Link to project */}
-      <Link to={`/${project.user.username}/${project.name}`} className="project-link">
-        {project.user.username}/{project.name}
+      <Link to={`/${project.username}/${project.name}`} className="project-link">
+        {project.username}/{project.name}
       </Link>
 
       {/* Description */}

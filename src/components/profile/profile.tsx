@@ -30,7 +30,7 @@ const Profile = () => {
       <Container className="d-flex">
         <ProfileSidebar user={user} />
         <div className="w-100">
-          <ProfileTab user={user} />
+          <ProfileTab username={username} />
         </div>
       </Container>
     </>

@@ -113,7 +113,7 @@ export class OrmDatabase implements Database {
       .createQueryBuilder("project")
       .leftJoin("project.user", "user")
       .leftJoin("project.tags", "tags")
-      .select(["project.id", "project.name", "project.description", "project.lastEdited", "user.username", "tags"])
+      .select(["project.id", "project.name", "project.description", "project.lastEdited", "project.userId", "user.username", "tags"])
       .where("project.id = :id", { id })
       .getOne();
   }

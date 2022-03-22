@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import _ from "lodash";
 import { logError, sendError } from "../error";
 import Request from "../request";
 

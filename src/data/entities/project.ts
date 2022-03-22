@@ -14,6 +14,9 @@ export class Project {
   @ManyToOne(() => User, (user) => user.id)
   user: number;
 
+  @Column()
+  userId: number;
+
   @OneToMany(() => Trade, (trade) => trade.project, {
     cascade: true,
     onDelete: "CASCADE"

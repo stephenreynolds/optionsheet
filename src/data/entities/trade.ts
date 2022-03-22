@@ -39,4 +39,7 @@ export class Trade {
 
   @ManyToOne(() => Project, (project) => project.trades, { onDelete: "CASCADE" })
   project: Project;
+
+  @Column()
+  projectId: number;
 }

@@ -127,18 +127,24 @@ export const addTrade = async (request: Request, response: Response) => {
 
 // PATCH /trades/:id
 export const updateTradeById = async (request: Request, response: Response) => {
-  const dataService = request.dataService;
-  const id = Number(request.params.id);
-  let trade = await dataService.getTradeWithProject(id);
-
-  if (!trade) {
-    sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
-    return;
-  }
-
   try {
+    const dataService = request.dataService;
+    const id = Number(request.params.id);
+
+    let trade = await dataService.getTradeById(id);
+
+    if (!trade) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { userId, ...updatedTrade } = request.body;
+
+    const project = await dataService.getProjectById(trade.projectId);
+    const tradeUser = await dataService.getUserById(project.userId);
+    if (userId !== tradeUser.id) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
 
     trade = {
       ...trade,
@@ -147,7 +153,7 @@ export const updateTradeById = async (request: Request, response: Response) => {
 
     await dataService.saveTrade(trade);
 
-    await dataService.onProjectUpdated(trade.project);
+    await dataService.onProjectUpdated(project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -160,19 +166,26 @@ export const updateTradeById = async (request: Request, response: Response) => {
 
 // DELETE /trades/:id
 export const deleteTradeById = async (request: Request, response: Response) => {
-  const dataService = request.dataService;
-  const id = Number(request.params.id);
-  const trade = await dataService.getTradeWithProject(id);
-
-  if (!trade) {
-    response.sendStatus(StatusCodes.NO_CONTENT);
-    return;
-  }
-
   try {
+    const dataService = request.dataService;
+    const id = Number(request.params.id);
+    const trade = await dataService.getTradeById(id);
+
+    if (!trade) {
+      response.sendStatus(StatusCodes.NO_CONTENT);
+      return;
+    }
+
+    const project = await dataService.getProjectById(trade.projectId);
+    const tradeUser = await dataService.getUserById(project.userId);
+    const userId = request.body.userId;
+    if (tradeUser.id !== userId) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
     await dataService.deleteTrade(id);
 
-    await dataService.onProjectUpdated(trade.project);
+    await dataService.onProjectUpdated(project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

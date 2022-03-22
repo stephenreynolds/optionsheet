@@ -1,8 +1,8 @@
 import request from "supertest";
-import app from "../app";
-import config from "../config";
-import mockDataService from "../data/mockdb/mockDataService";
-import routes from "../routes";
+import app from "../../app";
+import config from "../../config";
+import mockDataService from "../../data/mockdb/mockDataService";
+import routes from "../../routes";
 
 let token;
 

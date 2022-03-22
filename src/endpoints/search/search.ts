@@ -1,7 +1,8 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { SearchDto } from "./searchDtos";
 
 export const searchAll = async (request: Request, response: Response) => {
   try {
@@ -40,16 +41,16 @@ export const searchAll = async (request: Request, response: Response) => {
       items = await dataService.getUsersByUsername(term, limit, page - 1);
     }
 
-    const counts = {
-      trades: await dataService.getTradeMatches(term),
-      projects: await dataService.getProjectMatches(term),
-      users: await dataService.getUserMatches(term)
+    const res: SearchDto = {
+      items,
+      counts: {
+        trades: await dataService.getTradeMatches(term),
+        projects: await dataService.getProjectMatches(term),
+        users: await dataService.getUserMatches(term)
+      }
     };
 
-    response.send({
-      items,
-      counts
-    });
+    response.send(res);
   }
   catch (error) {
     const message = "Failed to search";

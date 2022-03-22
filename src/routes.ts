@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { verifyJwtToken } from "./middleware/authentication";
-import * as auth from "./endpoints/auth";
-import * as projects from "./endpoints/projects";
-import * as search from "./endpoints/search";
-import * as trades from "./endpoints/trades";
-import * as user from "./endpoints/user";
-import * as users from "./endpoints/users";
+import * as auth from "./endpoints/auth/auth";
+import * as projects from "./endpoints/projects/projects";
+import * as search from "./endpoints/search/search";
+import * as trades from "./endpoints/trades/trades";
+import * as user from "./endpoints/user/user";
+import * as users from "./endpoints/users/users";
 
 const router = Router();
 

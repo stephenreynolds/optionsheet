@@ -1,7 +1,8 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { GetTradeDto } from "./tradeDtos";
 
 // GET /projects/:username/:project/trades
 export const getTrades = async (request: Request, response: Response) => {
@@ -25,7 +26,7 @@ export const getTrades = async (request: Request, response: Response) => {
 
     const trades = await dataService.getTradesByProject(project);
 
-    response.send(trades.map((trade) => {
+    const res: GetTradeDto[] = trades.map((trade) => {
       return {
         ...trade,
         legs: trade.legs.map((leg) => {
@@ -38,7 +39,9 @@ export const getTrades = async (request: Request, response: Response) => {
           };
         })
       };
-    }));
+    });
+
+    response.send(res);
   }
   catch (error) {
     const message = "Failed to get trades";
@@ -59,7 +62,7 @@ export const getTrade = async (request: Request, response: Response) => {
       return;
     }
 
-    response.send({
+    const res: GetTradeDto = {
       ...trade,
       legs: trade.legs.map((leg) => {
         return {
@@ -70,7 +73,11 @@ export const getTrade = async (request: Request, response: Response) => {
           closePrice: leg.closePrice ? Number(leg.closePrice) : null
         };
       })
-    });
+    };
+
+    console.log("wat");
+
+    response.send(res);
   }
   catch (error) {
     const message = "Failed to get trade by id";

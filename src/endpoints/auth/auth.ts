@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { AuthTokenDto, AvailableDto } from "./authDtos";
 
 // POST /auth
 export const authenticate = async (request: Request, response: Response) => {
@@ -40,7 +41,12 @@ export const authenticate = async (request: Request, response: Response) => {
     const token = await dataService.createToken(user);
     const refreshToken = await dataService.createRefreshToken(user);
 
-    response.status(StatusCodes.OK).send({ token, refreshToken });
+    const dto: AuthTokenDto = {
+      token,
+      refreshToken
+    };
+
+    response.status(StatusCodes.OK).send(dto);
   }
   catch (error) {
     const message = "Failed to authenticate";
@@ -73,7 +79,13 @@ export const refreshToken = async (request: Request, response: Response) => {
 
     const user = refreshToken.user;
     const newToken = await dataService.createToken(user);
-    response.send({ token: newToken, refreshToken: refreshToken.token });
+
+    const dto: AuthTokenDto = {
+      token: newToken,
+      refreshToken: refreshToken.token
+    };
+
+    response.send(dto);
   }
   catch (error) {
     const message = "Failed to refresh token";
@@ -100,7 +112,11 @@ export const emailAndUsernameAvailable = async (request: Request, response: Resp
       available = !userWithName;
     }
 
-    response.send({ available });
+    const dto: AvailableDto = {
+      available
+    };
+
+    response.send(dto);
   }
   catch (error) {
     const message = "Failed to check if email and username are available";

@@ -1,9 +1,11 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
-import { getUserDetails } from "./user";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { AuthTokenDto } from "../auth/authDtos";
+import { getUserDetails } from "../user/user";
+import { StarredProjectDto } from "../user/userDtos";
 
 // POST /users
 export const createUser = async (request: Request, response: Response) => {
@@ -62,7 +64,12 @@ export const createUser = async (request: Request, response: Response) => {
     const token = await dataService.createToken(newUser);
     const refreshToken = await dataService.createRefreshToken(newUser);
 
-    response.send({ token, refreshToken });
+    const res: AuthTokenDto = {
+      token,
+      refreshToken
+    }
+
+    response.send(res);
   }
   catch (error) {
     const message = "Failed to create user";
@@ -98,7 +105,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
     const user = await dataService.getUserByName(username);
     const stars = await dataService.getStarredProjects(user.id);
 
-    const starredProjects = await Promise.all(stars.map(async (star) => {
+    const res: StarredProjectDto[] = await Promise.all(stars.map(async (star) => {
       const project = await dataService.getProjectById(star.projectId);
       return {
         name: project.name,
@@ -109,7 +116,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
       };
     }));
 
-    return response.send(starredProjects);
+    return response.send(res);
   }
   catch (error) {
     const message = "Failed to get starred projects";

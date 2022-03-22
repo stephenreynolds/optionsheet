@@ -1,23 +1,11 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { GetUserDto, StarredProjectDto } from "./userDtos";
 
-export interface UserDetails {
-  username: string;
-  url: string;
-  html_url: string;
-  projects_url: string;
-  email: string;
-  avatar_url: string;
-  bio: string;
-  created_on: Date;
-  updated_on: Date;
-  is_admin: boolean;
-}
-
-export const getUserDetails = (user): UserDetails => {
+export const getUserDetails = (user): GetUserDto => {
   const isAdmin = !!user.roles.find(role => role.name === "admin");
 
   return {
@@ -180,7 +168,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
 
     const stars = await dataService.getStarredProjects(userId);
 
-    const starredProjects = await Promise.all(stars.map(async (star) => {
+    const res: StarredProjectDto[] = await Promise.all(stars.map(async (star) => {
       const project = await dataService.getProjectById(star.projectId);
       return {
         name: project.name,
@@ -191,7 +179,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
       };
     }));
 
-    return response.send(starredProjects);
+    return response.send(res);
   }
   catch (error) {
     const message = "Failed to get starred projects";

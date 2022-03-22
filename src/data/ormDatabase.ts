@@ -128,7 +128,7 @@ export class OrmDatabase implements Database {
 
   public async onProjectUpdated(project: Project) {
     await this.projects.update({ id: project.id }, { lastEdited: new Date() });
-    await this.users.update({ id: project.user }, { updatedOn: new Date() });
+    await this.users.update({ id: project.userId }, { updatedOn: new Date() });
   }
 
   // Trade

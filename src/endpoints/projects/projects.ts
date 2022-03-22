@@ -1,7 +1,8 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { logError, sendError } from "../error";
-import Request from "../request";
+import { logError, sendError } from "../../error";
+import Request from "../../request";
+import { CreateProjectDto, GetProjectByNameDto, GetProjectDto } from "./projectDtos";
 
 // GET /projects/:username
 export const getProjects = async (request: Request, response: Response) => {
@@ -17,7 +18,7 @@ export const getProjects = async (request: Request, response: Response) => {
 
     const projects = await dataService.getProjectsByUserId(user.id);
 
-    const res = projects.map((project) => {
+    const res: GetProjectDto = projects.map((project) => {
       return {
         name: project.name,
         description: project.description,
@@ -55,7 +56,7 @@ export const getProjectByName = async (request: Request, response: Response) => 
       return;
     }
 
-    const res = {
+    const res: GetProjectByNameDto = {
       name: project.name,
       description: project.description,
       startingBalance: project.startingBalance ? Number(project.startingBalance) : null,
@@ -102,16 +103,14 @@ export const createProject = async (request: Request, response: Response) => {
       lastEdited: new Date()
     };
 
-    dataService.saveProject(project)
-      .then(async () => {
-        const user = await dataService.getUserById(userId);
-        response.send({
-          projectUrl: `/${user.username}/${project.name}`
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
+    await dataService.saveProject(project);
+
+    const user = await dataService.getUserById(userId);
+    const res: CreateProjectDto = {
+      projectUrl: `/${user.username}/${project.name}`
+    };
+
+    response.send(res);
   }
   catch (error) {
     const message = "Failed to create project";

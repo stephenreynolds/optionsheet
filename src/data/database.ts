@@ -1,52 +1,27 @@
-export interface Database {
-  // User
-  getUserById(id: number);
-  getUserByName(username: string);
-  getUserByEmail(email: string);
-  saveUser(user);
-  updateUserById(id: number, user);
-  deleteUserById(id: number);
+import { Pool } from "pg";
+import logger from "../logger";
 
-  // Role
-  getRoleByName(name: string);
+export class Database {
+  private readonly pool: Pool;
 
-  // Refresh token
-  getRefreshToken(refreshToken: string);
-  removeRefreshToken(refreshToken);
+  constructor() {
+    this.pool = new Pool({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD
+    });
 
-  // Project
-  getProjectsByUserId(userId: number);
-  getProject(userId: number, name: string);
-  getProjectById(id: number);
-  saveProject(project);
-  deleteProject(project);
-  onProjectUpdated(project);
+    this.seedData();
+  }
 
-  // Trade
-  getTradesByProject(project);
-  getTradeById(id: number);
-  getTradeWithProject(id: number);
-  saveTrade(trade);
-  deleteTrade(id: number);
-
-  // Tokens
-  createToken(user): Promise<string>
-  createRefreshToken(user): Promise<string>;
-
-  // Tags
-  createTag(name: string);
-
-  // Search
-  getTradesBySymbol(symbol: string, limit?: number, offset?: number);
-  getProjectsByName(name: string, limit?: number, offset?: number);
-  getUsersByUsername(username: string, limit?: number, offset?: number);
-  getTradeMatches(term: string);
-  getProjectMatches(term: string);
-  getUserMatches(term: string);
-
-  // Stars
-  starProject(userId: number, projectId: number);
-  unStarProject(userId: number, projectId: number);
-  getStarredProject(userId: number, projectId: number);
-  getStarredProjects(userId: number);
+  private seedData() {
+    try {
+      this.pool.query("CALL add_role($1)", ["user"]);
+    }
+    catch (error) {
+      logger.error(error.message);
+    }
+  }
 }

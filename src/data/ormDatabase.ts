@@ -105,7 +105,7 @@ export class OrmDatabase implements Database {
   }
 
   public async getProject(userId: number, name: string) {
-    return this.projects.findOne({ user: userId, name });
+    return this.projects.findOne({ userId, name });
   }
 
   public async getProjectById(id: number) {

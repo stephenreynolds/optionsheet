@@ -74,7 +74,7 @@ export const createUser = async (request: Request, response: Response) => {
     const createModel: UserCreateModel = {
       username,
       email,
-      passwordHash: await bcrypt.hash(password, 12)
+      password_hash: await bcrypt.hash(password, 12)
     };
     const { uuid } = await dataService.users.addUser(createModel);
 
@@ -132,10 +132,10 @@ export const getStarredProjects = async (request: Request, response: Response) =
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
-          startingBalance: project.starting_balance ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
           risk: project.risk ?? undefined,
-          createdOn: new Date(project.created_on),
-          lastEdited: new Date(project.updated_on),
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
           tags: tags.map((t) => t.name) ?? undefined
         };
       }));

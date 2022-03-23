@@ -10,17 +10,17 @@ export enum PutCall {
 
 interface CreateLegModel {
   quantity: number;
-  openPrice: number;
+  open_price: number;
   side: Side;
   expiration?: Date;
   strike?: number;
-  putCall?: PutCall;
+  put_call?: PutCall;
 }
 
 export interface CreateTradeModel {
   symbol: string;
-  openDate: Date;
-  openingNote?: string;
+  open_date: Date;
+  opening_note?: string;
   legs: CreateLegModel[];
   tags?: string[];
 }

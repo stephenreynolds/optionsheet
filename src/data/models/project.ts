@@ -1,14 +1,14 @@
 export interface ProjectCreateModel {
   name: string;
   description?: string;
-  startingBalance?: number;
+  starting_balance?: number;
   tags?: string[];
 }
 
 export interface ProjectUpdateModel {
   name?: string;
   description?: string;
-  startingBalance?: number;
+  starting_balance?: number;
   risk?: number;
   tags?: string[];
 }

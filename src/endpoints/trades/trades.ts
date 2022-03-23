@@ -69,16 +69,16 @@ export const addTrade = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const { symbol, openDate, openingNote, legs, tags } = request.body;
+    const { symbol, open_date, opening_note, legs, tags } = request.body;
 
-    if (!(symbol && openDate && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].openPrice >= 0)) {
+    if (!(symbol && open_date && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].openPrice >= 0)) {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "A trade was not provided.");
     }
 
     const model: CreateTradeModel = {
       symbol: symbol.toUpperCase(),
-      openDate,
-      openingNote: openingNote ?? undefined,
+      open_date,
+      opening_note: opening_note ?? undefined,
       legs,
       tags
     };

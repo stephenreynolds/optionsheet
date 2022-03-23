@@ -46,7 +46,7 @@ export class ProjectManager {
           INSERT INTO project(user_uuid, name, description, starting_balance)
           VALUES ($1, $2, $3, $4)
           RETURNING id
-      `, [userUUID, model.name, model.description, model.startingBalance]);
+      `, [userUUID, model.name, model.description, model.starting_balance]);
 
       await this.addProjectTags(res.rows[0].id, model.tags);
 
@@ -67,7 +67,7 @@ export class ProjectManager {
               risk             = COALESCE($5, risk)
           WHERE id = $1
           RETURNING *
-      `, [id, model.name, model.description, model.startingBalance, model.risk]);
+      `, [id, model.name, model.description, model.starting_balance, model.risk]);
 
       return res.rows[0];
     }

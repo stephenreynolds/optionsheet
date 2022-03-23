@@ -25,10 +25,10 @@ export const getProjects = async (request: Request, response: Response) => {
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
-          startingBalance: project.starting_balance ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
           risk: project.risk ?? undefined,
-          createdOn: new Date(project.created_on),
-          lastEdited: new Date(project.updated_on),
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
           tags: tags.map((t) => t.name) ?? undefined
         };
       }));
@@ -63,10 +63,10 @@ export const getProjectByName = async (request: Request, response: Response) => 
       name: project.name,
       username: user.username,
       description: project.description ?? undefined,
-      startingBalance: Number(project.starting_balance) ?? undefined,
+      starting_balance: Number(project.starting_balance) ?? undefined,
       risk: Number(project.risk) ?? undefined,
-      createdOn: new Date(project.created_on),
-      lastEdited: new Date(project.updated_on),
+      created_on: new Date(project.created_on),
+      last_edited: new Date(project.updated_on),
       tags: tags.map((t) => t.name) ?? undefined
     };
 
@@ -94,7 +94,7 @@ export const createProject = async (request: Request, response: Response) => {
     const model: ProjectCreateModel = {
       name,
       description: request.body.description.trim(),
-      startingBalance: request.body.startingBalance,
+      starting_balance: request.body.starting_balance,
       tags: request.body.tags
     };
 
@@ -102,7 +102,7 @@ export const createProject = async (request: Request, response: Response) => {
 
     const { username } = await dataService.users.getUserByUUID(userUUID);
     const res: CreateProjectDto = {
-      projectUrl: `/${username}/${encodeURIComponent(name)}`
+      project_url: `/${username}/${encodeURIComponent(name)}`
     };
 
     response.send(res);
@@ -137,8 +137,8 @@ export const updateProject = async (request: Request, response: Response) => {
     const model: ProjectUpdateModel = {
       name: newData.name,
       description: newData.description,
-      startingBalance: newData.startingBalance,
-      risk: newData.startingBalance
+      starting_balance: newData.starting_balance,
+      risk: newData.starting_balance
     };
 
     await dataService.projects.updateProject(project.id, model);

@@ -91,8 +91,8 @@ export const update = async (request: Request, response: Response) => {
         return sendError(request, response, StatusCodes.BAD_REQUEST, "Password is too weak.");
       }
 
-      const passwordHash = await bcrypt.hash(password, 12);
-      updateModel = { ...updateModel, passwordHash };
+      const password_hash = await bcrypt.hash(password, 12);
+      updateModel = { ...updateModel, password_hash };
     }
 
     // Change bio if given.
@@ -102,9 +102,9 @@ export const update = async (request: Request, response: Response) => {
     }
 
     // Change avatar url if given.
-    const avatarUrl = request.body.avatarUrl;
-    if (avatarUrl) {
-      updateModel = { ...updateModel, avatarUrl };
+    const avatar_url = request.body.avatar_url;
+    if (avatar_url) {
+      updateModel = { ...updateModel, avatar_url };
     }
 
     const updatedUser = await dataService.users.updateUser(userUUID, updateModel);
@@ -150,10 +150,10 @@ export const getStarredProjects = async (request: Request, response: Response) =
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
-          startingBalance: project.starting_balance ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
           risk: project.risk ?? undefined,
-          createdOn: new Date(project.created_on),
-          lastEdited: new Date(project.updated_on),
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
           tags: tags.map((t) => t.name) ?? undefined
         };
       }));

@@ -18,7 +18,7 @@ export class UserManager {
           INSERT INTO app_user(uuid, username, email, password_hash)
           VALUES (uuid_generate_v4(), $1, $2, $3)
           RETURNING uuid
-      `, [model.username, model.email, model.passwordHash]);
+      `, [model.username, model.email, model.password_hash]);
 
       return res.rows[0];
     }
@@ -38,7 +38,7 @@ export class UserManager {
               avatar_url    = COALESCE($6, avatar_url)
           WHERE uuid = $1
           RETURNING *
-      `, [userUUID, model.username, model.email, model.passwordHash, model.bio, model.avatarUrl]);
+      `, [userUUID, model.username, model.email, model.password_hash, model.bio, model.avatar_url]);
 
       return res.rows[0];
     }

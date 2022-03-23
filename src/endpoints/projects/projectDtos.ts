@@ -1,14 +1,14 @@
 export interface CreateProjectDto {
-  projectUrl: string;
+  project_url: string;
 }
 
 export interface GetProjectDto {
   name: string;
   username: string;
   description: string;
-  createdOn: Date;
-  lastEdited: Date;
+  created_on: Date;
+  last_edited: Date;
   tags?: string[];
-  startingBalance?: number;
+  starting_balance?: number;
   risk?: number;
 }

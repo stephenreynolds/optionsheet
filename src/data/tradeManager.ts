@@ -47,7 +47,7 @@ export class TradeManager {
           INSERT INTO trade(project_id, symbol, open_date, opening_note)
           VALUES ($1, $2, $3, $4)
           RETURNING *
-      `, [projectId, model.symbol, model.openDate, model.openingNote]);
+      `, [projectId, model.symbol, model.open_date, model.opening_note]);
 
       const tradeId = trade.rows[0].id;
 
@@ -57,16 +57,16 @@ export class TradeManager {
             INSERT INTO leg(trade_id, quantity, open_price, side)
             VALUES ($1, $2, $3, $4)
             RETURNING id
-        `, [tradeId, leg.quantity, leg.openPrice, leg.side]);
+        `, [tradeId, leg.quantity, leg.open_price, leg.side]);
 
         // Option part of leg if provided
-        if (leg.expiration && leg.strike && leg.putCall) {
+        if (leg.expiration && leg.strike && leg.put_call) {
           const legId = newLeg.rows[0].id;
 
           await this.pool.query(`
               INSERT INTO option(leg_id, expiration, strike, put_call)
               VALUES ($1, $2, $3, $4)
-          `, [legId, leg.expiration, leg.strike, leg.putCall]);
+          `, [legId, leg.expiration, leg.strike, leg.put_call]);
         }
       }
 

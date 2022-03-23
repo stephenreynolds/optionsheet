@@ -213,4 +213,15 @@ export class UserManager {
       throw error;
     }
   }
+
+  public async createTokenFromRefreshToken(refreshToken: string) {
+    const res = await this.pool.query(`
+        SELECT uuid
+        FROM app_user
+        WHERE refresh_token = $1
+    `, [refreshToken]);
+
+    const userUUID = res.rows[0].uuid;
+    return this.createToken(userUUID);
+  }
 }

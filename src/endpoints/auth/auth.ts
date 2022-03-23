@@ -51,3 +51,37 @@ export const authenticate = async (request: Request, response: Response) => {
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to authenticate.");
   }
 };
+
+// POST /auth/refresh
+export const refreshToken = async (request: Request, response: Response) => {
+  try {
+    if (!request.body.refreshToken) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token not provided.");
+    }
+
+    const dataService = request.dataService;
+
+    const { refresh_token, refresh_token_expiry } = await dataService.users.getRefreshToken(request.body.refreshToken);
+    if (!refresh_token) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid.");
+    }
+
+    const expired = new Date(refresh_token_expiry).getTime() < new Date().getTime();
+    if (expired) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired.");
+    }
+
+    const newToken = await dataService.users.createTokenFromRefreshToken(refresh_token);
+
+    const res: AuthTokenDto = {
+      token: newToken,
+      refreshToken: refresh_token
+    };
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to refresh token");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to refresh token.");
+  }
+};

@@ -15,5 +15,6 @@ router.get("/users/:username", users.getUser);
 
 // Auth
 router.post("/auth", auth.authenticate);
+router.post("/auth/refresh", auth.refreshToken);
 
 export default router;

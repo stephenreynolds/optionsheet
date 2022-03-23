@@ -9,6 +9,37 @@ export class TradeManager {
     this.pool = pool;
   }
 
+  public async getTradeById(id: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM trade
+          WHERE trade.id = $1
+      `, [id]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to get trade by id");
+    }
+  }
+
+  public async getLegsByTradeId(id: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT quantity, open_price, close_price, side, expiration, strike, put_call
+          FROM leg
+                   LEFT JOIN option ON option.leg_id = leg.id
+          WHERE leg.trade_id = $1
+      `, [id]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get trade by id");
+    }
+  }
+
   public async addTrade(projectId: number, model: CreateTradeModel) {
     try {
       // Trade
@@ -46,6 +77,22 @@ export class TradeManager {
     }
     catch (error) {
       logError(error, "Failed to add trade");
+    }
+  }
+
+  public async getTradeTags(id: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT id, name
+          FROM tag
+                   LEFT JOIN trade_tag ON trade_tag.tag_id = tag.id
+          WHERE trade_tag.trade_id = $1
+      `, [id]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get trade tags");
     }
   }
 

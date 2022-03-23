@@ -36,4 +36,7 @@ router.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteP
 router.post("/projects/:username/:project", [verifyJwtToken], trades.addTrade
 );
 
+// Trades
+router.get("/trades/:id", trades.getTrade);
+
 export default router;

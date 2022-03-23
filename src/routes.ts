@@ -25,5 +25,6 @@ router.get("/auth/check-credentials", auth.emailAndUsernameAvailable);
 router.post("/projects", [verifyJwtToken], projects.createProject);
 router.get("/projects/:username", projects.getProjects);
 router.get("/projects/:username/:project", projects.getProjectByName);
+router.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
 
 export default router;

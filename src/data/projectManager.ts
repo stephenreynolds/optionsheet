@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { logError } from "../error";
-import { ProjectCreateModel } from "./models/project";
+import { ProjectCreateModel, ProjectUpdateModel } from "./models/project";
 
 export class ProjectManager {
   private readonly pool: Pool;
@@ -54,6 +54,25 @@ export class ProjectManager {
     }
     catch (error) {
       logError(error, "Failed to create project");
+    }
+  }
+
+  public async updateProject(id: number, model: ProjectUpdateModel) {
+    try {
+      const res = await this.pool.query(`
+          UPDATE project
+          SET name             = COALESCE($2, name),
+              description      = COALESCE($3, description),
+              starting_balance = COALESCE($4, starting_balance),
+              risk             = COALESCE($5, risk)
+          WHERE id = $1
+          RETURNING *
+      `, [id, model.name, model.description, model.startingBalance, model.risk]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to update project");
     }
   }
 

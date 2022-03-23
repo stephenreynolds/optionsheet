@@ -39,5 +39,6 @@ router.get("/projects/:username/:project/trades", trades.getTrades);
 // Trades
 router.get("/trades/:id", trades.getTrade);
 router.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
+router.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
 
 export default router;

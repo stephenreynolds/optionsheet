@@ -166,29 +166,47 @@ export class TradeManager {
   }
 
   public async addTradeTags(id: number, tags: string[]) {
-    for (const newTag of tags) {
-      const name = newTag.trim().toLowerCase();
+    try {
+      for (const newTag of tags) {
+        const name = newTag.trim().toLowerCase();
 
-      let tag = await this.pool.query(`
-          SELECT id, name
-          FROM tag
-          WHERE name = $1
-      `, [name]);
-
-      if (!tag.rows.length) {
-        tag = await this.pool.query(`
-            INSERT INTO tag(name)
-            VALUES ($1)
-            RETURNING id, name
+        let tag = await this.pool.query(`
+            SELECT id, name
+            FROM tag
+            WHERE name = $1
         `, [name]);
+
+        if (!tag.rows.length) {
+          tag = await this.pool.query(`
+              INSERT INTO tag(name)
+              VALUES ($1)
+              RETURNING id, name
+          `, [name]);
+        }
+
+        const tagId = tag.rows[0].id;
+
+        await this.pool.query(`
+            INSERT INTO trade_tag(trade_id, tag_id)
+            VALUES ($1, $2)
+        `, [id, tagId]);
       }
+    }
+    catch (error) {
+      logError(error, "Failed to add trade legs");
+    }
+  }
 
-      const tagId = tag.rows[0].id;
-
+  public async deleteTradeById(id: number) {
+    try {
       await this.pool.query(`
-          INSERT INTO trade_tag(trade_id, tag_id)
-          VALUES ($1, $2)
-      `, [id, tagId]);
+          DELETE
+          FROM trade
+          WHERE id = $1
+      `, [id]);
+    }
+    catch (error) {
+      logError(error, "Failed to delete trade");
     }
   }
 }

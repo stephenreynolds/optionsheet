@@ -188,3 +188,31 @@ export const updateTradeById = async (request: Request, response: Response) => {
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update project.");
   }
 };
+
+// DELETE /trades/:id
+export const deleteTradeById = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const id = Number(request.params.id);
+
+    const trade = await dataService.trades.getTradeById(id);
+    if (trade) {
+      const project = await dataService.projects.getProjectById(trade.project_id);
+      const user = await dataService.users.getUserByUUID(project.user_uuid);
+
+      const userUUID = request.body.userUUID;
+
+      if (userUUID !== user.uuid) {
+        return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+      }
+
+      await dataService.trades.deleteTradeById(trade.id);
+    }
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    logError(error, "Failed to delete trade");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete trade.");
+  }
+};

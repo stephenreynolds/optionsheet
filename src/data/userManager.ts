@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import config from "../config";
-import logger from "../logger";
+import { logError } from "../error";
 import { UserCreateModel } from "./models/user";
 
 export class UserManager {
@@ -23,7 +23,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to add user");
       throw error;
     }
   }
@@ -39,7 +39,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to get user by UUID");
       throw error;
     }
   }
@@ -55,7 +55,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to get user by username");
       throw error;
     }
   }
@@ -71,7 +71,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to get user by email");
       throw error;
     }
   }
@@ -84,7 +84,7 @@ export class UserManager {
       `, [userUUID, roleID]);
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to add user role");
       throw error;
     }
   }
@@ -97,7 +97,7 @@ export class UserManager {
           ON CONFLICT DO NOTHING`, [name]);
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to add role");
       throw error;
     }
   }
@@ -113,7 +113,25 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to get role by name");
+      throw error;
+    }
+  }
+
+  public async getUserRoles(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+        SELECT role.id, role.name
+        FROM user_role
+        INNER JOIN role
+        ON user_role.role_id = role.id
+        WHERE user_id = $1
+      `, [userUUID]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get user roles");
       throw error;
     }
   }
@@ -133,7 +151,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to add refresh token");
       throw error;
     }
   }
@@ -149,7 +167,7 @@ export class UserManager {
       return res.rows[0];
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to get refresh token");
       throw error;
     }
   }
@@ -163,7 +181,7 @@ export class UserManager {
       `, [token]);
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to delete refresh token");
       throw error;
     }
   }
@@ -175,7 +193,7 @@ export class UserManager {
       });
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to create token");
       throw error;
     }
   }
@@ -195,7 +213,7 @@ export class UserManager {
       return await this.addRefreshToken(user.uuid, uuidv4(), expiredAt);
     }
     catch (error) {
-      logger.error(error.message);
+      logError(error, "Failed to create refresh token");
       throw error;
     }
   }

@@ -2,11 +2,28 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UserCreateModel } from "../../data/models/user";
-import { sendError } from "../../error";
-import logger from "../../logger";
+import { logError, sendError } from "../../error";
 import Request from "../../request";
 import bcrypt from "bcrypt";
-import { AuthTokenDto } from "./usersDtos";
+import { AuthTokenDto, GetUserDto } from "./usersDtos";
+
+const getUserDetails = async (user, dataService): Promise<GetUserDto> => {
+  const roles = await dataService.users.getUserRoles(user.uuid);
+  const isAdmin = roles.filter((role) => role.name === "admin").length > 0;
+
+  return {
+    username: user.username,
+    url: `https://api.optionsheet.net/users/${user.username}`,
+    html_url: `https://optionsheet.net/${user.username}`,
+    projects_url: `https://optionsheet.net/${user.username}/projects`,
+    email: user.email,
+    avatar_url: user.avatarUrl,
+    bio: user.bio,
+    created_on: new Date(user.created_on),
+    updated_on: new Date(user.updated_on),
+    is_admin: isAdmin
+  };
+};
 
 const emailIsValid = (email: string) => {
   const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
@@ -76,7 +93,24 @@ export const createUser = async (request: Request, response: Response) => {
     response.send(res);
   }
   catch (error) {
-    logger.error(error.message);
+    logError(error, "Failed to create user");
+    sendError(request, response, error, "Failed to create user");
+  }
+};
+
+// GET /users/:username
+export const getUser = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const { username } = request.params;
+    const user = await dataService.users.getUserByUsername(username);
+
+    const res = await getUserDetails(user, dataService);
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to get user");
     sendError(request, response, error, "Failed to create user");
   }
 };

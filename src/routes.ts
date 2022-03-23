@@ -4,6 +4,7 @@ import * as auth from "./endpoints/auth/auth";
 import * as user from "./endpoints/user/user";
 import * as users from "./endpoints/users/users";
 import * as projects from "./endpoints/projects/projects";
+import * as trades from "./endpoints/trades/trades";
 
 const router = Router();
 
@@ -32,5 +33,7 @@ router.get("/projects/:username", projects.getProjects);
 router.get("/projects/:username/:project", projects.getProjectByName);
 router.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
 router.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
+router.post("/projects/:username/:project", [verifyJwtToken], trades.addTrade
+);
 
 export default router;

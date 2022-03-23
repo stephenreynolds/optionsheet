@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS trade
 DO
 $$
     BEGIN
-        CREATE TYPE side AS ENUM ('buy', 'sell');
+        CREATE TYPE side AS ENUM ('Buy', 'Sell');
     EXCEPTION
         WHEN duplicate_object THEN null;
     END
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS leg
     id          INTEGER        NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     quantity    INTEGER        NOT NULL,
     open_price  NUMERIC(10, 2) NOT NULL,
-    close_price NUMERIC(10, 2) NOT NULL,
+    close_price NUMERIC(10, 2),
     side        side           NOT NULL,
     trade_id    INTEGER        NOT NULL,
 
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS leg
 DO
 $$
     BEGIN
-        CREATE TYPE put_call AS ENUM ('put', 'call');
+        CREATE TYPE put_call AS ENUM ('Put', 'Call');
     EXCEPTION
         WHEN duplicate_object THEN null;
     END

@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import logger from "../logger";
+import { UserManager } from "./userManager";
 
 export class Database {
   private readonly pool: Pool;
@@ -13,12 +14,16 @@ export class Database {
       password: process.env.DB_PASSWORD
     });
 
-    this.seedData();
+    this.users = new UserManager(this.pool);
+
+    this.seedData().then();
   }
 
-  private seedData() {
+  public users: UserManager;
+
+  private async seedData() {
     try {
-      this.pool.query("CALL add_role($1)", ["user"]);
+      await this.users.addRole("user");
     }
     catch (error) {
       logger.error(error.message);

@@ -1,9 +1,9 @@
-import { Project } from "../../data/entities/project";
-import { Trade } from "../../data/entities/trade";
-import { User } from "../../data/entities/user";
+import { GetProjectDto } from "../projects/projectDtos";
+import { GetTradeDto } from "../trades/tradeDtos";
+import { GetUserDto } from "../users/usersDtos";
 
 export interface SearchDto {
-  items: Trade[] | Project[] | User[];
+  items: GetTradeDto[] | GetProjectDto[] | GetUserDto[];
   counts: {
     trades: number;
     projects: number;

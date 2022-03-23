@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { CreateTradeModel, TradeUpdateModel } from "../../data/models/trade";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { GetTradeDto } from "./tradeDtos";
@@ -8,127 +9,143 @@ import { GetTradeDto } from "./tradeDtos";
 export const getTrades = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const username = request.params.username;
-    const user = await dataService.getUserByName(username);
+    const { username, project: projectName } = request.params;
 
+    const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-      return;
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const projectName = request.params.project;
-    const project = await dataService.getProject(user.id, projectName);
-
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "Project does not exist");
-      return;
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const trades = await dataService.getTradesByProject(project);
+    const trades = await dataService.trades.getTradesByProject(project.id);
 
-    const res: GetTradeDto[] = trades.map((trade) => {
-      return {
-        ...trade,
-        legs: trade.legs.map((leg) => {
-          return {
-            ...leg,
-            quantity: Number(leg.quantity),
-            strike: Number(leg.strike),
-            openPrice: Number(leg.openPrice),
-            closePrice: leg.closePrice ? Number(leg.closePrice) : null
-          };
-        })
-      };
-    });
+    const res: GetTradeDto[] = await Promise.all(
+      trades.map(async (trade) => {
+        const legs = await dataService.trades.getLegsByTradeId(trade.id);
+        const tags = await dataService.trades.getTradeTags(trade.id);
+
+        return {
+          id: trade.id,
+          symbol: trade.symbol,
+          open_date: new Date(trade.open_date),
+          close_date: trade.close_date ? new Date(trade.close_date) : undefined,
+          opening_note: trade.opening_note ?? undefined,
+          closing_note: trade.closing_note ?? undefined,
+          legs: legs.map((leg) => {
+            return {
+              side: leg.side,
+              quantity: Number(leg.quantity),
+              open_price: Number(leg.open_price),
+              closePrice: leg.close_price ? Number(leg.close_price) : undefined,
+              strike: leg.strike ? Number(leg.strike) : undefined,
+              expiration: leg.expiration ? new Date(leg.expiration) : undefined,
+              put_call: leg.put_call ?? undefined
+            };
+          }),
+          tags: tags.map((tag) => tag.name),
+          project_id: trade.project_id
+        };
+      })
+    );
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to get trades";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get trades");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get trades.");
   }
 };
 
 // GET /trades/:id
 export const getTrade = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const id = Number(request.params.id);
-    const trade = await dataService.getTradeById(id);
+    const dataService = request.dataService;
 
+    const trade = await dataService.trades.getTradeById(id);
     if (!trade) {
-      sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
-      return;
+      return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
     }
 
-    const res: GetTradeDto = {
-      ...trade,
-      legs: trade.legs.map((leg) => {
-        return {
-          ...leg,
-          quantity: Number(leg.quantity),
-          strike: Number(leg.strike),
-          openPrice: Number(leg.openPrice),
-          closePrice: leg.closePrice ? Number(leg.closePrice) : null
-        };
-      })
-    };
+    const legs = await dataService.trades.getLegsByTradeId(trade.id);
+    const tags = await dataService.trades.getTradeTags(trade.id);
 
-    console.log("wat");
+    const res: GetTradeDto = {
+      id: trade.id,
+      symbol: trade.symbol,
+      open_date: new Date(trade.open_date),
+      close_date: trade.close_date ? new Date(trade.close_date) : undefined,
+      opening_note: trade.opening_note ?? undefined,
+      closing_note: trade.closing_note ?? undefined,
+      legs: legs.map((leg) => {
+        return {
+          side: leg.side,
+          quantity: Number(leg.quantity),
+          open_price: Number(leg.open_price),
+          closePrice: leg.close_price ? Number(leg.close_price) : undefined,
+          strike: leg.strike ? Number(leg.strike) : undefined,
+          expiration: leg.expiration ? new Date(leg.expiration) : undefined,
+          put_call: leg.put_call ?? undefined
+        };
+      }),
+      tags: tags.map((tag) => tag.name),
+      project_id: trade.project_id
+    };
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to get trade by id";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get trade by id");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get trade.");
   }
 };
 
 // POST /projects/:username/:project
 export const addTrade = async (request: Request, response: Response) => {
-  const dataService = request.dataService;
-  const username = request.params.username;
-  const projectName = request.params.project;
-
-  const user = await dataService.getUserByName(username);
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-    return;
-  }
-
-  const project = await dataService.getProject(user.id, projectName);
-  if (!project) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
-    return;
-  }
-
-  const { symbol, openDate, legs } = request.body;
-
-  if (!(symbol && openDate && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].openPrice >= 0)) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "A trade was not provided.");
-    return;
-  }
-
   try {
-    const legs = request.body.legs;
+    const dataService = request.dataService;
+    const { username, project: projectName } = request.params;
+    const userUUID = request.body.userUUID;
 
-    const trade = {
-      ...request.body,
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
+
+    if (userUUID !== user.uuid) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
+    }
+
+    const { symbol, open_date, opening_note, legs, tags } = request.body;
+
+    if (!(symbol && open_date && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].open_price >= 0)) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "A trade was not provided.");
+    }
+
+    const model: CreateTradeModel = {
+      symbol: symbol.toUpperCase(),
+      open_date,
+      opening_note: opening_note ?? undefined,
       legs,
-      project
+      tags
     };
-    await dataService.saveTrade(trade);
 
-    await dataService.onProjectUpdated(project);
+    await dataService.trades.addTrade(project.id, model);
 
     response.sendStatus(StatusCodes.CREATED);
   }
   catch (error) {
-    const message = "Failed to add trade";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to add trade");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to add trade.");
   }
 };
 
@@ -138,36 +155,37 @@ export const updateTradeById = async (request: Request, response: Response) => {
     const dataService = request.dataService;
     const id = Number(request.params.id);
 
-    let trade = await dataService.getTradeById(id);
-
+    const trade = await dataService.trades.getTradeById(id);
     if (!trade) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { userId, ...updatedTrade } = request.body;
+    const project = await dataService.projects.getProjectById(trade.project_id);
+    const user = await dataService.users.getUserByUUID(project.user_uuid);
 
-    const project = await dataService.getProjectById(trade.projectId);
-    const tradeUser = await dataService.getUserById(project.userId);
-    if (userId !== tradeUser.id) {
+    const { userUUID, ...updateData } = request.body;
+
+    if (userUUID !== user.uuid) {
       return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
     }
 
-    trade = {
-      ...trade,
-      ...updatedTrade
+    const model: TradeUpdateModel = {
+      symbol: updateData.symbol ?? undefined,
+      open_date: updateData.open_date ? new Date(updateData.open_date) : undefined,
+      close_date: updateData.close_date ? new Date(updateData.close_date) : undefined,
+      opening_note: updateData.opening_note ?? undefined,
+      closing_note: updateData.closing_note ?? undefined,
+      legs: updateData.legs ?? undefined,
+      tags: updateData.tags ?? undefined
     };
 
-    await dataService.saveTrade(trade);
-
-    await dataService.onProjectUpdated(project);
+    await dataService.trades.updateTrade(trade.id, model);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to update trade";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to update project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update project.");
   }
 };
 
@@ -176,29 +194,25 @@ export const deleteTradeById = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
     const id = Number(request.params.id);
-    const trade = await dataService.getTradeById(id);
 
-    if (!trade) {
-      response.sendStatus(StatusCodes.NO_CONTENT);
-      return;
+    const trade = await dataService.trades.getTradeById(id);
+    if (trade) {
+      const project = await dataService.projects.getProjectById(trade.project_id);
+      const user = await dataService.users.getUserByUUID(project.user_uuid);
+
+      const userUUID = request.body.userUUID;
+
+      if (userUUID !== user.uuid) {
+        return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+      }
+
+      await dataService.trades.deleteTradeById(trade.id);
     }
-
-    const project = await dataService.getProjectById(trade.projectId);
-    const tradeUser = await dataService.getUserById(project.userId);
-    const userId = request.body.userId;
-    if (tradeUser.id !== userId) {
-      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
-    }
-
-    await dataService.deleteTrade(id);
-
-    await dataService.onProjectUpdated(project);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to delete trade";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to delete trade");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete trade.");
   }
 };

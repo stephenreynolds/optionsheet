@@ -1,12 +1,20 @@
-import { PutCall, Side } from "../../data/entities/leg";
+enum Side {
+  Buy = "Buy",
+  Sell = "Sell"
+}
+
+enum PutCall {
+  Put = "Put",
+  Call = "Call"
+}
 
 interface LegDto {
   id: number;
   side: Side;
   quantity: number;
-  openPrice: number;
-  closePrice?: number;
-  putCall?: PutCall;
+  open_price: number;
+  close_price?: number;
+  put_call?: PutCall;
   expiration?: Date;
   strike?: number;
 }
@@ -14,10 +22,11 @@ interface LegDto {
 export interface GetTradeDto {
   id: number;
   symbol: string;
-  openDate: Date;
-  closeDate?: Date;
-  openingNote?: string;
-  closingNote?: string;
+  open_date: Date;
+  close_date?: Date;
+  opening_note?: string;
+  closing_note?: string;
   tags?: string[];
   legs: LegDto[];
+  project_id: number;
 }

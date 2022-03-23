@@ -1,67 +1,45 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { UserUpdateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import { GetUserDto, StarredProjectDto } from "./userDtos";
+import { GetProjectDto } from "../projects/projectDtos";
+import { getUserDetails } from "../users/users";
 
-export const getUserDetails = (user): GetUserDto => {
-  const isAdmin = !!user.roles.find(role => role.name === "admin");
+const emailIsValid = (email: string) => {
+  const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
+  return email.length < 255 && emailRegex.test(email);
+};
 
-  return {
-    username: user.username,
-    url: `https://api.optionsheet.net/users/${user.username}`,
-    html_url: `https://optionsheet.net/${user.username}`,
-    projects_url: `https://optionsheet.net/${user.username}/projects`,
-    email: user.email,
-    avatar_url: user.avatarUrl,
-    bio: user.bio,
-    created_on: new Date(user.createdOn),
-    updated_on: new Date(user.updatedOn),
-    is_admin: isAdmin
-  };
+const passwordIsValid = (password: string) => {
+  const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/;
+  return passwordRegex.test(password);
 };
 
 // GET /user
 export const get = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const id = request.body.userId;
-    const user = await dataService.getUserById(id);
+    const { userUUID } = request.body;
+    const user = await dataService.users.getUserByUUID(userUUID);
 
-    const userDetails = getUserDetails(user);
+    const res = await getUserDetails(user, dataService);
 
-    response.status(StatusCodes.OK).send(userDetails);
+    response.send(res);
   }
   catch (error) {
-    const message = "Failed to get user";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get authenticated user");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get authenticated user.");
   }
 };
 
-interface UserUpdateModel {
-  username?: string;
-  email?: string;
-  bio?: string;
-  passwordHash?: string;
-}
-
-const passwordIsValid = (password: string) => {
-  const passwordRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])/;
-  return password.length >= 8 && passwordRegex.test(password);
-};
-
-const emailIsValid = (email: string) => {
-  const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
-  return email.length <= 320 && emailRegex.test(email);
-};
-
-// PATCH /user
+// PATH /user
 export const update = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const id = request.body.userId;
+    const userUUID = request.body.userUUID;
+    const user = await dataService.users.getUserByUUID(userUUID);
 
     let updateModel: UserUpdateModel = {};
 
@@ -69,38 +47,11 @@ export const update = async (request: Request, response: Response) => {
     const username = request.body.username;
     if (username) {
       // Check that no user already has that username.
-      const match = await dataService.getUserByName(username);
+      const match = await dataService.users.getUserByUsername(username);
       if (match) {
-        sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
-        return;
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
       }
-
       updateModel = { ...updateModel, username };
-    }
-
-    // Change password if given.
-    const password = request.body.password;
-    const confirmPassword = request.body.confirm;
-    const currentPassword = request.body.currentPassword;
-    if (password) {
-      if (password !== confirmPassword) {
-        return sendError(request, response, StatusCodes.BAD_REQUEST, "Password and confirmation do not match.");
-      }
-
-      const user = await dataService.getUserById(id);
-      const validated = await bcrypt.compare(currentPassword, user.passwordHash);
-      if (!validated) {
-        return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
-      }
-
-      // Check for valid password.
-      if (!passwordIsValid(password)) {
-        sendError(request, response, StatusCodes.BAD_REQUEST, "Password is too weak.");
-        return;
-      }
-
-      const passwordHash = await bcrypt.hash(password, 12);
-      updateModel = { ...updateModel, passwordHash };
     }
 
     // Change email if given.
@@ -108,18 +59,40 @@ export const update = async (request: Request, response: Response) => {
     if (email) {
       // Check for valid email address.
       if (!emailIsValid(email)) {
-        sendError(request, response, StatusCodes.BAD_REQUEST, "Email is invalid.");
-        return;
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "Email is invalid.");
       }
 
-      // Check that no user already has that username.
-      const match = await dataService.getUserByEmail(email);
+      // Check that no user already has that email.
+      const match = await dataService.users.getUserByEmail(email);
       if (match) {
-        sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
-        return;
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
       }
 
       updateModel = { ...updateModel, email };
+    }
+
+    // Change password if given.
+    const { password, confirm, currentPassword } = request.body;
+    if (password) {
+      if (password !== confirm) {
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "Password and confirm password do not match.");
+      }
+
+      if (!currentPassword) {
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "Current password required.");
+      }
+
+      const validated = await bcrypt.compare(currentPassword, user.password_hash);
+      if (!validated) {
+        return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
+      }
+
+      if (!passwordIsValid(password)) {
+        return sendError(request, response, StatusCodes.BAD_REQUEST, "Password is too weak.");
+      }
+
+      const password_hash = await bcrypt.hash(password, 12);
+      updateModel = { ...updateModel, password_hash };
     }
 
     // Change bio if given.
@@ -128,155 +101,151 @@ export const update = async (request: Request, response: Response) => {
       updateModel = { ...updateModel, bio };
     }
 
-    await dataService.updateUserById(id, updateModel);
-    const updatedUser = await dataService.getUserById(id);
+    // Change avatar url if given.
+    const avatar_url = request.body.avatar_url;
+    if (avatar_url) {
+      updateModel = { ...updateModel, avatar_url };
+    }
 
-    const userDetails = getUserDetails(updatedUser);
+    const updatedUser = await dataService.users.updateUser(userUUID, updateModel);
+    const res = await getUserDetails(updatedUser, dataService);
 
-    response.status(StatusCodes.OK).send(userDetails);
+    response.send(res);
   }
   catch (error) {
-    const message = "Failed to update user";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to update user");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user.");
   }
 };
 
 // DELETE /user
-export const deleteAccount = async (request: Request, response: Response) => {
+export const deleteUser = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const id = request.body.userId;
+    const userUUID = request.body.userUUID;
 
-    await dataService.deleteUserById(id);
+    await dataService.users.deleteUser(userUUID);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to delete user";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to delete user");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user.");
   }
 };
 
 // GET /user/starred
 export const getStarredProjects = async (request: Request, response: Response) => {
   try {
+    const userUUID = request.body.userUUID;
     const dataService = request.dataService;
 
-    const userId = request.body.userId;
+    const user = await dataService.users.getUserByUUID(userUUID);
+    const projects = await dataService.users.getStarredProjects(userUUID);
 
-    const stars = await dataService.getStarredProjects(userId);
-
-    const res: StarredProjectDto[] = await Promise.all(stars.map(async (star) => {
-      const project = await dataService.getProjectById(star.projectId);
-      return {
-        name: project.name,
-        description: project.description,
-        tags: project.tags,
-        lastEdited: new Date(project.lastEdited),
-        username: project.user.username
-      };
-    }));
+    const res: GetProjectDto[] = await Promise.all(
+      projects.map(async (project) => {
+        const tags = await dataService.projects.getProjectTags(project.id);
+        return {
+          name: project.name,
+          username: user.username,
+          description: project.description ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
+          risk: project.risk ?? undefined,
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
+          tags: tags.map((t) => t.name) ?? undefined
+        };
+      }));
 
     return response.send(res);
   }
   catch (error) {
-    const message = "Failed to get starred projects";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get starred projects");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get starred projects.");
   }
 };
 
 // GET /user/starred/:owner/:project
 export const isProjectStarred = async (request: Request, response: Response) => {
   try {
-    const ownerUsername = request.params.owner;
-    const projectName = request.params.project;
-
+    const { owner: ownerUsername, project: projectName } = request.params;
     const dataService = request.dataService;
-    const owner = await dataService.getUserByName(ownerUsername);
+
+    const owner = await dataService.users.getUserByUsername(ownerUsername);
     if (!owner) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.getProject(owner.id, projectName);
+    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const userId = request.body.userId;
-
-    const isStarred = await dataService.getStarredProject(userId, project.id);
-    if (!isStarred) {
+    const userUUID = request.body.userUUID;
+    const starredProject = await dataService.users.getStarredProject(userUUID, project.id);
+    if (!starredProject) {
       return response.sendStatus(StatusCodes.NOT_FOUND);
     }
 
-    return response.sendStatus(StatusCodes.NO_CONTENT);
+    response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to check if project is starred by user";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to check if project is starred by user");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to check if project is starred.");
   }
 };
 
 // PUT /user/starred/:owner/:project
 export const starProject = async (request: Request, response: Response) => {
   try {
-    const ownerUsername = request.params.owner;
-    const projectName = request.params.project;
-
+    const { owner: ownerUsername, project: projectName } = request.params;
     const dataService = request.dataService;
-    const owner = await dataService.getUserByName(ownerUsername);
+
+    const owner = await dataService.users.getUserByUsername(ownerUsername);
     if (!owner) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.getProject(owner.id, projectName);
+    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const userId = request.body.userId;
-
-    await dataService.starProject(userId, project.id);
+    const userUUID = request.body.userUUID;
+    await dataService.users.starProject(userUUID, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to star project";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to star project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to star project.");
   }
 };
 
 // DELETE /user/starred/:owner/:project
 export const unStarProject = async (request: Request, response: Response) => {
   try {
-    const ownerUsername = request.params.owner;
-    const projectName = request.params.project;
-
+    const { owner: ownerUsername, project: projectName } = request.params;
     const dataService = request.dataService;
-    const owner = await dataService.getUserByName(ownerUsername);
+
+    const owner = await dataService.users.getUserByUsername(ownerUsername);
     if (!owner) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.getProject(owner.id, projectName);
+    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const userId = request.body.userId;
-
-    await dataService.unStarProject(userId, project.id);
+    const userUUID = request.body.userUUID;
+    await dataService.users.unStarProject(userUUID, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to un-star project";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to un-star project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to un-star project.");
   }
 };

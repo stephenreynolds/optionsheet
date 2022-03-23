@@ -1,39 +1,43 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import { ProjectCreateModel, ProjectUpdateModel } from "../../data/models/project";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import { CreateProjectDto, GetProjectByNameDto, GetProjectDto } from "./projectDtos";
+import { CreateProjectDto, GetProjectDto } from "./projectDtos";
 
 // GET /projects/:username
 export const getProjects = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const username = request.params.username;
-    const user = await request.dataService.getUserByName(username);
+    const { username } = request.params;
 
+    const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-      return;
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
     }
 
-    const projects = await dataService.getProjectsByUserId(user.id);
+    const projects = await dataService.projects.getUserProjects(user.uuid);
 
-    const res: GetProjectDto = projects.map((project) => {
-      return {
-        name: project.name,
-        description: project.description,
-        tags: project.tags,
-        lastEdited: new Date(project.lastEdited),
-        username: project.user.username
-      };
-    });
+    const res: GetProjectDto[] = await Promise.all(
+      projects.map(async (project) => {
+        const tags = await dataService.projects.getProjectTags(project.id);
+        return {
+          name: project.name,
+          username: user.username,
+          description: project.description ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
+          risk: project.risk ?? undefined,
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
+          tags: tags.map((t) => t.name) ?? undefined
+        };
+      }));
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to get projects";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get user's projects");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get projects.");
   }
 };
 
@@ -41,145 +45,137 @@ export const getProjects = async (request: Request, response: Response) => {
 export const getProjectByName = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    const username = request.params.username;
-    const projectName = request.params.project;
+    const { username, project: projectName } = request.params;
 
-    const user = await dataService.getUserByName(username);
+    const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-      return;
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
     }
 
-    const project = await dataService.getProject(user.id, projectName);
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
-      return;
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
     }
 
-    const res: GetProjectByNameDto = {
+    const tags = await dataService.projects.getProjectTags(project.id);
+
+    const res: GetProjectDto = {
       name: project.name,
-      description: project.description,
-      startingBalance: project.startingBalance ? Number(project.startingBalance) : null,
-      tags: project.tags,
-      lastEdited: new Date(project.lastEdited),
-      risk: project.risk ? Number(project.risk) : null
+      username: user.username,
+      description: project.description ?? undefined,
+      starting_balance: Number(project.starting_balance) ?? undefined,
+      risk: Number(project.risk) ?? undefined,
+      created_on: new Date(project.created_on),
+      last_edited: new Date(project.updated_on),
+      tags: tags.map((t) => t.name) ?? undefined
     };
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to get project by name";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to get project by name");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get project by name.");
   }
 };
 
 // POST /projects
 export const createProject = async (request: Request, response: Response) => {
   try {
+    const userUUID = request.body.userUUID;
+    const name = request.body.name.trim();
     const dataService = request.dataService;
-    let name = request.body.name;
-    const description = request.body.description;
-    const startingBalance = request.body.startingBalance;
-    const tags = request.body.tags;
-    const userId = request.body.userId;
 
-    // Check that the user does not already have a project with this name.
-    const projectExists = await dataService.getProject(userId, name);
-    if (projectExists) {
-      sendError(request, response, StatusCodes.BAD_REQUEST, "A project with that name already exists.");
-      return;
+    // Check that the user does not already have a project with that name.
+    const existingProject = await dataService.projects.getProjectByName(userUUID, name);
+    if (existingProject) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "A project with that name already exists.");
     }
 
-    // Trim whitespace from name.
-    name = name.trim();
-
-    const project = {
+    const model: ProjectCreateModel = {
       name,
-      description,
-      startingBalance: startingBalance ? startingBalance : null,
-      tags,
-      user: userId,
-      lastEdited: new Date()
+      description: request.body.description.trim(),
+      starting_balance: request.body.starting_balance,
+      tags: request.body.tags
     };
 
-    await dataService.saveProject(project);
+    await dataService.projects.addProject(userUUID, model);
 
-    const user = await dataService.getUserById(userId);
+    const { username } = await dataService.users.getUserByUUID(userUUID);
     const res: CreateProjectDto = {
-      projectUrl: `/${user.username}/${project.name}`
+      project_url: `/${username}/${encodeURIComponent(name)}`
     };
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to create project";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to create project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create project.");
   }
 };
 
 // PATCH /projects/:username/:project
 export const updateProject = async (request: Request, response: Response) => {
-  const dataService = request.dataService;
-  const username = request.params.username;
-  const projectName = request.params.project;
-
-  const user = await dataService.getUserByName(username);
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-    return;
-  }
-
-  const project = await dataService.getProject(user.id, projectName);
-  if (!project) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
-    return;
-  }
-
   try {
-    delete request.body.userId;
-    const updatedData = request.body;
+    const dataService = request.dataService;
+    const { username, project: projectName } = request.params;
 
-    const updatedProject = {
-      ...project,
-      ...updatedData
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+    }
+
+    const { userUUID, ...newData } = request.body;
+    if (userUUID !== user.uuid) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
+    }
+
+    const model: ProjectUpdateModel = {
+      name: newData.name,
+      description: newData.description,
+      starting_balance: newData.starting_balance,
+      risk: newData.starting_balance
     };
 
-    await dataService.saveProject(updatedProject);
-
-    await dataService.onProjectUpdated(project);
+    await dataService.projects.updateProject(project.id, model);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to update project";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to update project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update project.");
   }
 };
 
 // DELETE /projects/:username/:project
-export const deleteProjectByName = async (request: Request, response: Response) => {
-  const dataService = request.dataService;
-  const username = request.params.username;
-  const projectName = request.params.project;
-
-  const user = await dataService.getUserByName(username);
-  if (!user) {
-    sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-    return;
-  }
-
+export const deleteProject = async (request: Request, response: Response) => {
   try {
-    const project = await dataService.getProject(user.id, projectName);
-    await request.dataService.deleteProject(project);
+    const dataService = request.dataService;
+    const { userUUID } = request.body;
+    const { username, project: projectName } = request.params;
+
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+    }
+
+    if (userUUID !== user.uuid) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    if (project) {
+      await dataService.projects.deleteProject(project.id);
+    }
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
   catch (error) {
-    const message = "Failed to delete project";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to delete project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete project.");
   }
 };

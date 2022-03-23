@@ -4,6 +4,7 @@ import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { SearchDto } from "./searchDtos";
 
+// GET /search
 export const searchAll = async (request: Request, response: Response) => {
   try {
     const query = request.query;
@@ -22,39 +23,38 @@ export const searchAll = async (request: Request, response: Response) => {
     let items = [];
 
     if (type === "trade" || !type) {
-      items = await dataService.getTradesBySymbol(term, limit, page - 1);
+      items = await dataService.trades.getTradesBySymbol(term, limit, page - 1);
     }
     else if (type === "project") {
-      const projects = await dataService.getProjectsByName(term, limit, page - 1);
+      const projects = await dataService.projects.getProjectsByName(term, limit, page - 1);
       items = projects.map((project) => {
         return {
           name: project.name,
           description: project.description,
           tags: project.tags,
-          lastEdited: new Date(project.lastEdited),
-          username: project.user.username,
+          updated_on: new Date(project.updated_on),
+          username: project.username,
           trades: project.trades
         };
       });
     }
     else if (type === "user") {
-      items = await dataService.getUsersByUsername(term, limit, page - 1);
+      items = await dataService.users.getUsersByUsername(term, limit, page - 1);
     }
 
     const res: SearchDto = {
       items,
       counts: {
-        trades: await dataService.getTradeMatches(term),
-        projects: await dataService.getProjectMatches(term),
-        users: await dataService.getUserMatches(term)
+        trades: await dataService.trades.getTradeMatches(term),
+        projects: await dataService.projects.getProjectMatches(term),
+        users: await dataService.users.getUserMatches(term)
       }
     };
 
     response.send(res);
   }
   catch (error) {
-    const message = "Failed to search";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to search");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to search.");
   }
 };

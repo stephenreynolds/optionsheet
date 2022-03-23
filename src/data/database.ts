@@ -1,52 +1,38 @@
-export interface Database {
-  // User
-  getUserById(id: number);
-  getUserByName(username: string);
-  getUserByEmail(email: string);
-  saveUser(user);
-  updateUserById(id: number, user);
-  deleteUserById(id: number);
+import { Pool } from "pg";
+import logger from "../logger";
+import { ProjectManager } from "./projectManager";
+import { TradeManager } from "./tradeManager";
+import { UserManager } from "./userManager";
 
-  // Role
-  getRoleByName(name: string);
+export class Database {
+  private readonly pool: Pool;
 
-  // Refresh token
-  getRefreshToken(refreshToken: string);
-  removeRefreshToken(refreshToken);
+  constructor() {
+    this.pool = new Pool({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD
+    });
 
-  // Project
-  getProjectsByUserId(userId: number);
-  getProject(userId: number, name: string);
-  getProjectById(id: number);
-  saveProject(project);
-  deleteProject(project);
-  onProjectUpdated(project);
+    this.users = new UserManager(this.pool);
+    this.projects = new ProjectManager(this.pool);
+    this.trades = new TradeManager(this.pool);
 
-  // Trade
-  getTradesByProject(project);
-  getTradeById(id: number);
-  getTradeWithProject(id: number);
-  saveTrade(trade);
-  deleteTrade(id: number);
+    this.seedData().then();
+  }
 
-  // Tokens
-  createToken(user): Promise<string>
-  createRefreshToken(user): Promise<string>;
+  public users: UserManager;
+  public projects: ProjectManager;
+  public trades: TradeManager;
 
-  // Tags
-  createTag(name: string);
-
-  // Search
-  getTradesBySymbol(symbol: string, limit?: number, offset?: number);
-  getProjectsByName(name: string, limit?: number, offset?: number);
-  getUsersByUsername(username: string, limit?: number, offset?: number);
-  getTradeMatches(term: string);
-  getProjectMatches(term: string);
-  getUserMatches(term: string);
-
-  // Stars
-  starProject(userId: number, projectId: number);
-  unStarProject(userId: number, projectId: number);
-  getStarredProject(userId: number, projectId: number);
-  getStarredProjects(userId: number);
+  private async seedData() {
+    try {
+      await this.users.addRole("user");
+    }
+    catch (error) {
+      logger.error(error.message);
+    }
+  }
 }

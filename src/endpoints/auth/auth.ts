@@ -1,3 +1,4 @@
+// POST /auth
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -5,53 +6,49 @@ import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { AuthTokenDto, AvailableDto } from "./authDtos";
 
-// POST /auth
 export const authenticate = async (request: Request, response: Response) => {
   try {
-    const username = request.body.username;
-    const email = request.body.email;
-    const password = request.body.password;
+    const { username, email, password } = request.body;
 
     let user;
-
     const dataService = request.dataService;
+
     if (username) {
-      user = await dataService.getUserByName(username);
+      user = await dataService.users.getUserByUsername(username);
     }
     else if (email) {
-      user = await dataService.getUserByEmail(email);
+      user = await dataService.users.getUserByEmail(email);
     }
     else {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "Need username or email to authenticate.");
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "Username or email is required.");
     }
 
     if (!password) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "Need password to authenticate.");
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "Password is required.");
     }
 
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+    const passwordIsValid = await bcrypt.compare(password, user.password_hash);
     if (!passwordIsValid) {
       return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
     }
 
-    const token = await dataService.createToken(user);
-    const refreshToken = await dataService.createRefreshToken(user);
+    const token = await dataService.users.createToken(user.uuid);
+    const { refresh_token: refreshToken } = await dataService.users.createRefreshToken(user.uuid);
 
-    const dto: AuthTokenDto = {
+    const res: AuthTokenDto = {
       token,
       refreshToken
     };
 
-    response.status(StatusCodes.OK).send(dto);
+    response.send(res);
   }
   catch (error) {
-    const message = "Failed to authenticate";
-    logError(error, message);
-    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to authenticate");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to authenticate.");
   }
 };
 
@@ -59,38 +56,33 @@ export const authenticate = async (request: Request, response: Response) => {
 export const refreshToken = async (request: Request, response: Response) => {
   try {
     if (!request.body.refreshToken) {
-      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token not provided");
-      return;
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token not provided.");
     }
 
     const dataService = request.dataService;
 
-    const refreshToken = await dataService.getRefreshToken(request.body.refreshToken);
-    if (!refreshToken) {
-      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid");
-      return;
+    const { refresh_token, refresh_token_expiry } = await dataService.users.getRefreshToken(request.body.refreshToken);
+    if (!refresh_token) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid.");
     }
 
-    if (refreshToken.expired) {
-      await dataService.removeRefreshToken(refreshToken);
-      sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired");
-      return;
+    const expired = new Date(refresh_token_expiry).getTime() < new Date().getTime();
+    if (expired) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token is expired.");
     }
 
-    const user = refreshToken.user;
-    const newToken = await dataService.createToken(user);
+    const newToken = await dataService.users.createTokenFromRefreshToken(refresh_token);
 
-    const dto: AuthTokenDto = {
+    const res: AuthTokenDto = {
       token: newToken,
-      refreshToken: refreshToken.token
+      refreshToken: refresh_token
     };
 
-    response.send(dto);
+    response.send(res);
   }
   catch (error) {
-    const message = "Failed to refresh token";
-    logError(error, message);
-    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to refresh token");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to refresh token.");
   }
 };
 
@@ -98,22 +90,23 @@ export const refreshToken = async (request: Request, response: Response) => {
 export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
-    let available = true;
-
-    if (request.query.email) {
-      const email = request.query.email.toString();
-      const userWithEmail = await dataService.getUserByEmail(email);
-      available = !userWithEmail;
-    }
+    let usernameAvailable = true;
+    let emailAvailable = true;
 
     if (request.query.username) {
       const username = request.query.username.toString();
-      const userWithName = await dataService.getUserByName(username);
-      available = !userWithName;
+      const userWithName = await dataService.users.getUserByUsername(username);
+      usernameAvailable = !userWithName;
+    }
+
+    if (request.query.email) {
+      const email = request.query.email.toString();
+      const userWithEmail = await dataService.users.getUserByEmail(email);
+      emailAvailable = !userWithEmail;
     }
 
     const dto: AvailableDto = {
-      available
+      available: usernameAvailable && emailAvailable
     };
 
     response.send(dto);

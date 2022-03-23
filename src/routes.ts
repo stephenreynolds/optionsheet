@@ -33,8 +33,8 @@ router.get("/projects/:username", projects.getProjects);
 router.get("/projects/:username/:project", projects.getProjectByName);
 router.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
 router.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
-router.post("/projects/:username/:project", [verifyJwtToken], trades.addTrade
-);
+router.post("/projects/:username/:project", [verifyJwtToken], trades.addTrade);
+router.get("/projects/:username/:project/trades", trades.getTrades);
 
 // Trades
 router.get("/trades/:id", trades.getTrade);

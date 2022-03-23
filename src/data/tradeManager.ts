@@ -14,13 +14,28 @@ export class TradeManager {
       const res = await this.pool.query(`
           SELECT *
           FROM trade
-          WHERE trade.id = $1
+          WHERE id = $1
       `, [id]);
 
       return res.rows[0];
     }
     catch (error) {
       logError(error, "Failed to get trade by id");
+    }
+  }
+
+  public async getTradesByProject(projectId: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM trade
+          WHERE project_id = $1
+      `, [projectId]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get trades by project");
     }
   }
 

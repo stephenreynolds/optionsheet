@@ -16,5 +16,6 @@ router.get("/users/:username", users.getUser);
 // Auth
 router.post("/auth", auth.authenticate);
 router.post("/auth/refresh", auth.refreshToken);
+router.get("/auth/check-credentials", auth.emailAndUsernameAvailable);
 
 export default router;

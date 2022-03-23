@@ -4,7 +4,7 @@ import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import { AuthTokenDto } from "./authDtos";
+import { AuthTokenDto, AvailableDto } from "./authDtos";
 
 export const authenticate = async (request: Request, response: Response) => {
   try {
@@ -83,5 +83,37 @@ export const refreshToken = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to refresh token");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to refresh token.");
+  }
+};
+
+// GET /auth/check-credentials
+export const emailAndUsernameAvailable = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    let usernameAvailable = true;
+    let emailAvailable = true;
+
+    if (request.query.username) {
+      const username = request.query.username.toString();
+      const userWithName = await dataService.users.getUserByUsername(username);
+      usernameAvailable = !userWithName;
+    }
+
+    if (request.query.email) {
+      const email = request.query.email.toString();
+      const userWithEmail = await dataService.users.getUserByEmail(email);
+      emailAvailable = !userWithEmail;
+    }
+
+    const dto: AvailableDto = {
+      available: usernameAvailable && emailAvailable
+    };
+
+    response.send(dto);
+  }
+  catch (error) {
+    const message = "Failed to check if email and username are available";
+    logError(error, message);
+    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
   }
 };

@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import logger from "../logger";
+import { ProjectManager } from "./projectManager";
 import { UserManager } from "./userManager";
 
 export class Database {
@@ -15,11 +16,13 @@ export class Database {
     });
 
     this.users = new UserManager(this.pool);
+    this.projects = new ProjectManager(this.pool);
 
     this.seedData().then();
   }
 
   public users: UserManager;
+  public projects: ProjectManager;
 
   private async seedData() {
     try {

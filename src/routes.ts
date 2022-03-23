@@ -1,8 +1,9 @@
 import { Router } from "express";
+import { verifyJwtToken } from "./middleware/authentication";
 import * as auth from "./endpoints/auth/auth";
 import * as user from "./endpoints/user/user";
 import * as users from "./endpoints/users/users";
-import { verifyJwtToken } from "./middleware/authentication";
+import * as projects from "./endpoints/projects/projects";
 
 const router = Router();
 
@@ -19,5 +20,8 @@ router.get("/users/:username", users.getUser);
 router.post("/auth", auth.authenticate);
 router.post("/auth/refresh", auth.refreshToken);
 router.get("/auth/check-credentials", auth.emailAndUsernameAvailable);
+
+// Projects
+router.post("/projects", [verifyJwtToken], projects.createProject);
 
 export default router;

@@ -4,6 +4,7 @@ import { UserCreateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import bcrypt from "bcrypt";
+import { GetProjectDto } from "../projects/projectDtos";
 import { AuthTokenDto, GetUserDto } from "./usersDtos";
 
 export const getUserDetails = async (user, dataService): Promise<GetUserDto> => {
@@ -112,5 +113,37 @@ export const getUser = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to get user");
     sendError(request, response, error, "Failed to create user.");
+  }
+};
+
+// GET /users/:username/starred
+export const getStarredProjects = async (request: Request, response: Response) => {
+  try {
+    const { username } = request.params;
+    const dataService = request.dataService;
+
+    const user = await dataService.users.getUserByUsername(username);
+    const projects = await dataService.users.getStarredProjects(user.uuid);
+
+    const res: GetProjectDto[] = await Promise.all(
+      projects.map(async (project) => {
+        const tags = await dataService.projects.getProjectTags(project.id);
+        return {
+          name: project.name,
+          username: user.username,
+          description: project.description ?? undefined,
+          startingBalance: project.starting_balance ?? undefined,
+          risk: project.risk ?? undefined,
+          createdOn: new Date(project.created_on),
+          lastEdited: new Date(project.updated_on),
+          tags: tags.map((t) => t.name) ?? undefined
+        };
+      }));
+
+    return response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to get starred projects");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get starred projects.");
   }
 };

@@ -19,6 +19,7 @@ router.delete("/user/starred/:owner/:project", [verifyJwtToken], user.unStarProj
 // Users
 router.post("/users", users.createUser);
 router.get("/users/:username", users.getUser);
+router.get("/users/:username/starred", users.getStarredProjects);
 
 // Auth
 router.post("/auth", auth.authenticate);

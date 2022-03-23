@@ -11,6 +11,10 @@ const router = Router();
 router.get("/user", [verifyJwtToken], user.get);
 router.patch("/user", [verifyJwtToken], user.update);
 router.delete("/user", [verifyJwtToken], user.deleteUser);
+router.get("/user/starred", [verifyJwtToken], user.getStarredProjects);
+router.get("/user/starred/:owner/:project", [verifyJwtToken], user.isProjectStarred);
+router.put("/user/starred/:owner/:project", [verifyJwtToken], user.starProject);
+router.delete("/user/starred/:owner/:project", [verifyJwtToken], user.unStarProject);
 
 // Users
 router.post("/users", users.createUser);

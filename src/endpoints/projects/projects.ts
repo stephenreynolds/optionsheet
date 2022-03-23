@@ -18,20 +18,20 @@ export const getProjects = async (request: Request, response: Response) => {
 
     const projects = await dataService.projects.getUserProjects(user.uuid);
 
-    const res: GetProjectDto[] = await Promise.all(projects.map(async (project) => {
-      const tags = await dataService.projects.getProjectTags(project.id);
-
-      return {
-        name: project.name,
-        username: user.username,
-        description: project.description ?? undefined,
-        startingBalance: project.starting_balance ?? undefined,
-        risk: project.risk ?? undefined,
-        createdOn: new Date(project.created_on),
-        lastEdited: new Date(project.updated_on),
-        tags: tags.map((t) => t.name) ?? undefined
-      };
-    }));
+    const res: GetProjectDto[] = await Promise.all(
+      projects.map(async (project) => {
+        const tags = await dataService.projects.getProjectTags(project.id);
+        return {
+          name: project.name,
+          username: user.username,
+          description: project.description ?? undefined,
+          startingBalance: project.starting_balance ?? undefined,
+          risk: project.risk ?? undefined,
+          createdOn: new Date(project.created_on),
+          lastEdited: new Date(project.updated_on),
+          tags: tags.map((t) => t.name) ?? undefined
+        };
+      }));
 
     response.send(res);
   }

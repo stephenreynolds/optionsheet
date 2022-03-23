@@ -248,4 +248,66 @@ export class UserManager {
       logError(error, "Failed to create token from refresh token");
     }
   }
+
+  public async getStarredProjects(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM starred_project
+                   LEFT JOIN project ON project.id = starred_project.project_id
+          WHERE starred_project.user_uuid = $1
+      `, [userUUID]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get starred projects");
+    }
+  }
+
+  public async starProject(userUUID: string, projectId: number) {
+    try {
+      const res = await this.pool.query(`
+          INSERT INTO starred_project(user_uuid, project_id)
+          VALUES ($1, $2)
+          ON CONFLICT DO NOTHING
+          RETURNING user_uuid, project_id
+      `, [userUUID, projectId]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to star project");
+    }
+  }
+
+  public async unStarProject(userUUID: string, projectId: number) {
+    try {
+      await this.pool.query(`
+          DELETE
+          FROM starred_project
+          WHERE user_uuid = $1
+            AND project_id = $2
+      `, [userUUID, projectId]);
+    }
+    catch (error) {
+      logError(error, "Failed to un-star project");
+    }
+  }
+
+  public async getStarredProject(userUUID: string, projectId: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM starred_project
+          WHERE user_uuid = $1
+            AND project_id = $2
+      `, [userUUID, projectId]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to get starred project");
+    }
+  }
 }

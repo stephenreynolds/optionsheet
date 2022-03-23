@@ -54,9 +54,9 @@ CREATE TABLE IF NOT EXISTS project
 
 CREATE TABLE IF NOT EXISTS starred_project
 (
-    projectId INTEGER NOT NULL,
-    userId    INTEGER NOT NULL,
-    PRIMARY KEY (projectId, userId)
+    project_id INTEGER NOT NULL,
+    user_uuid  uuid    NOT NULL,
+    PRIMARY KEY (project_id, user_uuid)
 );
 
 CREATE TABLE IF NOT EXISTS trade

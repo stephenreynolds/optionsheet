@@ -2,6 +2,7 @@ export interface ProjectCreateModel {
   name: string;
   description?: string;
   starting_balance?: number;
+  risk?: number;
   tags?: string[];
 }
 

@@ -58,10 +58,10 @@ export class ProjectManager {
   public async addProject(userUUID: string, model: ProjectCreateModel) {
     try {
       const res = await this.pool.query(`
-          INSERT INTO project(user_uuid, name, description, starting_balance)
-          VALUES ($1, $2, $3, $4)
+          INSERT INTO project(user_uuid, name, description, starting_balance, risk)
+          VALUES ($1, $2, $3, $4, $5)
           RETURNING id
-      `, [userUUID, model.name, model.description, model.starting_balance]);
+      `, [userUUID, model.name, model.description, model.starting_balance, model.risk]);
 
       await this.addProjectTags(res.rows[0].id, model.tags);
 

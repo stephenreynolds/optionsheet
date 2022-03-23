@@ -26,5 +26,6 @@ router.post("/projects", [verifyJwtToken], projects.createProject);
 router.get("/projects/:username", projects.getProjects);
 router.get("/projects/:username/:project", projects.getProjectByName);
 router.patch("/projects/:username/:project", [verifyJwtToken], projects.updateProject);
+router.delete("/projects/:username/:project", [verifyJwtToken], projects.deleteProject);
 
 export default router;

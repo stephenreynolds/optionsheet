@@ -76,6 +76,19 @@ export class ProjectManager {
     }
   }
 
+  public async deleteProject(id: number) {
+    try {
+      await this.pool.query(`
+          DELETE
+          FROM project
+          WHERE id = $1
+      `, [id]);
+    }
+    catch (error) {
+      logError(error, "Failed to delete project");
+    }
+  }
+
   public async getProjectTags(id: number) {
     try {
       const res = await this.pool.query(`

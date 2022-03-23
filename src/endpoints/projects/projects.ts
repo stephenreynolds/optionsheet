@@ -150,3 +150,32 @@ export const updateProject = async (request: Request, response: Response) => {
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update project.");
   }
 };
+
+// DELETE /projects/:username/:project
+export const deleteProject = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const { userUUID } = request.body;
+    const { username, project: projectName } = request.params;
+
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+    }
+
+    if (userUUID !== user.uuid) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    if (project) {
+      await dataService.projects.deleteProject(project.id);
+    }
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    logError(error, "Failed to delete project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete project.");
+  }
+};

@@ -1,4 +1,3 @@
-// POST /users
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UserCreateModel } from "../../data/models/user";
@@ -7,7 +6,7 @@ import Request from "../../request";
 import bcrypt from "bcrypt";
 import { AuthTokenDto, GetUserDto } from "./usersDtos";
 
-const getUserDetails = async (user, dataService): Promise<GetUserDto> => {
+export const getUserDetails = async (user, dataService): Promise<GetUserDto> => {
   const roles = await dataService.users.getUserRoles(user.uuid);
   const isAdmin = roles.filter((role) => role.name === "admin").length > 0;
 
@@ -35,6 +34,7 @@ const passwordIsValid = (password: string) => {
   return passwordRegex.test(password);
 };
 
+// POST /users
 export const createUser = async (request: Request, response: Response) => {
   try {
     const { username, email, password, confirm } = request.body;
@@ -83,18 +83,18 @@ export const createUser = async (request: Request, response: Response) => {
 
     // Create auth tokens.
     const token = await dataService.users.createToken(uuid);
-    const refreshToken = await dataService.users.createRefreshToken(uuid);
+    const { refresh_token: refreshToken } = await dataService.users.createRefreshToken(uuid);
 
     const res: AuthTokenDto = {
       token,
-      refreshToken: refreshToken.token
+      refreshToken
     };
 
     response.send(res);
   }
   catch (error) {
     logError(error, "Failed to create user");
-    sendError(request, response, error, "Failed to create user");
+    sendError(request, response, error, "Failed to create user.");
   }
 };
 
@@ -111,6 +111,6 @@ export const getUser = async (request: Request, response: Response) => {
   }
   catch (error) {
     logError(error, "Failed to get user");
-    sendError(request, response, error, "Failed to create user");
+    sendError(request, response, error, "Failed to create user.");
   }
 };

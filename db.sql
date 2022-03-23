@@ -8,26 +8,19 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create tables --
 -------------------
 
-CREATE TABLE IF NOT EXISTS refresh_token
-(
-    token  VARCHAR(36) NOT NULL PRIMARY KEY,
-    expiry TIMESTAMP   NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS app_user
 (
-    uuid                UUID         NOT NULL PRIMARY KEY,
-    username            VARCHAR(255) NOT NULL UNIQUE,
-    email               VARCHAR(255) NOT NULL UNIQUE,
-    email_confirmed     BOOLEAN      NOT NULL DEFAULT FALSE,
-    password_hash       VARCHAR(60)  NOT NULL,
-    avatar_url          TEXT,
-    bio                 TEXT,
-    created_on          TIMESTAMP    NOT NULL DEFAULT current_timestamp,
-    updated_on          TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
-    refresh_token_token VARCHAR(36),
-
-    CONSTRAINT fk_refresh_token FOREIGN KEY (refresh_token_token) REFERENCES refresh_token (token)
+    uuid                 UUID         NOT NULL PRIMARY KEY,
+    username             VARCHAR(255) NOT NULL UNIQUE,
+    email                VARCHAR(255) NOT NULL UNIQUE,
+    email_confirmed      BOOLEAN      NOT NULL DEFAULT FALSE,
+    password_hash        VARCHAR(60)  NOT NULL,
+    avatar_url           TEXT,
+    bio                  TEXT,
+    created_on           TIMESTAMP    NOT NULL DEFAULT current_timestamp,
+    updated_on           TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
+    refresh_token        VARCHAR(36),
+    refresh_token_expiry TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS role
@@ -187,29 +180,6 @@ FROM app_user
 WHERE uuid = _uuid;
 $$;
 
--- Add refresh token
-CREATE OR REPLACE PROCEDURE add_refresh_token(user_uuid UUID, token VARCHAR(32), expiry TIMESTAMP)
-    LANGUAGE SQL
-AS
-$$
-INSERT INTO refresh_token(token, expiry)
-VALUES (token, expiry);
-UPDATE app_user
-SET refresh_token_token = token
-WHERE uuid = user_uuid
-RETURNING token;
-$$;
-
--- Delete refresh token
-CREATE OR REPLACE PROCEDURE delete_refresh_token(_token VARCHAR(32))
-    LANGUAGE SQL
-AS
-$$
-DELETE
-FROM refresh_token
-WHERE token = _token;
-$$;
-
 -- Delete project
 CREATE OR REPLACE PROCEDURE delete_project(_id INTEGER)
     LANGUAGE SQL
@@ -233,16 +203,6 @@ $$;
 ---------------
 -- Functions --
 ---------------
-
--- Get refresh token
-CREATE OR REPLACE FUNCTION get_refresh_token(_token VARCHAR(60)) RETURNS refresh_token
-    LANGUAGE SQL
-AS
-$$
-SELECT token, expiry
-FROM refresh_token
-WHERE token = _token;
-$$;
 
 -- Get role by name
 CREATE OR REPLACE FUNCTION get_role_by_name(_name VARCHAR(20)) RETURNS role

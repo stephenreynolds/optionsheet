@@ -121,11 +121,11 @@ export class UserManager {
   public async getUserRoles(userUUID: string) {
     try {
       const res = await this.pool.query(`
-        SELECT role.id, role.name
-        FROM user_role
-        INNER JOIN role
-        ON user_role.role_id = role.id
-        WHERE user_id = $1
+          SELECT role.id, role.name
+          FROM user_role
+                   INNER JOIN role
+                              ON user_role.role_id = role.id
+          WHERE user_id = $1
       `, [userUUID]);
 
       return res.rows;
@@ -138,16 +138,11 @@ export class UserManager {
 
   public async addRefreshToken(userUUID: string, token: string, expiry: Date) {
     try {
-      const res = await this.pool.query(`
-          INSERT INTO refresh_token(token, expiry)
-          VALUES ($1, $2)
-          RETURNING token
-      `, [token, expiry]);
-
-      await this.pool.query(`UPDATE app_user
-                             SET refresh_token_token = $1
-                             WHERE uuid = $2`, [token, userUUID]);
-
+      const res = await this.pool.query(`UPDATE app_user
+                                         SET refresh_token        = $2,
+                                             refresh_token_expiry = $3
+                                         WHERE uuid = $1
+                                         RETURNING refresh_token`, [userUUID, token, expiry]);
       return res.rows[0];
     }
     catch (error) {
@@ -159,9 +154,9 @@ export class UserManager {
   public async getRefreshToken(token: string) {
     try {
       const res = await this.pool.query(`
-          SELECT token, expiry
-          FROM refresh_token
-          WHERE token = $1
+          SELECT refresh_token, refresh_token_expiry
+          FROM app_user
+          WHERE refresh_token = $1
       `, [token]);
 
       return res.rows[0];
@@ -175,9 +170,10 @@ export class UserManager {
   public async deleteRefreshToken(token: string) {
     try {
       await this.pool.query(`
-          DELETE
-          FROM refresh_token
-          WHERE token = $1;
+          UPDATE app_user
+          SET refresh_token        = NULL,
+              refresh_token_expiry = NULL
+          WHERE refresh_token = $1
       `, [token]);
     }
     catch (error) {
@@ -205,9 +201,9 @@ export class UserManager {
 
       const user = await this.getUserByUUID(userUUID);
 
-      const existingToken = await this.getRefreshToken(user.refresh_token_token);
-      if (existingToken) {
-        await this.deleteRefreshToken(existingToken);
+      const refresh_token = await this.getRefreshToken(user.refresh_token_token);
+      if (refresh_token) {
+        await this.deleteRefreshToken(refresh_token);
       }
 
       return await this.addRefreshToken(user.uuid, uuidv4(), expiredAt);

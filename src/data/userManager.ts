@@ -47,6 +47,18 @@ export class UserManager {
     }
   }
 
+  public async deleteUser(userUUID: string) {
+    try {
+      await this.pool.query(`
+          DELETE
+          FROM app_user
+          WHERE uuid = $1`, [userUUID]);
+    }
+    catch (error) {
+      logError(error, "Failed to delete user");
+    }
+  }
+
   public async getUserByUUID(uuid: string) {
     try {
       const res = await this.pool.query(`

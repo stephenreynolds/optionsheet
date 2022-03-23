@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS user_role
     user_id uuid    NOT NULL,
     role_id INTEGER NOT NULL,
 
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES app_user (uuid),
-    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (id)
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES app_user (uuid) ON DELETE CASCADE,
+    CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS project
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS project
     updated_on       TIMESTAMP             DEFAULT current_timestamp,
     user_uuid        UUID         NOT NULL,
 
-    CONSTRAINT fk_user FOREIGN KEY (user_uuid) REFERENCES app_user (uuid)
+    CONSTRAINT fk_user FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS starred_project
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS trade
     closing_note TEXT,
     project_id   INTEGER     NOT NULL,
 
-    CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id)
+    CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
 );
 
 DO
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS leg
     side        side           NOT NULL,
     trade_id    INTEGER        NOT NULL,
 
-    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id)
+    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id) ON DELETE CASCADE
 );
 
 DO
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS option
     put_call   put_call       NOT NULL,
     leg_id     INTEGER        NOT NULL,
 
-    CONSTRAINT fk_leg FOREIGN KEY (leg_id) REFERENCES leg (id)
+    CONSTRAINT fk_leg FOREIGN KEY (leg_id) REFERENCES leg (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tag
@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS project_tag
     project_id INTEGER NOT NULL,
     tag_id     INTEGER NOT NULL,
 
-    CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id),
-    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id)
+    CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
+    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS trade_tag
@@ -133,8 +133,8 @@ CREATE TABLE IF NOT EXISTS trade_tag
     trade_id INTEGER NOT NULL,
     tag_id   INTEGER NOT NULL,
 
-    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id),
-    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id)
+    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id) ON DELETE CASCADE,
+    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 
 ----------------

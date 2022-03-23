@@ -3,7 +3,7 @@ import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import config from "../config";
 import { logError } from "../error";
-import { UserCreateModel } from "./models/user";
+import { UserCreateModel, UserUpdateModel } from "./models/user";
 
 export class UserManager {
   private readonly pool: Pool;
@@ -24,7 +24,26 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to add user");
-      throw error;
+    }
+  }
+
+  public async updateUser(userUUID: string, model: UserUpdateModel) {
+    try {
+      const res = await this.pool.query(`
+          UPDATE app_user
+          SET username      = COALESCE($2, username),
+              email         = COALESCE($3, email),
+              password_hash = COALESCE($4, password_hash),
+              bio           = COALESCE($5, bio),
+              avatar_url    = COALESCE($6, avatar_url)
+          WHERE uuid = $1
+          RETURNING *
+      `, [userUUID, model.username, model.email, model.passwordHash, model.bio, model.avatarUrl]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to update user");
     }
   }
 
@@ -40,7 +59,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get user by UUID");
-      throw error;
     }
   }
 
@@ -56,7 +74,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get user by username");
-      throw error;
     }
   }
 
@@ -72,7 +89,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get user by email");
-      throw error;
     }
   }
 
@@ -85,7 +101,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to add user role");
-      throw error;
     }
   }
 
@@ -98,7 +113,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to add role");
-      throw error;
     }
   }
 
@@ -114,7 +128,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get role by name");
-      throw error;
     }
   }
 
@@ -132,7 +145,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get user roles");
-      throw error;
     }
   }
 
@@ -147,7 +159,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to add refresh token");
-      throw error;
     }
   }
 
@@ -163,7 +174,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get refresh token");
-      throw error;
     }
   }
 
@@ -178,7 +188,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to delete refresh token");
-      throw error;
     }
   }
 
@@ -190,7 +199,6 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to create token");
-      throw error;
     }
   }
 
@@ -210,18 +218,22 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to create refresh token");
-      throw error;
     }
   }
 
   public async createTokenFromRefreshToken(refreshToken: string) {
-    const res = await this.pool.query(`
-        SELECT uuid
-        FROM app_user
-        WHERE refresh_token = $1
-    `, [refreshToken]);
+    try {
+      const res = await this.pool.query(`
+          SELECT uuid
+          FROM app_user
+          WHERE refresh_token = $1
+      `, [refreshToken]);
 
-    const userUUID = res.rows[0].uuid;
-    return this.createToken(userUUID);
+      const userUUID = res.rows[0].uuid;
+      return this.createToken(userUUID);
+    }
+    catch (error) {
+      logError(error, "Failed to create token from refresh token");
+    }
   }
 }

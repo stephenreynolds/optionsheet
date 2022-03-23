@@ -8,6 +8,7 @@ const router = Router();
 
 // User
 router.get("/user", [verifyJwtToken], user.get);
+router.patch("/user", [verifyJwtToken], user.update);
 
 // Users
 router.post("/users", users.createUser);

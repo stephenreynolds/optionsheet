@@ -24,6 +24,21 @@ export class ProjectManager {
     }
   }
 
+  public async getProjectById(id: number) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM project
+          WHERE project.id = $1
+      `, [id]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to get project by name");
+    }
+  }
+
   public async getProjectByName(userUUID: string, name: string) {
     try {
       const res = await this.pool.query(`

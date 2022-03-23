@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { CreateTradeModel } from "../../data/models/trade";
+import { CreateTradeModel, TradeUpdateModel } from "../../data/models/trade";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { GetTradeDto } from "./tradeDtos";
@@ -46,7 +46,8 @@ export const getTrades = async (request: Request, response: Response) => {
               put_call: leg.put_call ?? undefined
             };
           }),
-          tags: tags.map((tag) => tag.name)
+          tags: tags.map((tag) => tag.name),
+          project_id: trade.project_id
         };
       })
     );
@@ -91,7 +92,8 @@ export const getTrade = async (request: Request, response: Response) => {
           put_call: leg.put_call ?? undefined
         };
       }),
-      tags: tags.map((tag) => tag.name)
+      tags: tags.map((tag) => tag.name),
+      project_id: trade.project_id
     };
 
     response.send(res);
@@ -125,7 +127,7 @@ export const addTrade = async (request: Request, response: Response) => {
 
     const { symbol, open_date, opening_note, legs, tags } = request.body;
 
-    if (!(symbol && open_date && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].openPrice >= 0)) {
+    if (!(symbol && open_date && legs && legs.length > 0 && legs[0].side && legs[0].quantity && legs[0].open_price >= 0)) {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "A trade was not provided.");
     }
 
@@ -144,5 +146,45 @@ export const addTrade = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to add trade");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to add trade.");
+  }
+};
+
+// PATCH /trades/:id
+export const updateTradeById = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const id = Number(request.params.id);
+
+    const trade = await dataService.trades.getTradeById(id);
+    if (!trade) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
+    }
+
+    const project = await dataService.projects.getProjectById(trade.project_id);
+    const user = await dataService.users.getUserByUUID(project.user_uuid);
+
+    const { userUUID, ...updateData } = request.body;
+
+    if (userUUID !== user.uuid) {
+      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+    }
+
+    const model: TradeUpdateModel = {
+      symbol: updateData.symbol ?? undefined,
+      open_date: updateData.open_date ? new Date(updateData.open_date) : undefined,
+      close_date: updateData.close_date ? new Date(updateData.close_date) : undefined,
+      opening_note: updateData.opening_note ?? undefined,
+      closing_note: updateData.closing_note ?? undefined,
+      legs: updateData.legs ?? undefined,
+      tags: updateData.tags ?? undefined
+    };
+
+    await dataService.trades.updateTrade(trade.id, model);
+
+    response.sendStatus(StatusCodes.NO_CONTENT);
+  }
+  catch (error) {
+    logError(error, "Failed to update project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update project.");
   }
 };

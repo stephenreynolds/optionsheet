@@ -146,4 +146,52 @@ export class ProjectManager {
       `, [id, tagId]);
     }
   }
+
+  public async getProjectsByName(name: string, limit?: number, offset = 0) {
+    try {
+      const projects = await this.pool.query(`
+          SELECT project.id,
+                 project.name,
+                 project.description,
+                 project.updated_on,
+                 app_user.username,
+                 COUNT(trade) trades
+          FROM project
+                   LEFT JOIN app_user ON app_user.uuid = project.user_uuid
+                   LEFT JOIN trade ON trade.project_id = project.id
+          WHERE LOWER(name) LIKE LOWER($1)
+          GROUP BY project.id,
+                   project.name,
+                   project.description,
+                   project.updated_on,
+                   app_user.username
+          OFFSET COALESCE($2, 0) * $3 LIMIT $2
+      `, [name, limit, offset]);
+
+      for (let i = 0; i < projects.rows.length; ++i) {
+        const tags = await this.getProjectTags(projects.rows[i].id);
+        projects.rows[i].tags = tags.map((tag) => tag.name);
+      }
+
+      return projects.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get projects by name");
+    }
+  }
+
+  public async getProjectMatches(term: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT COUNT(project)
+          FROM project
+          WHERE LOWER(name) LIKE LOWER($1)
+      `, [term]);
+
+      return res.rows[0].count;
+    }
+    catch (error) {
+      logError(error, "Failed to get project match count");
+    }
+  }
 }

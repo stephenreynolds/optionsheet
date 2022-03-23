@@ -209,4 +209,42 @@ export class TradeManager {
       logError(error, "Failed to delete trade");
     }
   }
+
+  public async getTradesBySymbol(symbol: string, limit?: number, offset = 0) {
+    try {
+      const trades = await this.pool.query(`
+          SELECT *
+          FROM trade
+          WHERE UPPER(symbol) = UPPER($1)
+          ORDER BY close_date DESC, open_date DESC
+          OFFSET COALESCE($2, 0) * $3 LIMIT $2
+      `, [symbol, limit, offset]);
+
+      for (let i = 0; i < trades.rows.length; ++i) {
+        trades.rows[i].legs = await this.getLegsByTradeId(trades.rows[i].id);
+        const tags = await this.getTradeTags(trades.rows[i].id);
+        trades.rows[i].tags = tags.map((tag) => tag.name);
+      }
+
+      return trades.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get trades by symbol");
+    }
+  }
+
+  public async getTradeMatches(term: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT COUNT(trade)
+          FROM trade
+          WHERE UPPER(symbol) = UPPER($1)
+      `, [term]);
+
+      return res.rows[0].count;
+    }
+    catch (error) {
+      logError(error, "Failed to get trade match count");
+    }
+  }
 }

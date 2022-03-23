@@ -310,4 +310,36 @@ export class UserManager {
       logError(error, "Failed to get starred project");
     }
   }
+
+  public async getUsersByUsername(username: string, limit?: number, offset = 0) {
+    try {
+      const res = await this.pool.query(`
+        SELECT username, avatar_url, bio, updated_on
+        FROM app_user
+        WHERE LOWER(username) LIKE LOWER($1)
+        OFFSET COALESCE($2, 0) * $3
+        LIMIT $2
+      `, [username, limit, offset]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get users by username");
+    }
+  }
+
+  public async getUserMatches(term: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT COUNT(app_user)
+          FROM app_user
+          WHERE LOWER(username) LIKE LOWER($1)
+      `, [term]);
+
+      return res.rows[0].count;
+    }
+    catch (error) {
+      logError(error, "Failed to get user match count");
+    }
+  }
 }

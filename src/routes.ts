@@ -4,6 +4,7 @@ import * as auth from "./endpoints/auth/auth";
 import * as user from "./endpoints/user/user";
 import * as users from "./endpoints/users/users";
 import * as projects from "./endpoints/projects/projects";
+import * as search from "./endpoints/search/search";
 import * as trades from "./endpoints/trades/trades";
 
 const router = Router();
@@ -40,5 +41,8 @@ router.get("/projects/:username/:project/trades", trades.getTrades);
 router.get("/trades/:id", trades.getTrade);
 router.patch("/trades/:id", [verifyJwtToken], trades.updateTradeById);
 router.delete("/trades/:id", [verifyJwtToken], trades.deleteTradeById);
+
+// Search
+router.get("/search", search.searchAll);
 
 export default router;

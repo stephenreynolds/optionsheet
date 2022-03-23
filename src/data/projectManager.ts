@@ -9,6 +9,21 @@ export class ProjectManager {
     this.pool = pool;
   }
 
+  public async getUserProjects(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT *
+          FROM project
+          WHERE user_uuid = $1
+      `, [userUUID]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get user's projects");
+    }
+  }
+
   public async getProjectByName(userUUID: string, name: string) {
     try {
       const res = await this.pool.query(`
@@ -45,10 +60,10 @@ export class ProjectManager {
   public async getProjectTags(id: number) {
     try {
       const res = await this.pool.query(`
-        SELECT id, name
-        FROM tag
-        LEFT JOIN project_tag ON project_tag.tag_id = tag.id
-        WHERE project_tag.project_id = $1
+          SELECT id, name
+          FROM tag
+                   LEFT JOIN project_tag ON project_tag.tag_id = tag.id
+          WHERE project_tag.project_id = $1
       `, [id]);
 
       return res.rows;

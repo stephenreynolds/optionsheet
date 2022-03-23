@@ -40,6 +40,42 @@ export const createProject = async (request: Request, response: Response) => {
   }
 };
 
+// GET /projects/:username
+export const getProjects = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const { username } = request.params;
+
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+    }
+
+    const projects = await dataService.projects.getUserProjects(user.uuid);
+
+    const res: GetProjectDto[] = await Promise.all(projects.map(async (project) => {
+      const tags = await dataService.projects.getProjectTags(project.id);
+
+      return {
+        name: project.name,
+        username: user.username,
+        description: project.description ?? undefined,
+        startingBalance: project.starting_balance ?? undefined,
+        risk: project.risk ?? undefined,
+        createdOn: new Date(project.created_on),
+        lastEdited: new Date(project.updated_on),
+        tags: tags.map((t) => t.name) ?? undefined
+      };
+    }));
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to get user's projects");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get projects.");
+  }
+};
+
 // GET /projects/:username/:project
 export const getProjectByName = async (request: Request, response: Response) => {
   try {

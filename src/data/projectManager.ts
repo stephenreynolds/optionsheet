@@ -42,6 +42,22 @@ export class ProjectManager {
     }
   }
 
+  public async getProjectTags(id: number) {
+    try {
+      const res = await this.pool.query(`
+        SELECT id, name
+        FROM tag
+        LEFT JOIN project_tag ON project_tag.tag_id = tag.id
+        WHERE project_tag.project_id = $1
+      `, [id]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get project tags");
+    }
+  }
+
   public async addProjectTags(id: number, tags: string[]) {
     for (const newTag of tags) {
       const name = newTag.trim().toLowerCase();

@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { ProjectCreateModel } from "../../data/models/project";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import { CreateProjectDto } from "./projectDtos";
+import { CreateProjectDto, GetProjectDto } from "./projectDtos";
 
 // POST /projects
 export const createProject = async (request: Request, response: Response) => {
@@ -37,5 +37,42 @@ export const createProject = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to create project");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to create project.");
+  }
+};
+
+// GET /projects/:username/:project
+export const getProjectByName = async (request: Request, response: Response) => {
+  try {
+    const dataService = request.dataService;
+    const { username, project: projectName } = request.params;
+
+    const user = await dataService.users.getUserByUsername(username);
+    if (!user) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+    }
+
+    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    if (!project) {
+      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
+    }
+
+    const tags = await dataService.projects.getProjectTags(project.id);
+
+    const res: GetProjectDto = {
+      name: project.name,
+      username: user.username,
+      description: project.description ?? undefined,
+      startingBalance: project.starting_balance ?? undefined,
+      risk: project.risk ?? undefined,
+      createdOn: new Date(project.created_on),
+      lastEdited: new Date(project.updated_on),
+      tags: tags.map((t) => t.name) ?? undefined
+    };
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to get project by name");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get project by name.");
   }
 };

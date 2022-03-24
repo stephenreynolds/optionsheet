@@ -17,7 +17,7 @@ export const getUserDetails = async (user, dataService): Promise<GetUserDto> => 
     html_url: `https://optionsheet.net/${user.username}`,
     projects_url: `https://optionsheet.net/${user.username}/projects`,
     email: user.email,
-    avatar_url: user.avatarUrl,
+    avatar_url: user.avatar_url,
     bio: user.bio,
     created_on: new Date(user.created_on),
     updated_on: new Date(user.updated_on),

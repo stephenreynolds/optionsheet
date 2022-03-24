@@ -6,7 +6,7 @@ import { logError, sendError } from "../error";
 
 export const verifyJwtToken = (request: Request, response: Response, next) => {
   try {
-    const token = request.headers["x-access-token"];
+    const token = request.headers["authorization"].split(" ")[1];
 
     if (!token) {
       return sendError(request, response, StatusCodes.UNAUTHORIZED, "Requires authentication");

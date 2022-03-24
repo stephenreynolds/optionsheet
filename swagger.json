@@ -1,0 +1,1695 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OptionSheet API",
+    "version": "1.0.0",
+    "description": "A tool for logging and analyzing options portfolios."
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication"
+    },
+    {
+      "name": "projects",
+      "description": "Projects"
+    },
+    {
+      "name": "search",
+      "description": "Search"
+    },
+    {
+      "name": "trades",
+      "description": "Trades"
+    },
+    {
+      "name": "user",
+      "description": "Authenticated user"
+    },
+    {
+      "name": "users",
+      "description": "Users"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "summary": "Authenticate the user with username and password",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "description": "User credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCredentials"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Refresh auth token",
+        "tags": [
+          "auth"
+        ],
+        "requestBody": {
+          "description": "Refresh token",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshToken"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/check-credentials": {
+      "get": {
+        "summary": "Check whether username or email is in use",
+        "tags": [
+          "auth"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query"
+          },
+          {
+            "name": "email",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Username/email is available."
+          },
+          "400": {
+            "description": "Username/email is not available."
+          }
+        }
+      }
+    },
+    "/projects": {
+      "post": {
+        "summary": "Create a project",
+        "tags": [
+          "projects"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectCreated"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{username}": {
+      "get": {
+        "summary": "Get a list of a user's projects",
+        "tags": [
+          "projects"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDetails"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{username}/{project_name}": {
+      "get": {
+        "summary": "Get information about a project",
+        "tags": [
+          "projects"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a trade to a project",
+        "tags": [
+          "projects",
+          "trades"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a project",
+        "tags": [
+          "projects"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a project",
+        "tags": [
+          "projects"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{username}/{project_name}/trades": {
+      "get": {
+        "summary": "Get a list of trades within a project",
+        "tags": [
+          "projects",
+          "trades"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Trade"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "summary": "Search projects, trades, and users",
+        "tags": [
+          "search"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "description": "Search term",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "trade",
+                "project",
+                "user"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trades/{id}": {
+      "get": {
+        "summary": "Get a trade",
+        "tags": [
+          "trades"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a trade",
+        "tags": [
+          "trades"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "required": true
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TradeUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a trade",
+        "tags": [
+          "trades"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "required": true
+            }
+          }
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "Get the authenticated user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update the authenticated user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Updated user data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete the authenticated user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/user/starred": {
+      "get": {
+        "summary": "Get a list of projects starred by the authenticated user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDetails"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/starred/{owner_username}/{project_name}": {
+      "get": {
+        "summary": "Get whether a project is starred by the authenticated user",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "owner_username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Project is starred by the authenticated user"
+          },
+          "404": {
+            "description": "Project is not starred by the authenticated user or does not exist"
+          }
+        }
+      },
+      "put": {
+        "description": "Star a project",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "owner_username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Un-star a project",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "owner_username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          },
+          {
+            "name": "project_name",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Register a user",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}": {
+      "get": {
+        "summary": "Get information about a user",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}/starred": {
+      "get": {
+        "summary": "Get a list of projects starred by a user",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectDetails"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "AuthHeader": {
+        "type": "string",
+        "format": "jwt",
+        "required": true
+      },
+      "AuthToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "format": "jwt",
+            "required": true
+          },
+          "refresh_token": {
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "status": {
+            "type": "number",
+            "format": "int32",
+            "required": true
+          },
+          "error": {
+            "type": "string",
+            "required": true
+          },
+          "message": {
+            "type": "string",
+            "required": true
+          },
+          "path": {
+            "type": "string",
+            "format": "uri",
+            "required": true
+          }
+        }
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        }
+      },
+      "ProjectCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "starting_balance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProjectCreated": {
+        "type": "object",
+        "properties": {
+          "project_url": {
+            "type": "string",
+            "format": "uri",
+            "required": true
+          }
+        }
+      },
+      "ProjectDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "username": {
+            "type": "string",
+            "required": true
+          },
+          "description": {
+            "type": "string"
+          },
+          "starting_balance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "risk": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "created_on": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "updated_on": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProjectUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "starting_balance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "risk": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        }
+      },
+      "SearchResults": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "updated_on": {
+                      "type": "string",
+                      "format": "date-time",
+                      "required": true
+                    },
+                    "username": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "trades": {
+                      "type": "integer",
+                      "format": "int32",
+                      "minimum": 0,
+                      "required": true
+                    }
+                  }
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Trade"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserDetails"
+                }
+              }
+            ],
+            "required": true
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "trades": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0,
+                "required": true
+              },
+              "projects": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0,
+                "required": true
+              },
+              "users": {
+                "type": "integer",
+                "format": "int32",
+                "minimum": 0,
+                "required": true
+              }
+            }
+          }
+        }
+      },
+      "Trade": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          },
+          "symbol": {
+            "type": "string",
+            "required": true
+          },
+          "open_date": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "close_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "opening_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "closing_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "Buy",
+                    "Sell"
+                  ],
+                  "required": true
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0,
+                  "required": true
+                },
+                "open_price": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "required": true
+                },
+                "close_price": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "strike": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "expiration": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                },
+                "put_call": {
+                  "type": "string",
+                  "enum": [
+                    "Put",
+                    "Call"
+                  ],
+                  "nullable": true
+                }
+              }
+            },
+            "minItems": 1,
+            "required": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "project_id": {
+            "type": "integer",
+            "format": "int32",
+            "required": true
+          }
+        }
+      },
+      "TradeCreateDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "required": true
+          },
+          "open_date": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "opening_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "Buy",
+                    "Sell"
+                  ],
+                  "required": true
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0,
+                  "required": true
+                },
+                "open_price": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "required": true
+                },
+                "strike": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "expiration": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                },
+                "put_call": {
+                  "type": "string",
+                  "enum": [
+                    "Put",
+                    "Call"
+                  ],
+                  "nullable": true
+                }
+              }
+            },
+            "minItems": 1,
+            "required": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TradeUpdateDto": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "open_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "close_date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "opening_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "closing_note": {
+            "type": "string",
+            "nullable": true
+          },
+          "legs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "side": {
+                  "type": "string",
+                  "enum": [
+                    "Buy",
+                    "Sell"
+                  ]
+                },
+                "quantity": {
+                  "type": "integer",
+                  "format": "int32",
+                  "minimum": 0
+                },
+                "open_price": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "required": true
+                },
+                "close_price": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "strike": {
+                  "type": "number",
+                  "format": "double",
+                  "minimum": 0,
+                  "nullable": true
+                },
+                "expiration": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true
+                },
+                "put_call": {
+                  "type": "string",
+                  "enum": [
+                    "Put",
+                    "Call"
+                  ],
+                  "nullable": true
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UserCreateDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "required": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "required": true
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "required": true
+          },
+          "confirm": {
+            "type": "string",
+            "format": "password",
+            "required": true
+          }
+        }
+      },
+      "UserCredentials": {
+        "type": "object",
+        "anyOf": [
+          {
+            "properties": {
+              "username": {
+                "type": "string",
+                "required": true
+              },
+              "password": {
+                "type": "string",
+                "format": "password",
+                "required": true
+              }
+            }
+          },
+          {
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "required": true
+              },
+              "password": {
+                "type": "string",
+                "format": "password",
+                "required": true
+              }
+            }
+          }
+        ]
+      },
+      "UserDetails": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "required": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "required": true
+          },
+          "html_url": {
+            "type": "string",
+            "format": "uri",
+            "required": true
+          },
+          "projects_url": {
+            "type": "string",
+            "format": "uri",
+            "required": true
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "required": true
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "created_on": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "updated_on": {
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          "is_admin": {
+            "type": "boolean",
+            "required": true,
+            "default": false
+          }
+        }
+      },
+      "UserUpdateDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "password": {
+            "type": "string",
+            "format": "password"
+          },
+          "confirm": {
+            "type": "string",
+            "format": "password"
+          },
+          "current_password": {
+            "type": "string",
+            "format": "password"
+          }
+        }
+      }
+    }
+  }
+}

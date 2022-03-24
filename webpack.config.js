@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const nodeExternals = require("webpack-node-externals");
 const path = require("path");
 const webpack = require("webpack");
+const CopyPlugin = require("copy-webpack-plugin");
 
 const paths = {
   build: path.resolve(__dirname, "build"),
@@ -31,6 +32,16 @@ const config = {
     }),
     new webpack.DefinePlugin({
       "process.env": JSON.stringify(dotenv.config().parsed)
+    }),
+    new CopyPlugin({
+      patterns: [{
+        from: path.resolve(__dirname, "node_modules/swagger-ui-dist/"),
+        to: "swagger-ui-dist",
+        globOptions: {
+          test: /\.(js|css|html|png)$/i,
+          ignore: ["index.js", "absolute-path.js", "*.map"]
+        }
+      }]
     })
   ],
   module: {

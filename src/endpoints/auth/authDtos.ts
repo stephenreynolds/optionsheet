@@ -1,6 +1,6 @@
 export interface AuthTokenDto {
   token: string;
-  refreshToken: string;
+  refresh_token: string;
 }
 
 export interface AvailableDto {

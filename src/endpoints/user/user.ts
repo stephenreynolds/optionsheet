@@ -34,7 +34,7 @@ export const get = async (request: Request, response: Response) => {
   }
 };
 
-// PATH /user
+// PATCH /user
 export const update = async (request: Request, response: Response) => {
   try {
     const dataService = request.dataService;
@@ -72,17 +72,17 @@ export const update = async (request: Request, response: Response) => {
     }
 
     // Change password if given.
-    const { password, confirm, currentPassword } = request.body;
+    const { password, confirm, current_password } = request.body;
     if (password) {
       if (password !== confirm) {
         return sendError(request, response, StatusCodes.BAD_REQUEST, "Password and confirm password do not match.");
       }
 
-      if (!currentPassword) {
+      if (!current_password) {
         return sendError(request, response, StatusCodes.BAD_REQUEST, "Current password required.");
       }
 
-      const validated = await bcrypt.compare(currentPassword, user.password_hash);
+      const validated = await bcrypt.compare(current_password, user.password_hash);
       if (!validated) {
         return sendError(request, response, StatusCodes.UNAUTHORIZED, "Incorrect password.");
       }
@@ -230,17 +230,14 @@ export const unStarProject = async (request: Request, response: Response) => {
     const dataService = request.dataService;
 
     const owner = await dataService.users.getUserByUsername(ownerUsername);
-    if (!owner) {
-      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
-    }
 
-    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
-    if (!project) {
-      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
+    if (owner) {
+      const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
+      if (project) {
+        const userUUID = request.body.userUUID;
+        await dataService.users.unStarProject(userUUID, project.id);
+      }
     }
-
-    const userUUID = request.body.userUUID;
-    await dataService.users.unStarProject(userUUID, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }

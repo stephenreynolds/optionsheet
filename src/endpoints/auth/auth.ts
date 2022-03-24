@@ -1,11 +1,11 @@
-// POST /auth
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import { AuthTokenDto, AvailableDto } from "./authDtos";
+import { AuthTokenDto } from "./authDtos";
 
+// POST /auth
 export const authenticate = async (request: Request, response: Response) => {
   try {
     const { username, email, password } = request.body;
@@ -37,11 +37,11 @@ export const authenticate = async (request: Request, response: Response) => {
     }
 
     const token = await dataService.users.createToken(user.uuid);
-    const { refresh_token: refreshToken } = await dataService.users.createRefreshToken(user.uuid);
+    const { refresh_token } = await dataService.users.createRefreshToken(user.uuid);
 
     const res: AuthTokenDto = {
       token,
-      refreshToken
+      refresh_token
     };
 
     response.send(res);
@@ -55,7 +55,7 @@ export const authenticate = async (request: Request, response: Response) => {
 // POST /auth/refresh
 export const refreshToken = async (request: Request, response: Response) => {
   try {
-    if (!request.body.refreshToken) {
+    if (!request.body.refresh_token) {
       return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token not provided.");
     }
 
@@ -75,7 +75,7 @@ export const refreshToken = async (request: Request, response: Response) => {
 
     const res: AuthTokenDto = {
       token: newToken,
-      refreshToken: refresh_token
+      refresh_token
     };
 
     response.send(res);
@@ -105,15 +105,15 @@ export const emailAndUsernameAvailable = async (request: Request, response: Resp
       emailAvailable = !userWithEmail;
     }
 
-    const dto: AvailableDto = {
-      available: usernameAvailable && emailAvailable
-    };
-
-    response.send(dto);
+    if (usernameAvailable && emailAvailable) {
+      response.sendStatus(StatusCodes.NO_CONTENT)
+    }
+    else {
+      response.sendStatus(StatusCodes.BAD_REQUEST)
+    }
   }
   catch (error) {
-    const message = "Failed to check if email and username are available";
-    logError(error, message);
-    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, message);
+    logError(error, "Failed to check if email and username are available");
+    return sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to check if email and username are available.");
   }
 };

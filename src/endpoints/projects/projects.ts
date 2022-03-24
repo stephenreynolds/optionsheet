@@ -13,7 +13,7 @@ export const getProjects = async (request: Request, response: Response) => {
 
     const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
     const projects = await dataService.projects.getUserProjects(user.uuid);
@@ -49,12 +49,12 @@ export const getProjectByName = async (request: Request, response: Response) => 
 
     const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
     const project = await dataService.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
     const tags = await dataService.projects.getProjectTags(project.id);
@@ -121,7 +121,7 @@ export const updateProject = async (request: Request, response: Response) => {
 
     const user = await dataService.users.getUserByUsername(username);
     if (!user) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
     const { userUUID, ...newData } = request.body;
@@ -131,7 +131,7 @@ export const updateProject = async (request: Request, response: Response) => {
 
     const project = await dataService.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not have a project with that name.");
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
     const model: ProjectUpdateModel = {
@@ -159,17 +159,15 @@ export const deleteProject = async (request: Request, response: Response) => {
     const { username, project: projectName } = request.params;
 
     const user = await dataService.users.getUserByUsername(username);
-    if (!user) {
-      return sendError(request, response, StatusCodes.BAD_REQUEST, "User does not exist.");
-    }
+    if (user) {
+      if (userUUID !== user.uuid) {
+        return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
+      }
 
-    if (userUUID !== user.uuid) {
-      return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
-    }
-
-    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
-    if (project) {
-      await dataService.projects.deleteProject(project.id);
+      const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+      if (project) {
+        await dataService.projects.deleteProject(project.id);
+      }
     }
 
     response.sendStatus(StatusCodes.NO_CONTENT);

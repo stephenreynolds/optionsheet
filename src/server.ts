@@ -6,7 +6,7 @@ import { Database } from "./data/database";
 import logger from "./logger";
 import Request from "./request";
 import routes from "./routes";
-import * as swaggerDocument from "../swagger.json";
+import * as swaggerDocument from "./swagger.json";
 
 // Connect to the database and inject a wrapper into every request.
 const database = new Database();

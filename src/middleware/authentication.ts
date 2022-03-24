@@ -6,11 +6,13 @@ import { logError, sendError } from "../error";
 
 export const verifyJwtToken = (request: Request, response: Response, next) => {
   try {
-    const token = request.headers["authorization"].split(" ")[1];
+    const authHeader = request.headers["authorization"];
 
-    if (!token) {
+    if (!authHeader) {
       return sendError(request, response, StatusCodes.UNAUTHORIZED, "Requires authentication");
     }
+
+    const token = authHeader.split(" ")[1]
 
     jwt.verify(token, config.jwt.secret, (error, decoded) => {
       if (error) {

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/stephenreynolds/optionsheet-server#readme",
   "dependencies": {
+    "@types/pg": "^8.6.5",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",

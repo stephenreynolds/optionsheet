@@ -13,7 +13,7 @@ const StarButton = ({ username, projectName }) => {
       .then(() => setStarred(true))
       .catch(() => setStarred(false))
       .finally(() => setLoading(false));
-  }, []);
+  }, [username, projectName]);
 
   const onClick = async () => {
     if (starred) {

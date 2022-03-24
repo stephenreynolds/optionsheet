@@ -14,7 +14,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
     .map((trade) => {
       return {
         ...trade,
-        close: new Date(trade.closeDate.toDateString())
+        close: new Date(trade.close_date.toDateString())
       };
     });
 
@@ -157,7 +157,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
     const gainLossRatioLong = averageGainLong && averageLossLong ? averageGainLong / averageLossLong : 1;
     const averageProfitLossLong = netProfitLong / (winningTradesLong.length + losingTradesLong.length);
     const averageDurationDaysLong = _.mean(longTrades
-      .filter((trade) => trade.closeDate)
+      .filter((trade) => trade.close_date)
       .map((trade) => getTradeDurationDays(trade)));
 
     history[history.length - 1].analytics.long = {
@@ -196,7 +196,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
     const gainLossRatioShort = averageGainShort && averageLossShort ? averageGainShort / averageLossShort : 1;
     const averageProfitLossShort = netProfitShort / (winningTradesShort.length + losingTradesShort.length);
     const averageDurationDaysShort = _.mean(shortTrades
-      .filter((trade) => trade.closeDate)
+      .filter((trade) => trade.close_date)
       .map((trade) => getTradeDurationDays(trade)));
 
     history[history.length - 1].analytics.short = {
@@ -235,7 +235,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
     const gainLossRatioNeutral = averageGainNeutral && averageLossNeutral ? averageGainNeutral / averageLossNeutral : 1;
     const averageProfitLossNeutral = netProfitNeutral / (winningTradesNeutral.length + losingTradesNeutral.length);
     const averageDurationDaysNeutral = _.mean(neutralTrades
-      .filter((trade) => trade.closeDate)
+      .filter((trade) => trade.close_date)
       .map((trade) => getTradeDurationDays(trade)));
 
     history[history.length - 1].analytics.neutral = {
@@ -361,7 +361,7 @@ export const calculateAnalytics = (startingBalance: number, risk: number, date: 
     .filter((r) => isFinite(r)));
   const tradingPeriodDays = getTradingPeriodDays(trades);
   const averageDurationDays = _.mean(trades
-    .filter((trade) => trade.closeDate)
+    .filter((trade) => trade.close_date)
     .map((trade) => getTradeDurationDays(trade)));
   const kellyPercentage = getKellyPercentage(percentProfitable, averageGain, averageLoss);
   const riskAmount = risk != null ? currentBalance * risk / 100 : undefined;
@@ -438,13 +438,13 @@ export const getAverageProfit = (trades: Trade[]) => {
 };
 
 export const getTradingPeriodDays = (trades: Trade[]) => {
-  const diff = trades[trades.length - 1].closeDate.getTime() - trades[0].openDate.getTime();
+  const diff = trades[trades.length - 1].close_date.getTime() - trades[0].open_date.getTime();
   return diff / (1000 * 3600 * 24);
 };
 
 export const getSharpeRatio = (trades: Trade[], startingBalance: number) => {
   const closedTrades = trades.slice().sort((a, b) => {
-    return a.closeDate.getTime() - b.closeDate.getTime();
+    return a.close_date.getTime() - b.close_date.getTime();
   });
 
   // Calculate excess returns
@@ -473,8 +473,8 @@ export const getKellyPercentage = (percentProfitable: number, averageGain: numbe
 };
 
 export const getAnnualizedProfit = (startingBalance: number, netProfit: number, trades: Trade[]) => {
-  const openDates = trades.map((t) => t.openDate);
-  const closeDates = trades.map((t) => t.closeDate);
+  const openDates = trades.map((t) => t.open_date);
+  const closeDates = trades.map((t) => t.close_date);
 
   const maxClose = new Date(Math.max.apply(null, closeDates)).getTime() / (1000 * 3600 * 24);
   const minOpen = new Date(Math.min.apply(null, openDates)).getTime() / (1000 * 3600 * 24);
@@ -488,7 +488,7 @@ export const getAlpha = (trades: Trade[], date: Date, startingBalance: number, m
   lastYear.setFullYear(lastYear.getFullYear() - 1);
 
   // Calculate balance one year ago.
-  const pastTrades1 = trades.filter((trade) => trade.closeDate.getTime() <= lastYear.getTime());
+  const pastTrades1 = trades.filter((trade) => trade.close_date.getTime() <= lastYear.getTime());
   const winningTrades1 = getWinningTrades(pastTrades1);
   const losingTrades1 = getLosingTrades(pastTrades1);
   const grossProfit1 = getGrossProfit(winningTrades1);
@@ -497,7 +497,7 @@ export const getAlpha = (trades: Trade[], date: Date, startingBalance: number, m
   const balanceOneYearAgo = getNetProfit(grossProfit1, grossLoss1) + startingBalance;
 
   // Calculate net profit since one year ago.
-  const pastTrades = trades.filter((trade) => trade.closeDate.getTime() >= lastYear.getTime());
+  const pastTrades = trades.filter((trade) => trade.close_date.getTime() >= lastYear.getTime());
   const winningTrades = getWinningTrades(pastTrades);
   const losingTrades = getLosingTrades(pastTrades);
   const grossProfit = getGrossProfit(winningTrades);

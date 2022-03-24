@@ -1,32 +1,30 @@
-import { Tag } from "./tag";
-
 export interface Project {
   name: string;
   description: string;
-  tags?: Tag[];
-  startingBalance?: number;
+  tags?: string[];
+  starting_balance?: number;
   risk?: number;
-  lastEdited: Date;
+  updated_on: Date;
 }
 
 export interface ProjectCreateModel {
   name: string;
   description: string;
-  tags?: Tag[];
-  startingBalance?: number;
+  tags?: string[];
+  starting_balance?: number;
 }
 
 export interface ProjectUpdateModel {
   name?: string;
   description?: string;
-  tags?: Tag[];
-  startingBalance?: number;
+  tags?: string[];
+  starting_balance?: number;
   risk?: number;
 }
 
 export interface ProjectSummaryModel {
   name: string;
   description: string;
-  tags?: Tag[];
-  lastEdited: Date;
+  tags?: string[];
+  updated_on: Date;
 }

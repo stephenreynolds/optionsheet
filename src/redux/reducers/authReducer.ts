@@ -8,7 +8,7 @@ interface AuthReducerState {
 
 const initialState: Readonly<Partial<AuthReducerState>> = {
   token: window.localStorage.getItem("token"),
-  refreshToken: window.localStorage.getItem("refreshToken")
+  refreshToken: window.localStorage.getItem("refresh_token")
 };
 
 const authenticateReducer = produce((state, action) => {
@@ -24,7 +24,7 @@ const authenticateReducer = produce((state, action) => {
     case REGISTER_FAIL:
       state = { };
       window.localStorage.removeItem("token");
-      window.localStorage.removeItem("refreshToken");
+      window.localStorage.removeItem("refresh_token");
       break;
   }
 

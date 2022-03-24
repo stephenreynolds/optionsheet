@@ -83,7 +83,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
     }
     else if ((key === "," || key === "Enter" || key === "Tab") && trimmedInput.length && !tags.includes(trimmedInput)) {
       e.preventDefault();
-      setTags([...tags, { name: trimmedInput }]);
+      setTags([...tags, trimmedInput]);
       setInput("");
       setShownSuggestions([]);
     }
@@ -93,7 +93,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
       const tagsCopy = [...tags];
       const poppedTag = tagsCopy.pop();
       setTags(tagsCopy);
-      setInput(poppedTag.name);
+      setInput(poppedTag);
     }
 
     setIsKeyReleased(false);
@@ -133,7 +133,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
         <div className="tags">
           {tags.map((tag, index) => (
             <div className="tag" key={index}>
-              {tag.name}
+              {tag}
               <button onClick={(e) => deleteTag(e, index)}>x</button>
             </div>
           ))}

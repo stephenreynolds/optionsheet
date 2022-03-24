@@ -2,7 +2,6 @@ import { blackScholes } from "black-scholes";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts/highstock";
 import _ from "lodash";
-import React from "react";
 import styled from "styled-components";
 import { Leg, PutCall, Side } from "../../../common/models/trade";
 import { tradeIsOption, usd } from "../../../common/tradeUtils";
@@ -51,7 +50,7 @@ const calculateChart = (legs: Leg[]) => {
     const strikes = legs.map((l) => l.strike);
     const min = _.min(strikes);
     const max = _.max(strikes);
-    const width = strikes.length > 1 ? (max - min) / 2 : legs[0].openPrice * 2;
+    const width = strikes.length > 1 ? (max - min) / 2 : legs[0].open_price * 2;
 
     for (let price = min - width; price <= max + width; price += 0.01) {
       points = [...points, {
@@ -62,12 +61,12 @@ const calculateChart = (legs: Leg[]) => {
     }
 
     for (const leg of legs) {
-      const optionType = leg.putCall === PutCall.Call ? "put" : "call";
+      const optionType = leg.put_call === PutCall.Call ? "put" : "call";
       const side = leg.side === Side.Buy ? 1 : -1;
 
       for (let i = 0; i < points.length; ++i) {
         const bs = blackScholes(leg.strike, points[i].x - 1, 0, 0, 0, optionType);
-        const pl = (bs - leg.openPrice) * leg.quantity * 100 * side;
+        const pl = (bs - leg.open_price) * leg.quantity * 100 * side;
         points[i] = {
           ...points[i],
           y: pl + points[i].y,
@@ -77,8 +76,8 @@ const calculateChart = (legs: Leg[]) => {
     }
   }
   else {
-    const min = legs[0].openPrice * 0.75;
-    const max = legs[0].openPrice * 1.25;
+    const min = legs[0].open_price * 0.75;
+    const max = legs[0].open_price * 1.25;
 
     for (let price = min; price <= max; price += 0.01) {
       points = [...points, {
@@ -90,7 +89,7 @@ const calculateChart = (legs: Leg[]) => {
     for (let i = 0; i < points.length; ++i) {
       const leg = legs[0];
       const side = leg.side === Side.Buy ? 1 : -1;
-      const pl = (points[i].x - leg.openPrice) * leg.quantity * side;
+      const pl = (points[i].x - leg.open_price) * leg.quantity * side;
       points[i] = {
         ...points[i],
         y: pl,
@@ -103,6 +102,8 @@ const calculateChart = (legs: Leg[]) => {
 };
 
 const OptionChart = ({ legs }: { legs: Leg[] }) => {
+  const data = calculateChart(legs);
+
   const options = {
     chart: {
       type: "area",
@@ -123,7 +124,7 @@ const OptionChart = ({ legs }: { legs: Leg[] }) => {
     },
     series: [
       {
-        data: calculateChart(legs),
+        data,
         color: "#1b7c1f",
         negativeColor: "#cb0707",
         fillOpacity: 0.5,

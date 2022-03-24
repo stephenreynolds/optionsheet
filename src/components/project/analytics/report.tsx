@@ -16,7 +16,7 @@ interface Props {
 }
 
 const getClosedTrades = (trades: Trade[]) => {
-  return trades.filter((trade) => trade.closeDate);
+  return trades.filter((trade) => trade.close_date);
 };
 
 const Report = ({ project, loading }: Props) => {
@@ -27,9 +27,9 @@ const Report = ({ project, loading }: Props) => {
   useEffect(() => {
     if (trades && getClosedTrades(trades).length) {
       const closedTrades = getClosedTrades(trades);
-      setHistory(calculateAnalyticsHistory(project.startingBalance, project.risk, closedTrades));
+      setHistory(calculateAnalyticsHistory(project.starting_balance, project.risk, closedTrades));
     }
-  }, [project.risk, project.startingBalance, trades]);
+  }, [project.risk, project.starting_balance, trades]);
 
   if (loading || !trades) {
     return null;
@@ -60,7 +60,7 @@ const Report = ({ project, loading }: Props) => {
       </StatisticItem>
       <hr />
       {/* Balance */}
-      {project.startingBalance && (
+      {project.starting_balance && (
         <StatisticDropdown history={history} property="currentBalance"
                            valueTextTransform={usd.format}>
           <StatisticItem>
@@ -81,7 +81,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Net profit % */}
-      {project.startingBalance && (
+      {project.starting_balance && (
         <StatisticDropdown history={history} property="netProfitPercent"
                            valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>
           <StatisticItem>
@@ -127,7 +127,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Alpha */}
-      {project.startingBalance && (
+      {project.starting_balance && (
         <StatisticDropdown history={history} property="alpha"
                            valueTextTransform={(n) => n.toFixed(2)}>
           <StatisticItem>
@@ -241,7 +241,7 @@ const Report = ({ project, loading }: Props) => {
       <br />
 
       {/* Annualized return */}
-      {project.startingBalance && (
+      {project.starting_balance && (
         <>
           <StatisticDropdown history={history} property="annualizedProfitPercent"
                              valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>

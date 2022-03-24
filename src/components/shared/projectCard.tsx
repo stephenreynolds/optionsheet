@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { Tag } from "../../common/models/tag";
 import { TagPill } from "./pill";
 import moment from "moment";
 
@@ -35,9 +34,9 @@ const ProjectCardDiv = styled.div`
 export interface ProjectCardProps {
   name: string;
   description: string;
-  lastEdited: Date;
+  updated_on: Date;
   username: string;
-  tags: Tag[];
+  tags: string[];
   trades: number;
 }
 
@@ -59,13 +58,13 @@ const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
       {/* Tags */}
       <div className="tags">
         {project.tags.map((tag) => (
-          <TagPill key={tag.name}>{tag.name}</TagPill>
+          <TagPill key={tag}>{tag}</TagPill>
         ))}
       </div>
 
       {/* Last edited date */}
       <p>
-        <small>Last edited {moment(new Date(project.lastEdited)).fromNow()}</small>
+        <small>Last edited {moment(new Date(project.updated_on)).fromNow()}</small>
       </p>
     </ProjectCardDiv>
   );

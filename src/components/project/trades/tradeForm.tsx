@@ -76,32 +76,32 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
 
   const initialValues = {
     symbol: trade ? trade.symbol : "",
-    openDate: trade ? trade.openDate : new Date(),
-    closeDate: () => {
+    open_date: trade ? trade.open_date : new Date(),
+    close_date: () => {
       if (trade) {
-        if (trade.closeDate) {
-          return trade.closeDate;
+        if (trade.close_date) {
+          return trade.close_date;
         }
-        if (trade.openDate) {
-          return trade.openDate;
+        if (trade.open_date) {
+          return trade.open_date;
         }
       }
       return undefined;
     },
     legs: trade ? trade.legs : [initialLegValues],
-    openingNote: trade && trade.openingNote ? trade.openingNote : "",
-    closingNote: trade && trade.closingNote ? trade.closingNote : "",
+    opening_note: trade && trade.opening_note ? trade.opening_note : "",
+    closing_note: trade && trade.closing_note ? trade.closing_note : "",
     tags: trade ? trade.tags : [],
     strategy: StrategyOptions.Call,
     errorMessages: []
   };
 
   const [symbol, setSymbol] = useState(initialValues.symbol);
-  const [openDate, setOpenDate] = useState(initialValues.openDate);
-  const [closeDate, setCloseDate] = useState(initialValues.closeDate);
+  const [openDate, setOpenDate] = useState(initialValues.open_date);
+  const [closeDate, setCloseDate] = useState(initialValues.close_date);
   const [legs, setLegs] = useState(initialValues.legs);
-  const [openingNote, setOpeningNote] = useState(initialValues.openingNote);
-  const [closingNote, setClosingNote] = useState(initialValues.closingNote);
+  const [openingNote, setOpeningNote] = useState(initialValues.opening_note);
+  const [closingNote, setClosingNote] = useState(initialValues.closing_note);
   const [tags, setTags] = useState(initialValues.tags);
   const [strategy, setStrategy] = useState(initialValues.strategy);
   const [errorMessages, setErrorMessages] = useState(initialValues.errorMessages);
@@ -123,7 +123,7 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
       messages = [...messages, m];
     }
 
-    if (trade && trade.closeDate) {
+    if (trade && trade.close_date) {
       if (!closeDateIsValid(openDate, closeDate)) {
         const m = "Close date must be after open date.";
         messages = [...messages, m];
@@ -140,11 +140,11 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
 
   const clear = () => {
     setSymbol(initialValues.symbol);
-    setOpenDate(initialValues.openDate);
-    setCloseDate(initialValues.closeDate);
+    setOpenDate(initialValues.open_date);
+    setCloseDate(initialValues.close_date);
     setLegs(initialValues.legs);
-    setOpeningNote(initialValues.openingNote);
-    setClosingNote(initialValues.closingNote);
+    setOpeningNote(initialValues.opening_note);
+    setClosingNote(initialValues.closing_note);
     setTags(initialValues.tags);
     setStrategy(StrategyOptions.Call);
     setErrorMessages([]);
@@ -160,11 +160,11 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
     if (trade && close) {
       const updatedTrade: TradeUpdateModel = {
         symbol,
-        openDate,
-        closeDate,
+        open_date: openDate,
+        close_date: closeDate,
         legs,
-        openingNote,
-        closingNote,
+        opening_note: openingNote,
+        closing_note: closingNote,
         tags
       };
 
@@ -178,11 +178,11 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
     else if (trade) {
       const updatedTrade: TradeUpdateModel = {
         symbol,
-        openDate,
-        closeDate: trade.closeDate ? closeDate : null,
+        open_date: openDate,
+        close_date: trade.close_date ? closeDate : null,
         legs,
-        openingNote,
-        closingNote: trade.closingNote ? closingNote : null,
+        opening_note: openingNote,
+        closing_note: trade.closing_note ? closingNote : null,
         tags
       };
 
@@ -196,9 +196,9 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
     else {
       const newTrade: TradeCreateModel = {
         symbol,
-        openDate,
+        open_date: openDate,
         legs,
-        openingNote,
+        opening_note: openingNote,
         tags
       };
 
@@ -257,7 +257,7 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
             )}
 
             {/* Close date */}
-            {trade && (close || trade.closeDate) && (
+            {trade && (close || trade.close_date) && (
               <div>
                 <label>Close date</label>
                 <DateInput value={closeDate} onChange={(e) => onTradeDateChange(e, setCloseDate)} clearIcon={null} />
@@ -269,7 +269,7 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
           <div className="legs">
             {legs.map((leg, i) => <LegInputGroup key={i} index={i} legs={legs} setLegs={setLegs}
                                                  isShares={isShares} close={close}
-                                                 closed={trade && trade.closeDate} />)}
+                                                 closed={trade && trade.close_date} />)}
           </div>
 
           {/* Add leg button */}
@@ -294,7 +294,7 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
           )}
 
           {/* Closing notes */}
-          {trade && (close || trade.closeDate) && (
+          {trade && (close || trade.close_date) && (
             <div>
               <label>Closing note</label>
               <textarea rows={1} value={closingNote} onChange={(e) => onNoteChange(e, setClosingNote)} />

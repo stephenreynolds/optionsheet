@@ -87,7 +87,7 @@ const TradeDetails = () => {
             <h1 className="mb-0">{trade.symbol}</h1>
             <h3>{getStrategyFromLegs(trade.legs)}</h3>
             {trade.tags.length > 0 && trade.tags.map((tag) => (
-              <TagPill key={tag.name}>{tag.name}</TagPill>
+              <TagPill key={tag}>{tag}</TagPill>
             ))}
           </div>
           <div>
@@ -100,7 +100,7 @@ const TradeDetails = () => {
         {myProject && (
           <div>
             {/* Close trade */}
-            {!trade.closeDate && <button onClick={toggleCloseModal} className="ml-0 mr-1">Close trade</button>}
+            {!trade.close_date && <button onClick={toggleCloseModal} className="ml-0 mr-1">Close trade</button>}
 
             {/* Edit trade */}
             <button className="ml-0 mr-1" onClick={toggleEditModal}>Edit trade</button>
@@ -113,11 +113,11 @@ const TradeDetails = () => {
 
       <div className="details mb-1" style={{width: "fit-content", marginRight: "5rem"}}>
         <DetailsSection>
-          <p>Open: {formatDate(trade.openDate)}</p>
+          <p>Open: {formatDate(trade.open_date)}</p>
           {isOption && <p>Expiration: {formatDate(trade.legs[0].expiration)}</p>}
-          {trade.closeDate && (
+          {trade.close_date && (
             <>
-              <p>Close: {new Date(trade.closeDate).toLocaleDateString()}</p>
+              <p>Close: {new Date(trade.close_date).toLocaleDateString()}</p>
               <p>Duration: {getTradeDurationDays(trade)} days</p>
             </>
           )}
@@ -127,7 +127,7 @@ const TradeDetails = () => {
           <p>Quantity: {getTradeQuantity(trade.legs)}</p>
           <p>Open price: {!isOption ? usd.format(getOpenPrice(trade.legs)) : getOpenPrice(trade.legs).toFixed(2)}</p>
           <p>Net cost: {usd.format(getNetCost(trade.legs) * (isOption ? 100 : 1))}</p>
-          {trade.closeDate && <p>P/L: {usd.format(getProfitLoss(trade))}</p>}
+          {trade.close_date && <p>P/L: {usd.format(getProfitLoss(trade))}</p>}
         </DetailsSection>
 
         <DetailsSection>
@@ -138,18 +138,18 @@ const TradeDetails = () => {
           )}
         </DetailsSection>
 
-        {(trade.openingNote || trade.closingNote) && (
+        {(trade.opening_note || trade.closing_note) && (
           <DetailsSection>
-            {trade.openingNote && (
+            {trade.opening_note && (
               <>
                 <b>Opening note:</b>
-                <blockquote>{trade.openingNote}</blockquote>
+                <blockquote>{trade.opening_note}</blockquote>
               </>
             )}
-            {trade.closingNote && (
+            {trade.closing_note && (
               <>
                 <b>Closing note:</b>
-                <blockquote>{trade.closingNote}</blockquote>
+                <blockquote>{trade.closing_note}</blockquote>
               </>
             )}
           </DetailsSection>

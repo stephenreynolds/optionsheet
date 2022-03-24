@@ -103,7 +103,7 @@ const NewProject = () => {
       name: data.name,
       description: data.description,
       tags: data.tags,
-      startingBalance: data.startingBalance !== "" ? data.startingBalance : null
+      starting_balance: data.startingBalance !== "" ? data.startingBalance : null
     };
 
     dispatch(projectActions.createProject(model))

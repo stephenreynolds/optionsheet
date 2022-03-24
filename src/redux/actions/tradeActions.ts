@@ -37,8 +37,8 @@ export const getTrades = (username: string, projectName: string) => {
         const trades = response.data.map((trade: Trade) => {
           return {
             ...trade,
-            openDate: new Date(trade.openDate),
-            closeDate: trade.closeDate ? new Date(trade.closeDate) : null,
+            open_date: new Date(trade.open_date),
+            close_date: trade.close_date ? new Date(trade.close_date) : null,
             legs: trade.legs.map((leg) => {
               return {
                 ...leg,
@@ -63,8 +63,8 @@ export const getTradeById = (id: string) => {
       .then((response) => {
         const trade: Trade = {
           ...response.data,
-          openDate: new Date(response.data.openDate),
-          closeDate: response.data.closeDate ? new Date(response.data.closeDate) : null,
+          open_date: new Date(response.data.open_date),
+          close_date: response.data.closeDate ? new Date(response.data.close_date) : null,
           legs: response.data.legs.map((leg) => {
             return {
               ...leg,

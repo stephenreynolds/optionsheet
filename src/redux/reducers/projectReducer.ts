@@ -7,12 +7,11 @@ import {
 import { Project, ProjectSummaryModel } from "../../common/models/project";
 import _ from "lodash";
 import produce from "immer";
-import { Tag } from "../../common/models/tag";
 
 interface ProjectReducerState {
   projects: ProjectSummaryModel[];
   project: Project;
-  tags: Tag[];
+  tags: string[];
 }
 
 const initialState: Readonly<Partial<ProjectReducerState>> = {};

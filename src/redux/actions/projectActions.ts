@@ -17,7 +17,7 @@ export const getProjects = (username: string) => {
         const projects = response.data.map((project: Project) => {
           return {
             ...project,
-            lastEdited: new Date(project.lastEdited)
+            updated_on: new Date(project.updated_on)
           };
         });
         dispatch({ type: GET_PROJECTS_SUCCESS, payload: projects });
@@ -37,7 +37,7 @@ export const getProject = (username: string, projectName: string) => {
       .then((response) => {
         const project: Project = {
           ...response.data,
-          lastEdited: new Date(response.data.lastEdited)
+          updated_on: new Date(response.data.updated_on)
         };
         dispatch({ type: GET_PROJECT_SUCCESS, payload: project });
       })
@@ -55,7 +55,7 @@ export const createProject = (model: ProjectCreateModel) => {
       .createProject(model)
       .then((response) => {
         dispatch({ type: CREATE_PROJECT_SUCCESS });
-        return response.data.projectUrl;
+        return response.data.project_url;
       })
       .catch((error) => {
         dispatch(apiCallError());

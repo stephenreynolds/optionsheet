@@ -9,7 +9,7 @@ const setToken = (token) => {
 };
 
 const getRefreshToken = () => {
-  return JSON.parse(window.localStorage.getItem("refreshToken"));
+  return JSON.parse(window.localStorage.getItem("refresh_token"));
 };
 
 const instance = axios.create({
@@ -23,7 +23,7 @@ instance.interceptors.request.use(
   (config) => {
     const token = getToken();
     if (token) {
-      config.headers["x-access-token"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
@@ -41,7 +41,7 @@ instance.interceptors.response.use(
       originalConfig._retry = true;
       try {
         const response = await instance.post("/auth/refresh", {
-          refreshToken: getRefreshToken()
+          refresh_token: getRefreshToken()
         });
 
         const { token } = response.data;

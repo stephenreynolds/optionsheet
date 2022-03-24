@@ -40,15 +40,15 @@ export const formatPrice = (price: number, digits = 2) => {
 };
 
 export const tradeIsOption = (legs: Leg[]) => {
-  return _.every(legs, (leg) => leg.putCall && leg.strike >= 0 && leg.expiration);
+  return _.every(legs, (leg) => leg.put_call && leg.strike >= 0 && leg.expiration);
 };
 
 export const getNetCost = (legs: Leg[]) => {
   let sum = 0;
 
-  for (const { side, openPrice, quantity } of legs) {
+  for (const { side, open_price, quantity } of legs) {
     const s = side === Side.Buy ? 1 : -1;
-    sum += s * openPrice * quantity;
+    sum += s * open_price * quantity;
   }
 
   return sum;
@@ -57,27 +57,27 @@ export const getNetCost = (legs: Leg[]) => {
 export const getOpenPrice = (legs: Leg[]) => {
   let sum = 0;
 
-  for (const { side, openPrice } of legs) {
+  for (const { side, open_price } of legs) {
     const s = side === Side.Buy ? 1 : -1;
-    sum += s * openPrice;
+    sum += s * open_price;
   }
 
   return sum;
 };
 
-export const getProfitLoss = ({ closeDate, legs }: Trade) => {
-  if (!closeDate) {
+export const getProfitLoss = ({ close_date, legs }: Trade) => {
+  if (!close_date) {
     return NaN;
   }
 
   let sum = 0;
 
-  for (const { side, openPrice, closePrice, quantity } of legs) {
+  for (const { side, open_price, close_price, quantity } of legs) {
     if (side == Side.Buy) {
-      sum += (closePrice - openPrice) * quantity;
+      sum += (close_price - open_price) * quantity;
     }
     else {
-      sum += (openPrice - closePrice) * quantity;
+      sum += (open_price - close_price) * quantity;
     }
   }
 
@@ -162,8 +162,8 @@ export const getMaxLoss = (trade: Trade) => {
   }
   // Iron condor = difference in strikes - net credit of the widest side
   if (strategy === Strategy.IronCondor) {
-    const calls = legs.filter((leg) => leg.putCall === PutCall.Call);
-    const puts = legs.filter((leg) => leg.putCall === PutCall.Put);
+    const calls = legs.filter((leg) => leg.put_call === PutCall.Call);
+    const puts = legs.filter((leg) => leg.put_call === PutCall.Put);
     const callsDiff = Math.abs(calls[0].strike - calls[1].strike);
     const putsDiff = Math.abs(puts[0].strike - puts[1].strike);
     return callsDiff > putsDiff ? callsDiff + cost : putsDiff + cost;
@@ -184,7 +184,7 @@ export const getReturnOnRisk = (trade: Trade) => {
 };
 
 export const getTradeDurationDays = (trade: Trade) => {
-  const diff = trade.closeDate.getTime() - trade.openDate.getTime();
+  const diff = trade.close_date.getTime() - trade.open_date.getTime();
   return Math.floor((diff / (1000 * 3600 * 24)));
 };
 

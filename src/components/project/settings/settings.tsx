@@ -52,7 +52,7 @@ const Settings = ({ username }) => {
     if (project) {
       setNewProjectName(project.name);
       setNewDescription(project.description);
-      setNewStartingBalance(project.startingBalance != null ? project.startingBalance : "");
+      setNewStartingBalance(project.starting_balance != null ? project.starting_balance : "");
       setNewTags(project.tags);
       setNewRisk(project.risk != null ? project.risk : "");
     }
@@ -100,7 +100,7 @@ const Settings = ({ username }) => {
 
     const startingBalance = newStartingBalance === "" ? null : Number(newStartingBalance);
 
-    dispatch(updateProject(username, project.name, { startingBalance })).then(() => {
+    dispatch(updateProject(username, project.name, { starting_balance: startingBalance })).then(() => {
       toast.success("Updated starting balance.");
     }, (error) => {
       toast.error(error);

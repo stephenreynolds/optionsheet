@@ -3,7 +3,6 @@ import { getStrategyFromLegs } from "../../common/strategy";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { TagPill } from "../shared/pill";
-import { Tag } from "../../common/models/tag";
 import moment from "moment";
 
 const TradeCardDiv = styled.div`
@@ -43,7 +42,7 @@ export interface TradeProps {
   openingNote?: string;
   closingNote?: string;
   legs: Leg[];
-  tags: Tag[];
+  tags: string[];
   project: {
     name: string;
     user: {
@@ -77,7 +76,7 @@ const TradeCard = ({ trade }: { trade: TradeProps }) => {
       {/* Tags */}
       <div className="tags">
         {trade.tags.map((tag) => (
-          <TagPill key={tag.name}>{tag.name}</TagPill>
+          <TagPill key={tag}>{tag}</TagPill>
         ))}
       </div>
 

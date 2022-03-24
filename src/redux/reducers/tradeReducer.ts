@@ -6,7 +6,6 @@ import {
 import { Trade } from "../../common/models/trade";
 import _ from "lodash";
 import produce from "immer";
-import { Tag } from "../../common/models/tag";
 
 const getAllTradeTags = (trades: Trade[]) => {
   return _.uniq(trades
@@ -17,7 +16,7 @@ const getAllTradeTags = (trades: Trade[]) => {
 interface TradeReducerState {
   trade: Trade;
   trades: Trade[];
-  tags: Tag[];
+  tags: string[];
 }
 
 const initialState: Readonly<Partial<TradeReducerState>> = {};

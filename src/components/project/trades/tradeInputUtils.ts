@@ -58,11 +58,11 @@ export const addDays = (date: Date, days: number) => {
 
 export const initialLegValues: Leg = {
   side: Side.Buy,
-  putCall: PutCall.Call,
+  put_call: PutCall.Call,
   quantity: 1,
   expiration: addDays(new Date(), 45),
   strike: NaN,
-  openPrice: NaN
+  open_price: NaN
 };
 
 export const onAddLegClick = (e, legs, setLegs) => {
@@ -107,7 +107,7 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           side: Side.Buy,
           quantity: 1,
-          openPrice: NaN
+          open_price: NaN
         }
       ]);
       return;

@@ -1,5 +1,3 @@
-import { Tag } from "./tag";
-
 export enum Side {
   Buy = "Buy",
   Sell = "Sell"
@@ -12,39 +10,39 @@ export enum PutCall {
 
 export interface Leg {
   side: Side;
-  putCall?: PutCall;
+  put_call?: PutCall;
   quantity: number;
   expiration?: Date;
   strike?: number;
-  openPrice: number;
-  closePrice?: number;
+  open_price: number;
+  close_price?: number;
 }
 
 export interface Trade {
   id?: string;
   symbol: string;
-  openDate: Date;
-  closeDate?: Date;
+  open_date: Date;
+  close_date?: Date;
   legs: Leg[];
-  openingNote?: string;
-  closingNote?: string;
-  tags?: Tag[];
+  opening_note?: string;
+  closing_note?: string;
+  tags?: string[];
 }
 
 export interface TradeCreateModel {
   symbol: string;
-  openDate: Date;
+  open_date: Date;
   legs: Leg[];
-  openingNote?: string;
-  tags?: Tag[];
+  opening_note?: string;
+  tags?: string[];
 }
 
 export interface TradeUpdateModel {
   symbol?: string;
-  openDate?: Date;
-  closeDate?: Date;
+  open_date?: Date;
+  close_date?: Date;
   legs?: Leg[];
-  openingNote?: string;
-  closingNote?: string;
-  tags?: Tag[];
+  opening_note?: string;
+  closing_note?: string;
+  tags?: string[];
 }

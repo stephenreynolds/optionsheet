@@ -237,9 +237,9 @@ const Trades = () => {
           .map((trade: Trade, i) => (
             <tr key={i} onClick={() => onTradeClick(trade)}>
               {/* Open date */}
-              <td>{formatDate(trade.openDate)}</td>
+              <td>{formatDate(trade.open_date)}</td>
               {/* Close date */}
-              <td>{trade.closeDate ? formatDate(trade.closeDate) : null}</td>
+              <td>{trade.close_date ? formatDate(trade.close_date) : null}</td>
               {/* Expiration */}
               <td>{formatDate(getTradeExpiration(trade.legs))}</td>
               {/* Symbol */}
@@ -258,7 +258,7 @@ const Trades = () => {
               </td>
               <td className="left-align">
                 {trade.tags.map((tag) => (
-                  <TagPill key={tag.name} value={tag.name}>{tag.name}</TagPill>
+                  <TagPill key={tag} value={tag}>{tag}</TagPill>
                 ))}
               </td>
             </tr>

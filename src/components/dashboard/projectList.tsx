@@ -64,7 +64,7 @@ const ProjectList = () => {
       <ul>
         {projects
           .filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
-          .sort((a, b) => b.lastEdited.getTime() - a.lastEdited.getTime())
+          .sort((a, b) => b.updated_on.getTime() - a.updated_on.getTime())
           .map((project, i) => (
             <li key={i}>
               <Link to={`/${username}/${project.name}`}>{project.name}</Link>

@@ -44,7 +44,6 @@ export class TradeManager {
       const res = await this.pool.query(`
           SELECT quantity, open_price, close_price, side, expiration, strike, put_call
           FROM leg
-                   LEFT JOIN option ON option.leg_id = leg.id
           WHERE leg.trade_id = $1
       `, [id]);
 
@@ -68,21 +67,11 @@ export class TradeManager {
 
       // Legs
       for (const leg of model.legs) {
-        const newLeg = await this.pool.query(`
-            INSERT INTO leg(trade_id, quantity, open_price, side)
-            VALUES ($1, $2, $3, $4)
+        await this.pool.query(`
+            INSERT INTO leg(trade_id, quantity, open_price, side, expiration, strike, put_call)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id
-        `, [tradeId, leg.quantity, leg.open_price, leg.side]);
-
-        // Option part of leg if provided
-        if (leg.expiration && leg.strike && leg.put_call) {
-          const legId = newLeg.rows[0].id;
-
-          await this.pool.query(`
-              INSERT INTO option(leg_id, expiration, strike, put_call)
-              VALUES ($1, $2, $3, $4)
-          `, [legId, leg.expiration, leg.strike, leg.put_call]);
-        }
+        `, [tradeId, leg.quantity, leg.open_price, leg.side, leg.expiration, leg.strike, leg.put_call]);
       }
 
       // Tags
@@ -119,21 +108,11 @@ export class TradeManager {
         `, [tradeId]);
 
         for (const leg of model.legs) {
-          const newLeg = await this.pool.query(`
-              INSERT INTO leg(trade_id, quantity, open_price, close_price, side)
-              VALUES ($1, $2, $3, $4, $5)
+          await this.pool.query(`
+              INSERT INTO leg(trade_id, quantity, open_price, close_price, side, expiration, strike, put_call)
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
               RETURNING id
-          `, [tradeId, leg.quantity, leg.open_price, leg.close_price, leg.side]);
-
-          // Option part of leg if provided
-          if (leg.expiration && leg.strike && leg.put_call) {
-            const legId = newLeg.rows[0].id;
-
-            await this.pool.query(`
-                INSERT INTO option(leg_id, expiration, strike, put_call)
-                VALUES ($1, $2, $3, $4)
-            `, [legId, leg.expiration, leg.strike, leg.put_call]);
-          }
+          `, [tradeId, leg.quantity, leg.open_price, leg.close_price, leg.side, leg.expiration, leg.strike, leg.put_call]);
         }
       }
 

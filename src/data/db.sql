@@ -81,18 +81,6 @@ $$
     END
 $$;
 
-CREATE TABLE IF NOT EXISTS leg
-(
-    id          INTEGER        NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    quantity    INTEGER        NOT NULL,
-    open_price  NUMERIC(10, 2) NOT NULL,
-    close_price NUMERIC(10, 2),
-    side        side           NOT NULL,
-    trade_id    INTEGER        NOT NULL,
-
-    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id) ON DELETE CASCADE
-);
-
 DO
 $$
     BEGIN
@@ -102,15 +90,19 @@ $$
     END
 $$;
 
-CREATE TABLE IF NOT EXISTS option
+CREATE TABLE IF NOT EXISTS leg
 (
-    id         INTEGER        NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    expiration Date           NOT NULL,
-    strike     NUMERIC(10, 2) NOT NULL,
-    put_call   put_call       NOT NULL,
-    leg_id     INTEGER        NOT NULL,
+    id          INTEGER        NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    side        side           NOT NULL,
+    quantity    INTEGER        NOT NULL,
+    open_price  NUMERIC(10, 2) NOT NULL,
+    close_price NUMERIC(10, 2),
+    put_call    put_call,
+    expiration  Date,
+    strike      NUMERIC(10, 2),
+    trade_id    INTEGER        NOT NULL,
 
-    CONSTRAINT fk_leg FOREIGN KEY (leg_id) REFERENCES leg (id) ON DELETE CASCADE
+    CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tag
@@ -228,27 +220,3 @@ CREATE TRIGGER on_leg_updated
     AFTER UPDATE
     ON leg
 EXECUTE PROCEDURE leg_updated_on();
-
--- On option updated
-CREATE OR REPLACE FUNCTION option_updated_on() RETURNS TRIGGER AS
-$update_user$
-BEGIN
-    IF pg_trigger_depth() < 2 THEN
-        UPDATE project
-        SET updated_on = now()
-        WHERE id = (SELECT project_id
-                    FROM trade
-                    WHERE id = (SELECT trade_id
-                                FROM leg
-                                WHERE leg_id = NEW.leg_id));
-    END IF;
-    RETURN NEW;
-END
-$update_user$ LANGUAGE plpgsql;
-
-DROP TRIGGER IF EXISTS on_option_updated ON "optionsheet"."option";
-
-CREATE TRIGGER on_option_updated
-    AFTER UPDATE
-    ON option
-EXECUTE PROCEDURE option_updated_on();

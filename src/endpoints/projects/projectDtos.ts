@@ -7,7 +7,7 @@ export interface GetProjectDto {
   username: string;
   description: string;
   created_on: Date;
-  last_edited: Date;
+  updated_on: Date;
   tags?: string[];
   starting_balance?: number;
   risk?: number;

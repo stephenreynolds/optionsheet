@@ -9,7 +9,7 @@ enum PutCall {
 }
 
 interface LegDto {
-  id: number;
+  id?: number;
   side: Side;
   quantity: number;
   open_price: number;

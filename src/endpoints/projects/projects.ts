@@ -66,7 +66,7 @@ export const getProjectByName = async (request: Request, response: Response) => 
       starting_balance: Number(project.starting_balance) ?? undefined,
       risk: Number(project.risk) ?? undefined,
       created_on: new Date(project.created_on),
-      last_edited: new Date(project.updated_on),
+      updated_on: new Date(project.updated_on),
       tags: tags.map((t) => t.name) ?? undefined
     };
 

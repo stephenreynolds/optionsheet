@@ -115,7 +115,7 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
       setLegs([{
         ...initialLegValues,
         side: Side.Buy,
-        putCall: PutCall.Call,
+        put_call: PutCall.Call,
         expiration: defaultExpiration
       }]);
       return;
@@ -123,7 +123,7 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
       setLegs([{
         ...initialLegValues,
         side: Side.Buy,
-        putCall: PutCall.Put,
+        put_call: PutCall.Put,
         expiration: defaultExpiration
       }]);
       return;
@@ -132,13 +132,13 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         }
       ]);
@@ -148,25 +148,25 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Put,
+          put_call: PutCall.Put,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Put,
+          put_call: PutCall.Put,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         }
       ]);
@@ -177,13 +177,13 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: addDays(openDate, 30)
         },
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: addDays(openDate, 60)
         }
       ]);
@@ -194,13 +194,13 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Put,
+          put_call: PutCall.Put,
           expiration: defaultExpiration
         }
       ]);
@@ -210,20 +210,20 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           quantity: 2,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         }
       ]);
@@ -233,25 +233,25 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: addDays(openDate, 30)
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Put,
+          put_call: PutCall.Put,
           expiration: addDays(openDate, 30)
         },
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: addDays(openDate, 60)
         },
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Put,
+          put_call: PutCall.Put,
           expiration: addDays(openDate, 60)
         }
       ]);
@@ -261,13 +261,13 @@ export const onStrategyChange = (e, setStrategy, setLegs, openDate) => {
         {
           ...initialLegValues,
           side: Side.Buy,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           expiration: defaultExpiration
         },
         {
           ...initialLegValues,
           side: Side.Sell,
-          putCall: PutCall.Call,
+          put_call: PutCall.Call,
           quantity: 2,
           expiration: defaultExpiration
         }

@@ -20,7 +20,7 @@ const invertOptions = (legs: Leg[], setLegs) => {
   const newLegs = legs.map((leg) => {
     return {
       ...leg,
-      putCall: leg.put_call === PutCall.Call ? PutCall.Put : PutCall.Call
+      put_call: leg.put_call === PutCall.Call ? PutCall.Put : PutCall.Call
     };
   });
 
@@ -100,8 +100,8 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
   };
 
   const onOptionChange = (e) => {
-    const putCall = PutCall[e.target.value];
-    updateLegs({ ...leg, putCall });
+    const put_call = PutCall[e.target.value];
+    updateLegs({ ...leg, put_call });
   };
 
   const onQuantityChange = (e) => {

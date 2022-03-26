@@ -1,9 +1,9 @@
+import bcrypt from "bcrypt";
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UserCreateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
-import bcrypt from "bcrypt";
 import { GetProjectDto } from "../projects/projectDtos";
 import { AuthTokenDto, GetUserDto } from "./usersDtos";
 
@@ -105,6 +105,10 @@ export const getUser = async (request: Request, response: Response) => {
     const dataService = request.dataService;
     const { username } = request.params;
     const user = await dataService.users.getUserByUsername(username);
+
+    if (!user) {
+      return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
+    }
 
     const res = await getUserDetails(user, dataService);
 

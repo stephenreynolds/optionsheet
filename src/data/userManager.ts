@@ -116,18 +116,6 @@ export class UserManager {
     }
   }
 
-  public async addRole(name: string) {
-    try {
-      await this.pool.query(`
-          INSERT INTO role(name)
-          VALUES ($1)
-          ON CONFLICT DO NOTHING`, [name]);
-    }
-    catch (error) {
-      logError(error, "Failed to add role");
-    }
-  }
-
   public async getRoleByName(name: string) {
     try {
       const res = await this.pool.query(`

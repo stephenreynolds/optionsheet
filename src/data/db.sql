@@ -220,3 +220,8 @@ CREATE TRIGGER on_leg_updated
     AFTER UPDATE
     ON leg
 EXECUTE PROCEDURE leg_updated_on();
+
+-- Insert default data
+INSERT INTO role(name)
+VALUES ('user')
+ON CONFLICT DO NOTHING;

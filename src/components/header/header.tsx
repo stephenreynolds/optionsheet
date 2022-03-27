@@ -9,7 +9,7 @@ import NavLinks from "./navLinks";
 
 const StyledHeader = styled.header`
   background-color: ${props => props.theme.dark.fg};
-  padding: 12px 32px;
+  padding: 7px 32px;
   display: flex;
   align-items: center;
 `;

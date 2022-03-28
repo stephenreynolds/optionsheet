@@ -64,8 +64,8 @@ const PinnedProjects = ({ username }) => {
 
   return (
     <>
-      <div className="d-flex space-between">
-        <h3>Pinned</h3>
+      <div className="d-flex space-between align-center" style={{marginBottom: "1em"}}>
+        <h3 className="m-0">Pinned</h3>
         {myProfile && <TextButton onClick={onCustomizePinsClick}>Customize your pins</TextButton>}
       </div>
 

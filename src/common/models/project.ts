@@ -1,10 +1,13 @@
 export interface Project {
+  id: number;
   name: string;
   description: string;
   tags?: string[];
   starting_balance?: number;
   risk?: number;
+  created_on: Date;
   updated_on: Date;
+  pinned?: boolean;
 }
 
 export interface ProjectCreateModel {

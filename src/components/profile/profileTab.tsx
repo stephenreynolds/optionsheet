@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { lazy } from "react";
 
-const Overview = lazy(() => import(/* webpackChunkName: "profile-overview" */ "./overview"));
+const Overview = lazy(() => import(/* webpackChunkName: "profile-overview" */ "./overview/overview"));
 const Projects = lazy(() => import(/* webpackChunkName: "profile-projects" */ "./projects"));
 const Stars = lazy(() => import(/* webpackChunkName: "profile-stars" */ "./stars"));
 
@@ -18,7 +18,7 @@ const ProfileTab = ({ username }) => {
     return <Stars username={username} />;
   }
 
-  return <Overview />;
+  return <Overview username={username} />;
 };
 
 export default ProfileTab;

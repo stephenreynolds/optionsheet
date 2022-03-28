@@ -150,6 +150,10 @@ export default createGlobalStyle`
   .fw-bold {
     font-weight: 600;
   }
+  
+  .muted {
+    opacity: 0.5;
+  }
 
   .d-flex {
     display: flex;

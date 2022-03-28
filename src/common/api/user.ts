@@ -25,10 +25,18 @@ export const unStarProject = async (ownerUsername: string, projectName: string) 
   return await api.delete(`/user/starred/${ownerUsername}/${projectName}`);
 };
 
+export const setPinnedProjects = async (projectIds: number[]) => {
+  return await api.put(`/user/pinned`, { projectIds });
+};
+
 export const checkProjectStarred = async (ownerUsername: string, projectName: string) => {
   return await api.get(`/user/starred/${ownerUsername}/${projectName}`);
 };
 
 export const getStarredProjects = async (username: string) => {
   return await api.get(`/users/${username}/starred`);
+};
+
+export const getPinnedProjects = async (username: string) => {
+  return await api.get(`/users/${username}/pinned`);
 };

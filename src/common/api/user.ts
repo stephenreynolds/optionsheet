@@ -1,4 +1,4 @@
-import api from "./api";
+import api, { baseURL } from "./api";
 import { UserUpdateModel } from "../models/user";
 
 export const getAuthenticatedUser = () => {
@@ -15,6 +15,25 @@ export const updateUser = async (data: UserUpdateModel) => {
 
 export const deleteUser = async () => {
   return api.delete(`/user`);
+};
+
+export const setAvatar = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return api.post(`/user/avatar`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+};
+
+export const getAvatarUrl = (avatarUrl) => {
+  if (!avatarUrl) {
+    return "/img/profile.png";
+  }
+
+  return `${baseURL}/${avatarUrl}`;
 };
 
 export const starProject = async (ownerUsername: string, projectName: string) => {

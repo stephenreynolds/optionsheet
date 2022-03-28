@@ -1,16 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import { useEffect, useState } from "react";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { updateUser } from "../../redux/actions/userActions";
 import { toast } from "react-toastify";
-
-const ProfileImage = styled.img`
-  border: 2px solid ${props => props.theme.dark.border};
-  border-radius: 999px;
-  height: 200px;
-`;
+import { getAvatarUrl } from "../../common/api/user";
+import { ProfileImg } from "../styles";
 
 const ProfileSidebar = ({ user }) => {
   const myUsername = useSelector((state) => getUsername(state));
@@ -44,7 +39,9 @@ const ProfileSidebar = ({ user }) => {
   return (
     <div style={{ maxWidth: "296px", marginTop: "-50px", marginRight: "2rem" }}>
       <div>
-        <ProfileImage src={user.avatar_url ?? "/img/profile.png"} alt={user.username} />
+        <div style={{width: "300px", height: "300px", marginBottom: "1em"}}>
+          <ProfileImg src={getAvatarUrl(user.avatar_url)} crossOrigin="anonymous" alt={user.username} />
+        </div>
         <h1 className="fw-bold text-center">{user.username}</h1>
         {editing ? (
           <div>

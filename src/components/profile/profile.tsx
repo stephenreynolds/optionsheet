@@ -27,7 +27,7 @@ const Profile = () => {
   return (
     <>
       <ProfileTabs />
-      <Container className="d-flex">
+      <Container className="d-flex" width="1200px">
         <ProfileSidebar user={user} />
         <div className="w-100">
           <ProfileTab username={username} />

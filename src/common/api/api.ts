@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export const baseURL = "http://localhost:5000";
+
 const getToken = () => {
   return JSON.parse(window.localStorage.getItem("token"));
 };
@@ -13,7 +15,7 @@ const getRefreshToken = () => {
 };
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL,
   headers: {
     "Content-Type": "application/json"
   }

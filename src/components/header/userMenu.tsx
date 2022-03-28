@@ -1,18 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/actions/authActions";
 import { getUser } from "../../redux/selectors/userSelectors";
-// import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
-
-const ProfileImage = styled.img`
-  border-radius: 999px;
-  max-height: 24px;
-`;
+import { getAvatarUrl } from "../../common/api/user";
+import { ProfileImg } from "../styles";
 
 const StyledIcon = styled(FontAwesomeIcon)`
   color: ${props => props.theme.dark.text};
@@ -109,7 +105,9 @@ const UserMenu = () => {
       {/*<StyledIcon icon={faBell} />*/}
       <Dropdown onClick={onToggleUserDropdown}>
         <div className="d-flex">
-          <ProfileImage src={user.avatar_url ?? "/img/profile.png"} alt={user.username} />
+          <div style={{ height: "24px", width: "24px" }}>
+            <ProfileImg src={getAvatarUrl(user.avatar_url)} crossOrigin="anonymous" alt={user.username} />
+          </div>
           <StyledIcon icon={faCaretDown} />
         </div>
       </Dropdown>

@@ -97,7 +97,7 @@ export const update = async (request: Request, response: Response) => {
 
     // Change bio if given.
     const bio = request.body.bio;
-    if (bio) {
+    if (typeof bio === "string") {
       updateModel = { ...updateModel, bio };
     }
 

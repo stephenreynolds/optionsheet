@@ -1,6 +1,8 @@
 import color from "color";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TagPill } from "../../shared/pill";
 import { useDrag, useDrop } from "react-dnd";
 import type { XYCoord, Identifier } from "dnd-core";
@@ -17,6 +19,14 @@ const CardContainer = styled.div`
     color: ${props => `${color(props.theme.dark.text).darken(0.2)}`};
     min-height: 2em;
     margin: 0.5em 0;
+  }
+`;
+
+const GripIcon = styled(FontAwesomeIcon)`
+  color: ${props => `${color(props.theme.dark.text).darken(0.2)}`};
+  
+  &:hover {
+    cursor: pointer;
   }
 `;
 
@@ -83,7 +93,10 @@ const DraggableProject = ({ username, project, id, index, moveCard }) => {
 
   return (
     <CardContainer ref={ref} isDragging={isDragging} data-handler-id={handlerId}>
-      <Link to={`/${username}/${project.name}`}>{username}/<b>{project.name}</b></Link>
+      <div className="d-flex space-between">
+        <Link to={`/${username}/${project.name}`}>{username}/<b>{project.name}</b></Link>
+        <GripIcon icon={faGripVertical} />
+      </div>
       <p className="description">
         {project.description}
       </p>

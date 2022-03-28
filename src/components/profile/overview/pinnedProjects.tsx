@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import TextButton from "../../shared/textButton";
 import PinnedProjectsModal from "./pinnedProjectsModal";
-import { getPinnedProjects } from "../../../common/api/user";
+import { getPinnedProjects, setPinnedProjects as updatePinnedProjects } from "../../../common/api/user";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import DraggableProject from "./draggableProject";
-import { setPinnedProjects as updatePinnedProjects } from "../../../common/api/user";
 import { useSelector } from "react-redux";
 import { getUsername } from "../../../redux/selectors/userSelectors";
 

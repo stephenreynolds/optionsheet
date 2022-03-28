@@ -26,6 +26,7 @@ export const TagPill = styled.span`
   border-radius: 5px;
   color: #fff;
   font-weight: 600;
+  user-select: none;
 
   &:last-child {
     margin: 0;

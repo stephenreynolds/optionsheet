@@ -5,7 +5,7 @@ import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TagPill } from "../../shared/pill";
 import { useDrag, useDrop } from "react-dnd";
-import type { XYCoord, Identifier } from "dnd-core";
+import type { Identifier, XYCoord } from "dnd-core";
 import { useRef } from "react";
 
 const CardContainer = styled.div`
@@ -24,6 +24,7 @@ const CardContainer = styled.div`
 
 const GripIcon = styled(FontAwesomeIcon)`
   color: ${props => `${color(props.theme.dark.text).darken(0.2)}`};
+  font-size: 75%;
   
   &:hover {
     cursor: pointer;

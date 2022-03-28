@@ -2,6 +2,7 @@ import color from "color";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { faGripVertical } from "@fortawesome/free-solid-svg-icons";
+import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { TagPill } from "../../shared/pill";
 import { useDrag, useDrop } from "react-dnd";
@@ -113,6 +114,11 @@ const DraggableProject = ({ username, project, id, index, moveCard, onDropped })
         {project.tags.map((tag) => (
           <TagPill key={tag}>{tag}</TagPill>
         ))}
+        {project.stars > 0 && (
+          <span style={{ marginLeft: "1em" }}>
+            <FontAwesomeIcon icon={faStar} /> {project.stars}
+          </span>
+        )}
       </div>
     </CardContainer>
   );

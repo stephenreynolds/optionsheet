@@ -48,7 +48,7 @@ const TitleBar = ({ username, project }) => {
       </div>
 
       <div>
-        <StarButton username={username} projectName={project.name} />
+        <StarButton username={username} projectName={project.name} stars={project.stars} />
       </div>
     </TitleBarDiv>
   );

@@ -61,7 +61,7 @@ export const refreshToken = async (request: Request, response: Response) => {
 
     const dataService = request.dataService;
 
-    const { refresh_token, refresh_token_expiry } = await dataService.users.getRefreshToken(request.body.refreshToken);
+    const { refresh_token, refresh_token_expiry } = await dataService.users.getRefreshToken(request.body.refresh_token);
     if (!refresh_token) {
       return sendError(request, response, StatusCodes.FORBIDDEN, "Refresh token invalid.");
     }

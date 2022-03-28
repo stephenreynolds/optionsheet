@@ -133,6 +133,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
       projects.map(async (project) => {
         const tags = await dataService.projects.getProjectTags(project.id);
         return {
+          id: project.id,
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
@@ -149,5 +150,40 @@ export const getStarredProjects = async (request: Request, response: Response) =
   catch (error) {
     logError(error, "Failed to get starred projects");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get starred projects.");
+  }
+};
+
+// GET /users/:username/pinned
+export const getPinnedProjects = async (request: Request, response: Response) => {
+  try {
+    const { username } = request.params;
+    const dataService = request.dataService;
+
+    const user = await dataService.users.getUserByUsername(username);
+    const projectIds = await dataService.users.getPinnedProjects(user.uuid);
+
+    const res: GetProjectDto[] = await Promise.all(
+      projectIds.map(async (id) => {
+        const project = await dataService.projects.getProjectById(id);
+        const tags = await dataService.projects.getProjectTags(project.id);
+        return {
+          id: project.id,
+          name: project.name,
+          username: user.username,
+          description: project.description ?? undefined,
+          starting_balance: project.starting_balance ?? undefined,
+          risk: project.risk ?? undefined,
+          created_on: new Date(project.created_on),
+          updated_on: new Date(project.updated_on),
+          tags: tags.map((t) => t.name) ?? undefined,
+          pinned: true
+        };
+      }));
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to get pinned projects");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get pinned projects.");
   }
 };

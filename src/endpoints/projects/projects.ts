@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { StatusCodes } from "http-status-codes";
+import _ from "lodash";
 import { ProjectCreateModel, ProjectUpdateModel } from "../../data/models/project";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
@@ -17,11 +18,13 @@ export const getProjects = async (request: Request, response: Response) => {
     }
 
     const projects = await dataService.projects.getUserProjects(user.uuid);
+    const pinnedProjectIds = await dataService.users.getPinnedProjects(user.uuid);
 
     const res: GetProjectDto[] = await Promise.all(
       projects.map(async (project) => {
         const tags = await dataService.projects.getProjectTags(project.id);
         return {
+          id: project.id,
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
@@ -29,7 +32,8 @@ export const getProjects = async (request: Request, response: Response) => {
           risk: project.risk ?? undefined,
           created_on: new Date(project.created_on),
           updated_on: new Date(project.updated_on),
-          tags: tags.map((t) => t.name) ?? undefined
+          tags: tags.map((t) => t.name) ?? undefined,
+          pinned: _.some(pinnedProjectIds, (id) => id === project.id)
         };
       }));
 
@@ -60,6 +64,7 @@ export const getProjectByName = async (request: Request, response: Response) => 
     const tags = await dataService.projects.getProjectTags(project.id);
 
     const res: GetProjectDto = {
+      id: project.id,
       name: project.name,
       username: user.username,
       description: project.description ?? undefined,

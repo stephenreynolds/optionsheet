@@ -954,6 +954,58 @@
         }
       }
     },
+    "/user/pinned": {
+      "put": {
+        "summary": "Set the user's pinned projects",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "number",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "post": {
         "summary": "Register a user",
@@ -1058,6 +1110,40 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ProjectDetails"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{username}/pinned": {
+      "get": {
+        "summary": "Get a list of projects pinned by a user",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "format": "int32"
                   }
                 }
               }

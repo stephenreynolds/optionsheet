@@ -299,14 +299,44 @@ export class UserManager {
     }
   }
 
+  public async getPinnedProjects(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT pinned_projects
+          FROM app_user
+          WHERE uuid = $1
+      `, [userUUID]);
+
+      return res.rows[0].pinned_projects;
+    }
+    catch (error) {
+      logError(error, "Failed to get pinned projects");
+    }
+  }
+
+  public async setPinnedProjects(userUUID: string, projectsIds: number[]) {
+    try {
+      const res = await this.pool.query(`
+          UPDATE app_user
+          SET pinned_projects = $2
+          WHERE uuid = $1
+          RETURNING pinned_projects
+      `, [userUUID, projectsIds]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to add pinned project");
+    }
+  }
+
   public async getUsersByUsername(username: string, limit?: number, offset = 0) {
     try {
       const res = await this.pool.query(`
-        SELECT username, avatar_url, bio, updated_on
-        FROM app_user
-        WHERE LOWER(username) LIKE LOWER($1)
-        OFFSET COALESCE($2, 0) * $3
-        LIMIT $2
+          SELECT username, avatar_url, bio, updated_on
+          FROM app_user
+          WHERE LOWER(username) LIKE LOWER($1)
+          OFFSET COALESCE($2, 0) * $3 LIMIT $2
       `, [username, limit, offset]);
 
       return res.rows;

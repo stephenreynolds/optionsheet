@@ -147,6 +147,7 @@ export const getStarredProjects = async (request: Request, response: Response) =
       projects.map(async (project) => {
         const tags = await dataService.projects.getProjectTags(project.id);
         return {
+          id: project.id,
           name: project.name,
           username: user.username,
           description: project.description ?? undefined,
@@ -244,5 +245,30 @@ export const unStarProject = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to un-star project");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to un-star project.");
+  }
+};
+
+// PUT /user/pinned
+export const setPinnedProjects = async (request: Request, response: Response) => {
+  try {
+    const userUUID = request.body.userUUID;
+    const projectIds = request.body.projectIds;
+    const dataService = request.dataService;
+
+    // Check that each project exists.
+    for (const id of projectIds) {
+      const project = await dataService.projects.getProjectById(id);
+      if (!project) {
+        return sendError(request, response, StatusCodes.NOT_FOUND, "At least one of the projects does not exist.");
+      }
+    }
+
+    const res: number[] = await dataService.users.setPinnedProjects(userUUID, projectIds);
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to add pinned project");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to add pinned project.");
   }
 };

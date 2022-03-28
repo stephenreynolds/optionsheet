@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS app_user
     password_hash        VARCHAR(60)  NOT NULL,
     avatar_url           TEXT,
     bio                  TEXT,
+    pinned_projects      INTEGER[]             DEFAULT '{}',
     created_on           TIMESTAMP    NOT NULL DEFAULT current_timestamp,
     updated_on           TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
     refresh_token        VARCHAR(36),

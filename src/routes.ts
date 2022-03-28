@@ -17,11 +17,13 @@ router.get("/user/starred", [verifyJwtToken], user.getStarredProjects);
 router.get("/user/starred/:owner/:project", [verifyJwtToken], user.isProjectStarred);
 router.put("/user/starred/:owner/:project", [verifyJwtToken], user.starProject);
 router.delete("/user/starred/:owner/:project", [verifyJwtToken], user.unStarProject);
+router.put("/user/pinned", [verifyJwtToken], user.setPinnedProjects);
 
 // Users
 router.post("/users", users.createUser);
 router.get("/users/:username", users.getUser);
 router.get("/users/:username/starred", users.getStarredProjects);
+router.get("/users/:username/pinned", users.getPinnedProjects);
 
 // Auth
 router.post("/auth", auth.authenticate);

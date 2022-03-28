@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
+import * as fs from "fs";
 import { StatusCodes } from "http-status-codes";
+import * as path from "path";
 import { UserUpdateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
@@ -101,12 +103,6 @@ export const update = async (request: Request, response: Response) => {
       updateModel = { ...updateModel, bio };
     }
 
-    // Change avatar url if given.
-    const avatar_url = request.body.avatar_url;
-    if (avatar_url) {
-      updateModel = { ...updateModel, avatar_url };
-    }
-
     const updatedUser = await dataService.users.updateUser(userUUID, updateModel);
     const res = await getUserDetails(updatedUser, dataService);
 
@@ -131,6 +127,31 @@ export const deleteUser = async (request: Request, response: Response) => {
   catch (error) {
     logError(error, "Failed to delete user");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete user.");
+  }
+};
+
+// POST /user/avatar
+export const setAvatar = async (request: Request, response: Response) => {
+  try {
+    const userUUID = request.body.userUUID;
+    const file = request.file;
+    const dataService = request.dataService;
+    const avatar_url = `uploads/images/${file.filename}`;
+
+    const { avatar_url: old_avatar_url } = await dataService.users.getUserByUUID(userUUID);
+    fs.unlink(path.resolve(__dirname, old_avatar_url), (error) => {
+      if (error) {
+        throw new Error(`Failed to delete avatar image at ${old_avatar_url}: ${error.message}`);
+      }
+    });
+
+    await dataService.users.updateUser(userUUID, { avatar_url });
+
+    response.send({ avatar_url });
+  }
+  catch (error) {
+    logError(error, "Failed to set profile picture");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to set profile picture.");
   }
 };
 

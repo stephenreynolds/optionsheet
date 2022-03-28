@@ -3,18 +3,7 @@ import { faStar as faStarred } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { checkProjectStarred, starProject, unStarProject } from "../../common/api/user";
-import styled from "styled-components";
-
-const StarCount = styled.span`
-  display: inline-block;
-  margin-left: 1ch;
-  font-weight: normal;
-  background-color: #494949;
-  border-radius: 2em;
-  padding: 0 6px;
-  font-size: 12px;
-  line-height: 18px;
-`;
+import { NumberCircle } from "../styles";
 
 const StarButton = ({ username, projectName, stars }) => {
   const [starred, setStarred] = useState(false);
@@ -53,7 +42,7 @@ const StarButton = ({ username, projectName, stars }) => {
           <FontAwesomeIcon icon={faStar} /> Star
         </>
       )}
-      <StarCount>{stars}</StarCount>
+      <NumberCircle>{stars}</NumberCircle>
     </button>
   );
 };

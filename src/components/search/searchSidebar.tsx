@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import color from "color";
 import numeral from "numeral";
+import { NumberCircle } from "../styles";
 
 const SidebarNav = styled.nav`
   border: 1px solid ${props => props.theme.dark.border};
@@ -36,14 +37,9 @@ const SidebarNav = styled.nav`
   }
 `;
 
-const ResultCount = styled.small`
-  color: ${props => props.count ? "#fff" : "inherit"};
+const ResultCount = styled(NumberCircle)`
   background-color: ${props => props.count > 0 ? "#6a7079" : "#3e4146"};
-  padding: 0.2em;
-  border-radius: 999px;
   font-weight: 600;
-  min-width: 1.5em;
-  text-align: center;
 `;
 
 interface SearchSidebarProps {

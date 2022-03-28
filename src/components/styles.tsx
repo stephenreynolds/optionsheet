@@ -302,3 +302,14 @@ export const Container = styled.div`
   width: ${props => props.width ? props.width : "1000px"};
   padding: 1rem;
 `;
+
+export const NumberCircle = styled.span`
+  display: inline-block;
+  margin-left: 1ch;
+  font-weight: normal;
+  background-color: #494949;
+  border-radius: 2em;
+  padding: 0 6px;
+  font-size: 12px;
+  line-height: 18px;
+`;

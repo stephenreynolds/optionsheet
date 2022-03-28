@@ -240,7 +240,7 @@ export class UserManager {
   public async getStarredProjects(userUUID: string) {
     try {
       const res = await this.pool.query(`
-          SELECT *
+          SELECT project.*
           FROM starred_project
                    LEFT JOIN project ON project.id = starred_project.project_id
           WHERE starred_project.user_uuid = $1

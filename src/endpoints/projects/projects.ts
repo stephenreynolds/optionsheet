@@ -33,7 +33,8 @@ export const getProjects = async (request: Request, response: Response) => {
           created_on: new Date(project.created_on),
           updated_on: new Date(project.updated_on),
           tags: tags.map((t) => t.name) ?? undefined,
-          pinned: _.some(pinnedProjectIds, (id) => id === project.id)
+          pinned: _.some(pinnedProjectIds, (id) => id === project.id),
+          stars: Number(project.stars)
         };
       }));
 
@@ -72,7 +73,8 @@ export const getProjectByName = async (request: Request, response: Response) => 
       risk: Number(project.risk) ?? undefined,
       created_on: new Date(project.created_on),
       updated_on: new Date(project.updated_on),
-      tags: tags.map((t) => t.name) ?? undefined
+      tags: tags.map((t) => t.name) ?? undefined,
+      stars: Number(project.stars)
     };
 
     response.send(res);

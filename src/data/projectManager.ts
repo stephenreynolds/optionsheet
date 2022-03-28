@@ -12,9 +12,11 @@ export class ProjectManager {
   public async getUserProjects(userUUID: string) {
     try {
       const res = await this.pool.query(`
-          SELECT *
+          SELECT project.*, COUNT(starred_project) stars
           FROM project
-          WHERE user_uuid = $1
+                   LEFT JOIN starred_project ON project_id = project.id
+          WHERE project.user_uuid = $1
+          GROUP BY project.id
       `, [userUUID]);
 
       return res.rows;
@@ -27,9 +29,11 @@ export class ProjectManager {
   public async getProjectById(id: number) {
     try {
       const res = await this.pool.query(`
-          SELECT *
+          SELECT project.*, COUNT(starred_project) stars
           FROM project
+                   LEFT JOIN starred_project ON project_id = project.id
           WHERE project.id = $1
+          GROUP BY project.id
       `, [id]);
 
       return res.rows[0];
@@ -42,10 +46,12 @@ export class ProjectManager {
   public async getProjectByName(userUUID: string, name: string) {
     try {
       const res = await this.pool.query(`
-          SELECT *
+          SELECT project.*, COUNT(starred_project) stars
           FROM project
+                   LEFT JOIN starred_project ON project_id = project.id
           WHERE project.user_uuid = $1
             AND project.name = $2
+          GROUP BY project.id
       `, [userUUID, name]);
 
       return res.rows[0];

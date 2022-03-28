@@ -13,4 +13,5 @@ export interface GetProjectDto {
   tags?: string[];
   starting_balance?: number;
   risk?: number;
+  stars?: number;
 }

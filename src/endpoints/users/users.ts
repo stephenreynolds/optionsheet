@@ -176,7 +176,8 @@ export const getPinnedProjects = async (request: Request, response: Response) =>
           created_on: new Date(project.created_on),
           updated_on: new Date(project.updated_on),
           tags: tags.map((t) => t.name) ?? undefined,
-          pinned: true
+          pinned: true,
+          stars: Number(project.stars)
         };
       }));
 

@@ -142,6 +142,10 @@ export default createGlobalStyle`
   .text-center {
     text-align: center;
   }
+  
+  .text-left {
+    text-align: left;
+  }
 
   .fw-normal {
     font-weight: normal;
@@ -181,6 +185,11 @@ export default createGlobalStyle`
 
   .m-0 {
     margin: 0;
+  }
+  
+  .mx-0 {
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .ml-0 {

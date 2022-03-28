@@ -37,7 +37,7 @@ interface DragItem {
   type: string;
 }
 
-const DraggableProject = ({ username, project, id, index, moveCard }) => {
+const DraggableProject = ({ username, project, id, index, moveCard, onDropped }) => {
   const dragRef = useRef(null);
   const previewRef = useRef(null);
 
@@ -89,6 +89,9 @@ const DraggableProject = ({ username, project, id, index, moveCard }) => {
       moveCard(dragIndex, hoverIndex);
 
       item.index = hoverIndex;
+    },
+    drop() {
+      onDropped();
     }
   });
 

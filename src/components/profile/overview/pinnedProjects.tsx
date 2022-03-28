@@ -20,7 +20,7 @@ const PinnedProjects = ({ username }) => {
   const myUsername = useSelector((state) => getUsername(state));
   const myProfile = myUsername === username;
 
-  const [loaded, setLoaded] = useState(false);
+  const [orderUpdated, setOrderUpdated] = useState(false);
   const [pinnedProjects, setPinnedProjects] = useState([]);
   const [showCustomizePinsModel, setShowCustomizePinsModel] = useState(false);
 
@@ -32,25 +32,24 @@ const PinnedProjects = ({ username }) => {
     getPinnedProjects(username)
       .then((result) => {
         setPinnedProjects(result.data);
-        setLoaded(true);
       })
       .catch((error) => {
         toast.error(error.message);
       });
   }, []);
 
-  useEffect(() => {
-    if (loaded) {
-      const projectIds = pinnedProjects
-        .map((project) => project.id);
+  const onDropped = () => {
+    const projectIds = pinnedProjects
+      .map((project) => project.id);
 
-      updatePinnedProjects(projectIds)
-        .then()
-        .catch((error) => {
-          toast.error(error.message);
-        });
-    }
-  }, [pinnedProjects]);
+    updatePinnedProjects(projectIds)
+      .then(() => {
+        setOrderUpdated(true);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
     setPinnedProjects(prevState => {
@@ -64,8 +63,11 @@ const PinnedProjects = ({ username }) => {
 
   return (
     <>
-      <div className="d-flex space-between align-center" style={{marginBottom: "1em"}}>
-        <h3 className="m-0">Pinned</h3>
+      <div className="d-flex space-between align-center" style={{ marginBottom: "1em" }}>
+        <div className="d-flex" style={{ alignItems: "baseline" }}>
+          <h3 className="m-0">Pinned</h3>
+          {orderUpdated && <small style={{ marginLeft: "1ch" }}>Order updated.</small>}
+        </div>
         {myProfile && <TextButton onClick={onCustomizePinsClick}>Customize your pins</TextButton>}
       </div>
 
@@ -74,14 +76,15 @@ const PinnedProjects = ({ username }) => {
           <PinGrid>
             {pinnedProjects.map((project, i) => (
               <DraggableProject key={project.id} username={username} project={project} index={i} id={project.id}
-                                moveCard={moveCard} />
+                                moveCard={moveCard} onDropped={onDropped} />
             ))}
           </PinGrid>
         </DndProvider>
       ) : <h3 className="text-center">No pinned projects.</h3>}
 
       {showCustomizePinsModel && <PinnedProjectsModal show={showCustomizePinsModel} setShow={setShowCustomizePinsModel}
-                                                      pinnedProjects={pinnedProjects} setPinned={setPinnedProjects} />}
+                                                      pinnedProjects={pinnedProjects}
+                                                      setPinnedProjects={setPinnedProjects} />}
     </>
   );
 };

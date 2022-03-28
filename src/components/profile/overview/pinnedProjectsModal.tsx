@@ -9,6 +9,8 @@ import styled from "styled-components";
 import color from "color";
 import { getProjects } from "../../../common/api/projects";
 import { Project } from "../../../common/models/project";
+import { setPinnedProjects as updatePinnedProjects } from "../../../common/api/user";
+import { toast } from "react-toastify";
 
 const ProjectListItem = styled.div`
   padding: 0.3em 0.5em;
@@ -30,7 +32,7 @@ const ProjectListItem = styled.div`
   }
 `;
 
-const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinned }) => {
+const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinnedProjects }) => {
   const username = useSelector((state) => getUsername(state));
   const maxPins = 6;
 
@@ -63,7 +65,17 @@ const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinned }) => {
   };
 
   const onSubmit = () => {
-    setPinned(projects.filter((project) => project.pinned));
+    const projectIds = projects
+      .filter((project) => project.pinned)
+      .map((project) => project.id);
+
+    updatePinnedProjects(projectIds)
+      .then(() => {
+        setPinnedProjects(projects.filter((project) => project.pinned));
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
     onHide();
   };
 

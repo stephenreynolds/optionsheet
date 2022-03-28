@@ -8,6 +8,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import DraggableProject from "./draggableProject";
 import { setPinnedProjects as updatePinnedProjects } from "../../../common/api/user";
+import { useSelector } from "react-redux";
+import { getUsername } from "../../../redux/selectors/userSelectors";
 
 const PinGrid = styled.div`
   display: grid;
@@ -16,6 +18,9 @@ const PinGrid = styled.div`
 `;
 
 const PinnedProjects = ({ username }) => {
+  const myUsername = useSelector((state) => getUsername(state));
+  const myProfile = myUsername === username;
+
   const [loaded, setLoaded] = useState(false);
   const [pinnedProjects, setPinnedProjects] = useState([]);
   const [showCustomizePinsModel, setShowCustomizePinsModel] = useState(false);
@@ -62,7 +67,7 @@ const PinnedProjects = ({ username }) => {
     <>
       <div className="d-flex space-between">
         <h3>Pinned</h3>
-        <TextButton onClick={onCustomizePinsClick}>Customize your pins</TextButton>
+        {myProfile && <TextButton onClick={onCustomizePinsClick}>Customize your pins</TextButton>}
       </div>
 
       {pinnedProjects.length > 0 ? (

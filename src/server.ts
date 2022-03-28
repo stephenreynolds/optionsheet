@@ -1,4 +1,5 @@
 import express from "express";
+import * as path from "path";
 import swaggerUi from "swagger-ui-express";
 import app from "./app";
 import config from "./config";
@@ -21,6 +22,9 @@ app.use("/swagger",
   express.static("swagger-ui-dist/", { index: false }),
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument));
+
+// Uploaded files
+app.use("/uploads", express.static(path.resolve(__dirname, "uploads/"), { index: false }));
 
 app.listen(config.port, config.host, () => {
   logger.info(`Server listening at ${config.host}:${config.port}`);

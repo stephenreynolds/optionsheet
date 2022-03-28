@@ -49,7 +49,7 @@ const ProfileSidebar = ({ user }) => {
         {editing ? (
           <div>
             <label>Bio</label>
-            <textarea value={newBio} onChange={onBioChange} />
+            <textarea value={newBio} onChange={onBioChange} placeholder="Update your bio..." />
             <div className="d-flex">
               <button className="btn-green" onClick={onSaveEdits}>Save</button>
               <button onClick={cancelEdits}>Cancel</button>

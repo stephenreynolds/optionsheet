@@ -22,10 +22,10 @@ const CardContainer = styled.div`
   }
 `;
 
-const GripIcon = styled(FontAwesomeIcon)`
+const DragHandle = styled.span`
   color: ${props => `${color(props.theme.dark.text).darken(0.2)}`};
   font-size: 75%;
-  
+
   &:hover {
     cursor: pointer;
   }
@@ -38,65 +38,70 @@ interface DragItem {
 }
 
 const DraggableProject = ({ username, project, id, index, moveCard }) => {
-  const ref = useRef(null);
+  const dragRef = useRef(null);
+  const previewRef = useRef(null);
+
+  const [{ isDragging }, drag, preview] = useDrag({
+    type: "card",
+    item: () => {
+      return { id, index };
+    },
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging()
+    })
+  });
+
   const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: "card",
     collect(monitor) {
       return {
-        handlerId: monitor.getHandlerId(),
-      }
+        handlerId: monitor.getHandlerId()
+      };
     },
     hover(item: DragItem, monitor) {
-      if (!ref.current) {
-        return
+      if (!previewRef.current) {
+        return;
       }
-      const dragIndex = item.index
-      const hoverIndex = index
+      const dragIndex = item.index;
+      const hoverIndex = index;
 
       if (dragIndex === hoverIndex) {
-        return
+        return;
       }
 
-      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+      const hoverBoundingRect = previewRef.current?.getBoundingClientRect();
 
       const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
-      const clientOffset = monitor.getClientOffset()
+      const clientOffset = monitor.getClientOffset();
 
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
 
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return
+        return;
       }
 
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return
+        return;
       }
 
-      moveCard(dragIndex, hoverIndex)
+      moveCard(dragIndex, hoverIndex);
 
-      item.index = hoverIndex
-    },
+      item.index = hoverIndex;
+    }
   });
 
-  const [{ isDragging }, drag] = useDrag({
-    type: "card",
-    item: () => {
-      return { id, index }
-    },
-    collect: (monitor: any) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  })
-
-  drag(drop(ref));
+  drag(dragRef);
+  drop(preview(previewRef));
 
   return (
-    <CardContainer ref={ref} isDragging={isDragging} data-handler-id={handlerId}>
+    <CardContainer ref={previewRef} isDragging={isDragging} data-handler-id={handlerId}>
       <div className="d-flex space-between">
         <Link to={`/${username}/${project.name}`}>{username}/<b>{project.name}</b></Link>
-        <GripIcon icon={faGripVertical} />
+        <DragHandle ref={dragRef}>
+          <FontAwesomeIcon icon={faGripVertical} />
+        </DragHandle>
       </div>
       <p className="description">
         {project.description}

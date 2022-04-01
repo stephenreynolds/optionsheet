@@ -20,6 +20,8 @@ router.get("/user/starred/:owner/:project", [verifyJwtToken], user.isProjectStar
 router.put("/user/starred/:owner/:project", [verifyJwtToken], user.starProject);
 router.delete("/user/starred/:owner/:project", [verifyJwtToken], user.unStarProject);
 router.put("/user/pinned", [verifyJwtToken], user.setPinnedProjects);
+router.get("/user/settings", [verifyJwtToken], user.getDefaultProjectSettings);
+router.patch("/user/settings", [verifyJwtToken], user.updateDefaultProjectSettings);
 
 // Users
 router.post("/users", users.createUser);

@@ -10,18 +10,20 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS app_user
 (
-    uuid                 UUID         NOT NULL PRIMARY KEY,
-    username             VARCHAR(255) NOT NULL UNIQUE,
-    email                VARCHAR(255) NOT NULL UNIQUE,
-    email_confirmed      BOOLEAN      NOT NULL DEFAULT FALSE,
-    password_hash        VARCHAR(60)  NOT NULL,
-    avatar_url           TEXT,
-    bio                  TEXT,
-    pinned_projects      INTEGER[]             DEFAULT '{}',
-    created_on           TIMESTAMP    NOT NULL DEFAULT current_timestamp,
-    updated_on           TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
-    refresh_token        VARCHAR(36),
-    refresh_token_expiry TIMESTAMP
+    uuid                     UUID         NOT NULL PRIMARY KEY,
+    username                 VARCHAR(255) NOT NULL UNIQUE,
+    email                    VARCHAR(255) NOT NULL UNIQUE,
+    email_confirmed          BOOLEAN      NOT NULL DEFAULT FALSE,
+    password_hash            VARCHAR(60)  NOT NULL,
+    avatar_url               TEXT,
+    bio                      TEXT,
+    pinned_projects          INTEGER[]             DEFAULT '{}',
+    created_on               TIMESTAMP    NOT NULL DEFAULT current_timestamp,
+    updated_on               TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
+    refresh_token            VARCHAR(36),
+    refresh_token_expiry     TIMESTAMP,
+    default_starting_balance NUMERIC,
+    default_risk             NUMERIC
 );
 
 CREATE TABLE IF NOT EXISTS role
@@ -127,6 +129,24 @@ CREATE TABLE IF NOT EXISTS trade_tag
     tag_id   INTEGER NOT NULL,
 
     CONSTRAINT fk_trade FOREIGN KEY (trade_id) REFERENCES trade (id) ON DELETE CASCADE,
+    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS default_project_tag
+(
+    user_uuid UUID    NOT NULL,
+    tag_id    INTEGER NOT NULL,
+
+    CONSTRAINT fk_project FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE,
+    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS default_trade_tag
+(
+    user_uuid UUID    NOT NULL,
+    tag_id    INTEGER NOT NULL,
+
+    CONSTRAINT fk_trade FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE,
     CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 

@@ -3,12 +3,13 @@ import { Response } from "express";
 import * as fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import * as path from "path";
-import { UserUpdateModel } from "../../data/models/user";
+import { DefaultProjectSettingsUpdateModel, UserUpdateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import logger from "../../logger";
 import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { getUserDetails } from "../users/users";
+import { UserSettings } from "./userDtos";
 
 const emailIsValid = (email: string) => {
   const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
@@ -143,7 +144,7 @@ export const setAvatar = async (request: Request, response: Response) => {
 
     fs.unlink(path.resolve(__dirname, old_avatar_url), (error) => {
       if (error) {
-        logger.warn(`Failed to delete avatar image at ${old_avatar_url}: ${error.message}`)
+        logger.warn(`Failed to delete avatar image at ${old_avatar_url}: ${error.message}`);
       }
     });
 
@@ -293,5 +294,42 @@ export const setPinnedProjects = async (request: Request, response: Response) =>
   catch (error) {
     logError(error, "Failed to add pinned project");
     sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to add pinned project.");
+  }
+};
+
+// GET /user/settings
+export const getDefaultProjectSettings = async (request: Request, response: Response) => {
+  try {
+    const userUUID = request.body.userUUID;
+    const dataService = request.dataService;
+
+    const userSettings: UserSettings = await dataService.users.getDefaultProjectSettings(userUUID);
+
+    response.send(userSettings);
+  }
+  catch (error) {
+    logError(error, "Failed to get user settings");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get user settings.");
+  }
+};
+
+// PATCH /user/settings
+export const updateDefaultProjectSettings = async (request: Request, response: Response) => {
+  try {
+    const userUUID = request.body.userUUID;
+    const dataService = request.dataService;
+
+    const model: DefaultProjectSettingsUpdateModel = {
+      default_starting_balance: request.body.default_starting_balance ?? undefined,
+      default_risk: request.body.default_risk ?? undefined
+    };
+
+    const res: UserSettings = await dataService.users.updateDefaultProjectSettings(userUUID, model);
+
+    response.send(res);
+  }
+  catch (error) {
+    logError(error, "Failed to update user settings");
+    sendError(request, response, StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update user settings.");
   }
 };

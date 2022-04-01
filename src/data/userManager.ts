@@ -3,7 +3,7 @@ import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import config from "../config";
 import { logError } from "../error";
-import { UserCreateModel, UserUpdateModel } from "./models/user";
+import { UserCreateModel, DefaultProjectSettingsUpdateModel, UserUpdateModel } from "./models/user";
 
 export class UserManager {
   private readonly pool: Pool;
@@ -145,6 +145,38 @@ export class UserManager {
     }
     catch (error) {
       logError(error, "Failed to get user roles");
+    }
+  }
+
+  public async getDefaultProjectSettings(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT default_starting_balance, default_risk
+          FROM app_user
+          WHERE uuid = $1
+      `, [userUUID]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to get user settings");
+    }
+  }
+
+  public async updateDefaultProjectSettings(userUUID: string, model: DefaultProjectSettingsUpdateModel) {
+    try {
+      const res = await this.pool.query(`
+          UPDATE app_user
+          SET default_starting_balance = $2,
+              default_risk             = $3
+          WHERE uuid = $1
+          RETURNING default_starting_balance, default_risk
+      `, [userUUID, model.default_starting_balance, model.default_risk]);
+
+      return res.rows[0];
+    }
+    catch (error) {
+      logError(error, "Failed to update user settings");
     }
   }
 

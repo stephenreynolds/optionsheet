@@ -1006,6 +1006,63 @@
         }
       }
     },
+    "/user/settings": {
+      "get": {
+        "summary": "Get the user's default project settings",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefaultProjectSettings"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update the user's default project settings",
+        "tags": [
+          "user"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefaultProjectSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefaultProjectSettings"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "post": {
         "summary": "Register a user",
@@ -1755,6 +1812,21 @@
             "type": "boolean",
             "required": true,
             "default": false
+          }
+        }
+      },
+      "DefaultProjectSettings": {
+        "type": "object",
+        "properties": {
+          "default_starting_balance": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "default_risk": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         }
       },

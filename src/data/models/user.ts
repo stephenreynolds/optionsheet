@@ -11,3 +11,8 @@ export interface UserUpdateModel {
   bio?: string;
   avatar_url?: string;
 }
+
+export interface DefaultProjectSettingsUpdateModel {
+  default_starting_balance?: number;
+  default_risk?: number;
+}

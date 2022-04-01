@@ -14,7 +14,7 @@ const InputGroup = styled.div`
 `;
 
 const AccountSettings = () => {
-  const[showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   const toggleDeleteModal = () => {
     setShowDeleteAccount(!showDeleteAccount);

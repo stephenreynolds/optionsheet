@@ -10,7 +10,6 @@ import { useLocation } from "react-router";
 const ProfileSettings = lazy(() => import(/* webpackChunkName: "settings-account" */ "./profile"));
 const AccountSettings = lazy(() => import(/* webpackChunkName: "settings-account" */ "./account/account"));
 const ProjectSettings = lazy(() => import(/* webpackChunkName: "settings-projects" */ "./projects"));
-const TagSettings = lazy(() => import(/* webpackChunkName: "settings-tags" */ "./tags"));
 
 const Settings = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
@@ -29,7 +28,6 @@ const Settings = () => {
           <Route path="profile" element={<ProfileSettings />} />
           <Route path="account" element={<AccountSettings />} />
           <Route path="projects" element={<ProjectSettings />} />
-          <Route path="tags" element={<TagSettings />} />
           <Route path="*" element={<Navigate to="/notfound" />} />
         </Routes>
       </Suspense>

@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import color from "color";
-import { faGear, faUser, faDiagramProject, faTags } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faUser, faDiagramProject } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const SidebarContainer = styled.aside`
@@ -65,12 +65,6 @@ const Sidebar = () => {
           <NavLink to="projects" className={activeClassName} end>
             <FontAwesomeIcon icon={faDiagramProject} />
             Projects
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="tags" className={activeClassName} end>
-            <FontAwesomeIcon icon={faTags} />
-            Tags
           </NavLink>
         </li>
       </ul>

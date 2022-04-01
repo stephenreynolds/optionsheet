@@ -322,11 +322,3 @@ export const NumberCircle = styled.span`
   font-size: 12px;
   line-height: 18px;
 `;
-
-export const ProfileImg = styled.img`
-  border: 2px solid ${props => props.theme.dark.border};
-  border-radius: 999px;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-`;

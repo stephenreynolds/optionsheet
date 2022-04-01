@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAuthenticatedUser, updateUser } from "../../redux/actions/userActions";
 import { toast } from "react-toastify";
 import { getUser } from "../../redux/selectors/userSelectors";
-import { getAvatarUrl, setAvatar } from "../../common/api/user";
-import { ProfileImg } from "../styles";
+import { setAvatar } from "../../common/api/user";
+import ProfileImage from "../shared/profileImage";
 
 const InputGroup = styled.div`
   margin: 1rem 0;
@@ -16,7 +16,7 @@ const InputGroup = styled.div`
   }
 `;
 
-const ProfileImage = styled.div`
+const ProfileImageSetting = styled.div`
   width: 200px;
   height: 200px;
   
@@ -90,15 +90,17 @@ const ProfileSettings = () => {
           </div>
           <div>
             <label>Profile picture</label>
-            <ProfileImage>
-              <ProfileImg src={getAvatarUrl(user.avatar_url)} crossOrigin="anonymous" alt={user.username} onClick={onChangeAvatarClick} />
+            <ProfileImageSetting>
+              <div onClick={onChangeAvatarClick}>
+                <ProfileImage imageUrl={user.avatar_url} username={user.username} />
+              </div>
               <button onClick={onChangeAvatarClick}>Edit</button>
               <input ref={profilePictureInput}
                      type="file"
                      accept="image/x-png,image/gif,image/jpeg"
                      style={{ display: "none" }}
                      onChange={onChangeAvatar} />
-            </ProfileImage>
+            </ProfileImageSetting>
           </div>
         </div>
       </InputGroup>

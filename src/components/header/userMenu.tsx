@@ -7,8 +7,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDetectClickOutside } from "react-detect-click-outside";
-import { getAvatarUrl } from "../../common/api/user";
-import { ProfileImg } from "../styles";
+import ProfileImage from "../shared/profileImage";
 
 const StyledIcon = styled(FontAwesomeIcon)`
   color: ${props => props.theme.dark.text};
@@ -106,7 +105,7 @@ const UserMenu = () => {
       <Dropdown onClick={onToggleUserDropdown}>
         <div className="d-flex">
           <div style={{ height: "24px", width: "24px" }}>
-            <ProfileImg src={getAvatarUrl(user.avatar_url)} crossOrigin="anonymous" alt={user.username} />
+            <ProfileImage imageUrl={user.avatar_url} username={user.username} />
           </div>
           <StyledIcon icon={faCaretDown} />
         </div>

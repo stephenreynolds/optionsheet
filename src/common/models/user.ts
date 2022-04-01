@@ -29,3 +29,8 @@ export interface UserUpdateModel {
   bio?: string;
   password?: string;
 }
+
+export interface DefaultProjectSettingsModel {
+  default_starting_balance?: number;
+  default_risk?: number;
+}

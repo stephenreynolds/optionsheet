@@ -1,5 +1,5 @@
 import { ErrorMessage, Formik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Navigate } from "react-router";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import { getProjectTags } from "../../redux/selectors/projectSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
 import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
+import { getDefaultProjectSettings } from "../../common/api/user";
 
 const NewProjectContainer = styled.div`
   margin: 0 auto;
@@ -62,15 +63,11 @@ const validationSchema = yup.object({
     .of(yup.string()),
   startingBalance: yup
     .number()
+    .positive(),
+  risk: yup
+    .number()
     .positive()
 });
-
-const initialValues = {
-  name: "",
-  description: "",
-  tags: [],
-  startingBalance: ""
-};
 
 const NewProject = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
@@ -81,6 +78,8 @@ const NewProject = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [initialValues, setInitialValues] = useState<{}>();
+
   useEffect(() => {
     if (username && !tagSuggestions) {
       dispatch(projectActions.getProjects(username))
@@ -90,11 +89,27 @@ const NewProject = () => {
     }
   }, [dispatch, tagSuggestions, username]);
 
+  useEffect(() => {
+    getDefaultProjectSettings()
+      .then((res) => {
+        const startingBalance = res.data.default_starting_balance;
+        const risk = res.data.default_risk;
+
+        setInitialValues({
+          name: "",
+          description: "",
+          tags: [],
+          startingBalance: startingBalance ?? "",
+          risk: risk ?? ""
+        });
+      });
+  }, []);
+
   if (!isLoggedIn) {
     return <Navigate to="/login" state={location.pathname} />;
   }
 
-  if (loading) {
+  if (loading || !initialValues) {
     return null;
   }
 
@@ -103,8 +118,11 @@ const NewProject = () => {
       name: data.name,
       description: data.description,
       tags: data.tags,
-      starting_balance: data.startingBalance !== "" ? data.startingBalance : null
+      starting_balance: data.startingBalance !== "" ? data.startingBalance : null,
+      risk: data.risk !== "" ? data.risk : null
     };
+
+    console.log(model);
 
     dispatch(projectActions.createProject(model))
       .then((res) => {
@@ -178,6 +196,24 @@ const NewProject = () => {
               />
               <div id="balanceHelpBlock">
                 <ErrorMessage name="startingBalance" />
+              </div>
+            </InputGroup>
+
+            {/* Risk */}
+            <InputGroup>
+              <label>Risk</label>
+              <input
+                type="number"
+                name="risk"
+                placeholder="Enter an amount (optional)..."
+                min="0"
+                step="0.01"
+                aria-describedby="riskHelpBlock"
+                className={touched.risk && errors.risk && "invalid"}
+                {...getFieldProps("risk")}
+              />
+              <div id="riskHelpBlock">
+                <ErrorMessage name="risk" />
               </div>
             </InputGroup>
 

@@ -16,6 +16,7 @@ export interface ProjectCreateModel {
   description: string;
   tags?: string[];
   starting_balance?: number;
+  risk?: number;
 }
 
 export interface ProjectUpdateModel {

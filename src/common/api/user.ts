@@ -1,5 +1,5 @@
 import api, { baseURL } from "./api";
-import { UserUpdateModel } from "../models/user";
+import { DefaultProjectSettingsModel, UserUpdateModel } from "../models/user";
 
 export const getAuthenticatedUser = () => {
   return api.get(`/user`);
@@ -34,6 +34,14 @@ export const getAvatarUrl = (avatarUrl) => {
   }
 
   return `${baseURL}/${avatarUrl}`;
+};
+
+export const getDefaultProjectSettings = async () => {
+  return api.get(`/user/settings`);
+};
+
+export const updateDefaultProjectSettings = async (model: DefaultProjectSettingsModel) => {
+  return await api.patch(`/user/settings`, model);
 };
 
 export const starProject = async (ownerUsername: string, projectName: string) => {

@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import * as path from "path";
 import { UserUpdateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
+import logger from "../../logger";
 import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { getUserDetails } from "../users/users";
@@ -139,9 +140,10 @@ export const setAvatar = async (request: Request, response: Response) => {
     const avatar_url = `uploads/images/${file.filename}`;
 
     const { avatar_url: old_avatar_url } = await dataService.users.getUserByUUID(userUUID);
+
     fs.unlink(path.resolve(__dirname, old_avatar_url), (error) => {
       if (error) {
-        throw new Error(`Failed to delete avatar image at ${old_avatar_url}: ${error.message}`);
+        logger.warn(`Failed to delete avatar image at ${old_avatar_url}: ${error.message}`)
       }
     });
 

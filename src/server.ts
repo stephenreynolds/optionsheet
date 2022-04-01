@@ -1,4 +1,5 @@
 import express from "express";
+import * as fs from "fs";
 import * as path from "path";
 import swaggerUi from "swagger-ui-express";
 import app from "./app";
@@ -24,6 +25,10 @@ app.use("/swagger",
   swaggerUi.setup(swaggerDocument));
 
 // Uploaded files
+const dir = path.resolve(__dirname, "uploads/images");
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir, { recursive: true });
+}
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads/"), { index: false }));
 
 app.listen(config.port, config.host, () => {

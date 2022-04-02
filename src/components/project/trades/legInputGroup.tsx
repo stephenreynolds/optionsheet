@@ -156,10 +156,10 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
       return;
     }
 
-    const closePrice = Number.parseFloat(priceStr);
+    const close_price = Number.parseFloat(priceStr);
 
     setClosePriceStr(priceStr);
-    updateLegs({ ...leg, closePrice: closePrice });
+    updateLegs({ ...leg, close_price });
   };
 
   const onDelete = (e) => {

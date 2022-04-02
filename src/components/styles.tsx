@@ -17,6 +17,10 @@ export default createGlobalStyle`
     margin-top: 0;
     font-weight: 400;
   }
+  
+  b, strong {
+    font-weight: 600;
+  }
 
   a {
     color: ${props => props.theme.dark.accent};

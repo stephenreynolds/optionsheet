@@ -4,17 +4,24 @@ import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
   const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
+  const [confirmInput, setConfirmInput] = useState("");
 
   if (!show) {
     return null;
   }
 
+  const onConfirmTextChange = (e) => {
+    setConfirmInput(e.target.value);
+  };
+
   const onCancel = (e) => {
     e.preventDefault();
+    setConfirmInput("");
     toggleVisibility();
   };
 
@@ -28,6 +35,9 @@ const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
     });
   };
 
+  const confirmText = `${username}/${projectName}`;
+  const confirmed = confirmInput.toLowerCase() === confirmText.toLowerCase();
+
   return (
     <Modal toggleVisibility={toggleVisibility}>
       <div className="modal-heading">
@@ -36,9 +46,16 @@ const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
       <div className="modal-content">
         Are you sure you want to delete this project?
 
+        <div>
+          <p>
+            Please type <b>{confirmText}</b> to confirm.
+          </p>
+          <input type="text" className="m-0 w-100" value={confirmInput} onChange={onConfirmTextChange} />
+        </div>
+
         <div className="form-buttons">
           <button onClick={onCancel} className="ml-0">Cancel</button>
-          <button className="btn-red mr-0" onClick={onSubmit}>Delete</button>
+          <button className="btn-red mr-0" onClick={onSubmit} disabled={!confirmed}>Delete</button>
         </div>
       </div>
     </Modal>

@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDetectClickOutside } from "react-detect-click-outside";
 import ProfileImage from "../shared/profileImage";
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -53,16 +52,6 @@ const DropdownItem = styled.button`
   }
 `;
 
-const DetectClickOutside = ({ closeDropdown, children }) => {
-  const ref = useDetectClickOutside({ onTriggered: closeDropdown });
-
-  return (
-    <div ref={ref}>
-      {children}
-    </div>
-  );
-};
-
 const DropdownMenu = styled.div`
   border: 1px solid ${props => props.theme.dark.button.border};
   border-radius: 5px;
@@ -101,7 +90,6 @@ const UserMenu = () => {
 
   return (
     <>
-      {/*<StyledIcon icon={faBell} />*/}
       <Dropdown onClick={onToggleUserDropdown}>
         <div className="d-flex">
           <div style={{ height: "24px", width: "24px" }}>
@@ -111,14 +99,12 @@ const UserMenu = () => {
         </div>
       </Dropdown>
       {showUserDropdown && (
-        <DetectClickOutside closeDropdown={onToggleUserDropdown}>
-          <DropdownMenu>
-            <DropdownItem onClick={e => navigateTo(e, `/${user.username}`)}>Profile</DropdownItem>
-            <DropdownItem onClick={e => navigateTo(e, "/settings/profile")}>Settings</DropdownItem>
-            <hr className="m-0" />
-            <DropdownItem onClick={onLogout}>Sign out</DropdownItem>
-          </DropdownMenu>
-        </DetectClickOutside>
+        <DropdownMenu>
+          <DropdownItem onClick={e => navigateTo(e, `/${user.username}`)}>Profile</DropdownItem>
+          <DropdownItem onClick={e => navigateTo(e, "/settings/profile")}>Settings</DropdownItem>
+          <hr className="m-0" />
+          <DropdownItem onClick={onLogout}>Sign out</DropdownItem>
+        </DropdownMenu>
       )}
     </>
   );

@@ -222,7 +222,7 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
   const isShares = strategy === StrategyOptions.Shares || trade && !tradeIsOption(trade.legs);
 
   return (
-    <Modal toggleVisibility={() => false}>
+    <Modal toggleVisibility={toggleVisibility}>
       <div className="modal-heading">
         {close ? <h3>Close trade</h3> : <h3>Edit trade</h3>}
       </div>

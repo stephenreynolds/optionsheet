@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { useDetectClickOutside } from "react-detect-click-outside";
 
 const PageMask = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -55,24 +54,12 @@ const ModalContainer = styled.div`
   }
 `;
 
-const DetectClickOutside = ({ toggleVisibility, children }) => {
-  const ref = useDetectClickOutside({ onTriggered: toggleVisibility });
-
-  return (
-    <div ref={ref}>
-      {children}
-    </div>
-  );
-};
-
 const Modal = ({ toggleVisibility, children }) => (
   <>
-    <PageMask />
-    <DetectClickOutside toggleVisibility={toggleVisibility}>
-      <ModalContainer>
-        {children}
-      </ModalContainer>
-    </DetectClickOutside>
+    <PageMask onClick={toggleVisibility} />
+    <ModalContainer>
+      {children}
+    </ModalContainer>
   </>
 );
 

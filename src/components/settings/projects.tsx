@@ -13,6 +13,7 @@ const InputGroup = styled.div`
 `;
 
 const ProjectSettings = () => {
+  const [loading, setLoading] = useState(true);
   const [newStartingBalance, setNewStartingBalance] = useState<number | string>("");
   const [newRisk, setNewRisk] = useState<number | string>("");
 
@@ -22,6 +23,7 @@ const ProjectSettings = () => {
         const data: DefaultProjectSettingsModel = res.data;
         setNewStartingBalance(data.default_starting_balance ?? "");
         setNewRisk(data.default_risk ?? "");
+        setLoading(false);
       })
       .catch((error) => toast.error(error.message));
   }, []);
@@ -46,6 +48,10 @@ const ProjectSettings = () => {
       })
       .catch((error) => toast.error(error.message));
   };
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <div className="w-100">

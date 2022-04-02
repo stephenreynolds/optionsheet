@@ -20,6 +20,7 @@ const PinnedProjects = ({ username }) => {
   const myUsername = useSelector((state) => getUsername(state));
   const myProfile = myUsername === username;
 
+  const [loading, setLoading] = useState(true);
   const [orderUpdated, setOrderUpdated] = useState(false);
   const [pinnedProjects, setPinnedProjects] = useState([]);
   const [showCustomizePinsModel, setShowCustomizePinsModel] = useState(false);
@@ -32,6 +33,7 @@ const PinnedProjects = ({ username }) => {
     getPinnedProjects(username)
       .then((result) => {
         setPinnedProjects(result.data);
+        setLoading(false);
       })
       .catch((error) => {
         toast.error(error.message);
@@ -60,6 +62,10 @@ const PinnedProjects = ({ username }) => {
       return pins;
     });
   }, []);
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <>

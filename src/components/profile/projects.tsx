@@ -5,16 +5,20 @@ import ProjectList from "./projectList";
 
 const ProfileProjects = ({ username }) => {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (username) {
       getProjects(username)
-        .then(results => setProjects(results.data))
+        .then(results => {
+          setProjects(results.data);
+          setLoading(false);
+        })
         .catch(error => toast(error.message));
     }
   }, [username]);
 
-  return <ProjectList projects={projects} />;
+  return !loading && <ProjectList projects={projects} />;
 };
 
 export default ProfileProjects;

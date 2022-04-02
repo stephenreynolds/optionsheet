@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS project
     starting_balance NUMERIC,
     risk             NUMERIC,
     created_on       TIMESTAMP    NOT NULL DEFAULT current_timestamp,
-    updated_on       TIMESTAMP             DEFAULT current_timestamp,
+    updated_on       TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= project.created_on),
     user_uuid        UUID         NOT NULL,
 
     CONSTRAINT fk_user FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE
@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS trade
     close_date   DATE CHECK (close_date >= trade.open_date),
     opening_note TEXT,
     closing_note TEXT,
+    created_on   TIMESTAMP   NOT NULL DEFAULT current_timestamp,
+    updated_on   TIMESTAMP            DEFAULT current_timestamp CHECK (updated_on >= trade.created_on),
     project_id   INTEGER     NOT NULL,
 
     CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE
@@ -132,24 +134,6 @@ CREATE TABLE IF NOT EXISTS trade_tag
     CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS default_project_tag
-(
-    user_uuid UUID    NOT NULL,
-    tag_id    INTEGER NOT NULL,
-
-    CONSTRAINT fk_project FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE,
-    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS default_trade_tag
-(
-    user_uuid UUID    NOT NULL,
-    tag_id    INTEGER NOT NULL,
-
-    CONSTRAINT fk_trade FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE,
-    CONSTRAINT fk_tag FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
-);
-
 --------------
 -- Triggers --
 --------------
@@ -205,6 +189,10 @@ CREATE OR REPLACE FUNCTION trade_updated_on() RETURNS TRIGGER AS
 $update_user$
 BEGIN
     IF pg_trigger_depth() < 2 THEN
+        UPDATE trade
+        SET updated_on = now()
+        WHERE id = NEW.id;
+
         UPDATE project
         SET updated_on = now()
         WHERE id = NEW.project_id;
@@ -230,6 +218,10 @@ BEGIN
         WHERE id = (SELECT project_id
                     FROM trade
                     WHERE id = NEW.trade_id);
+
+        UPDATE trade
+        SET updated_on = now()
+        WHERE id = NEW.trade_id;
     END IF;
     RETURN NEW;
 END

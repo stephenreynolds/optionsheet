@@ -28,5 +28,7 @@ export interface GetTradeDto {
   closing_note?: string;
   tags?: string[];
   legs: LegDto[];
+  created_on: Date;
+  updated_on: Date;
   project_id: number;
 }

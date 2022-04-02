@@ -47,6 +47,8 @@ export const getTrades = async (request: Request, response: Response) => {
             };
           }),
           tags: tags.map((tag) => tag.name),
+          created_on: new Date(trade.created_on),
+          updated_on: new Date(trade.updated_on),
           project_id: trade.project_id
         };
       })
@@ -93,6 +95,8 @@ export const getTrade = async (request: Request, response: Response) => {
         };
       }),
       tags: tags.map((tag) => tag.name),
+      created_on: new Date(trade.created_on),
+      updated_on: new Date(trade.updated_on),
       project_id: trade.project_id
     };
 

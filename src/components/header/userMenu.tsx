@@ -5,7 +5,7 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProfileImage from "../shared/profileImage";
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -66,8 +66,23 @@ const UserMenu = () => {
   const user = useSelector((state) => getUser(state));
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const ref = useRef<HTMLElement>();
 
-  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    const isClickedOutside = (e) => {
+      if (showDropdown && ref.current && !ref.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", isClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", isClickedOutside);
+    };
+  }, [showDropdown]);
 
   if (!user) {
     return null;
@@ -75,7 +90,7 @@ const UserMenu = () => {
 
   const onToggleUserDropdown = (e) => {
     e.preventDefault();
-    setShowUserDropdown(!showUserDropdown);
+    setShowDropdown(!showDropdown);
   };
 
   const onLogout = () => {
@@ -98,8 +113,8 @@ const UserMenu = () => {
           <StyledIcon icon={faCaretDown} />
         </div>
       </Dropdown>
-      {showUserDropdown && (
-        <DropdownMenu>
+      {showDropdown && (
+        <DropdownMenu ref={ref}>
           <DropdownItem onClick={e => navigateTo(e, `/${user.username}`)}>Profile</DropdownItem>
           <DropdownItem onClick={e => navigateTo(e, "/settings/profile")}>Settings</DropdownItem>
           <hr className="m-0" />

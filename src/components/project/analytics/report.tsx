@@ -71,7 +71,7 @@ const Report = ({ project, loading }: Props) => {
   const current = history[history.length - 1].analytics;
 
   return (
-    <Container style={{ width: "fit-content" }}>
+    <Container style={{ width: "fit-content", marginBottom: "2em" }}>
       <StatisticItem>
         <div className="statistic-name" />
         <div className="all-trades"><b>All trades</b></div>

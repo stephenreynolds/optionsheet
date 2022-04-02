@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import React  from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import App from "./components/app";
@@ -8,7 +8,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import store from "./redux/store";
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
   <ReduxProvider store={store}>
     <ThemeProvider theme={theme}>
       <BaseStyles />
@@ -30,6 +31,5 @@ ReactDOM.render(
         theme="dark"
       />
     </ThemeProvider>
-  </ReduxProvider>,
-  document.getElementById("root")
+  </ReduxProvider>
 );

@@ -24,7 +24,6 @@ import { getTrade } from "../../../redux/selectors/tradeSelectors";
 import { PLPill, TagPill } from "../../shared/pill";
 import { Container } from "../../styles";
 import DeleteTrade from "./deleteTrade";
-import OptionChart from "./optionChart";
 import TradeForm from "./tradeForm";
 import { getUsername } from "../../../redux/selectors/userSelectors";
 
@@ -155,8 +154,6 @@ const TradeDetails = () => {
           </DetailsSection>
         )}
       </div>
-
-      <OptionChart legs={trade.legs} />
 
       {myProject && (
         <>

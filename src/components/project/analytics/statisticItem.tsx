@@ -1,6 +1,5 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { AnalyticsChart } from "./analyticsChart";
 
 export const StatisticItem = styled.div`
   display: flex;
@@ -27,14 +26,7 @@ const DropdownContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-export const StatisticDropdown = ({
-                                    description = "",
-                                    history,
-                                    property,
-                                    valueTransform = (n) => n,
-                                    valueTextTransform = (n) => n,
-                                    children
-                                  }) => {
+export const StatisticDropdown = ({ description = "", children }) => {
     const [showDropdown, setShowDropdown] = useState(false);
 
     return (
@@ -45,8 +37,6 @@ export const StatisticDropdown = ({
         {showDropdown && (
           <DropdownContainer className="statistic-dropdown">
             <p>{description}</p>
-            <AnalyticsChart history={history} property={property}
-                            valueTransform={valueTransform} valueTextTransform={valueTextTransform} />
           </DropdownContainer>
         )}
       </div>

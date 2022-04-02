@@ -61,8 +61,7 @@ const Report = ({ project, loading }: Props) => {
       <hr />
       {/* Balance */}
       {project.starting_balance && (
-        <StatisticDropdown history={history} property="currentBalance"
-                           valueTextTransform={usd.format}>
+        <StatisticDropdown>
           <StatisticItem>
             <div className="statistic-name">Balance</div>
             <div className="all-trades">{usd.format(current.currentBalance)}</div>
@@ -70,8 +69,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticDropdown>
       )}
       {/* Net profit */}
-      <StatisticDropdown history={history} property="netProfit"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Net profit</div>
           <div className="all-trades">{usd.format(current.netProfit)}</div>
@@ -82,8 +80,7 @@ const Report = ({ project, loading }: Props) => {
       </StatisticDropdown>
       {/* Net profit % */}
       {project.starting_balance && (
-        <StatisticDropdown history={history} property="netProfitPercent"
-                           valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>
+        <StatisticDropdown>
           <StatisticItem>
             <div className="statistic-name">Net profit %</div>
             <div className="all-trades">{(current.netProfitPercent * 100).toFixed(2)}%</div>
@@ -94,8 +91,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticDropdown>
       )}
       {/* Gross profit */}
-      <StatisticDropdown history={history} property="grossProfit"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Gross profit</div>
           <div className="all-trades">{usd.format(current.grossProfit)}</div>
@@ -105,8 +101,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Gross loss */}
-      <StatisticDropdown history={history} property="grossLoss"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Gross loss</div>
           <div className="all-trades">{usd.format(current.grossLoss)}</div>
@@ -116,8 +111,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Profit factor */}
-      <StatisticDropdown history={history} property="profitFactor"
-                         valueTextTransform={(n) => n.toFixed(2)}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Profit factor</div>
           <div className="all-trades">{current.profitFactor.toFixed(2)}</div>
@@ -128,8 +122,7 @@ const Report = ({ project, loading }: Props) => {
       </StatisticDropdown>
       {/* Alpha */}
       {project.starting_balance && (
-        <StatisticDropdown history={history} property="alpha"
-                           valueTextTransform={(n) => n.toFixed(2)}>
+        <StatisticDropdown>
           <StatisticItem>
             <div className="statistic-name">Alpha</div>
             <div className="all-trades">{(current.alpha * 100).toFixed(2)}%</div>
@@ -140,7 +133,7 @@ const Report = ({ project, loading }: Props) => {
       <br />
 
       {/* Total number of trades */}
-      <StatisticDropdown history={history} property="totalTrades">
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Total number of trades</div>
           <div className="all-trades">{current.totalTrades}</div>
@@ -150,8 +143,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Percent profitable */}
-      <StatisticDropdown history={history} property="percentProfitable"
-                         valueTextTransform={(n) => `${(n * 100).toFixed(2)}%`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Percent profitable</div>
           <div className="all-trades">{(current.percentProfitable * 100).toFixed(2)}%</div>
@@ -161,7 +153,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Winning trades */}
-      <StatisticDropdown history={history} property="winningTrades">
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Winning trades</div>
           <div className="all-trades">{current.winningTrades}</div>
@@ -171,7 +163,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Losing trades */}
-      <StatisticDropdown history={history} property="losingTrades">
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Losing trades</div>
           <div className="all-trades">{current.losingTrades}</div>
@@ -181,7 +173,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Even trades */}
-      <StatisticDropdown history={history} property="evenTrades">
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Even trades</div>
           <div className="all-trades">{current.evenTrades}</div>
@@ -194,8 +186,7 @@ const Report = ({ project, loading }: Props) => {
       <br />
 
       {/* Avg. trade net profit */}
-      <StatisticDropdown history={history} property="averageProfitLoss"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Avg. trade net profit</div>
           <div className="all-trades">{usd.format(current.averageProfitLoss)}</div>
@@ -205,8 +196,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Avg. gain*/}
-      <StatisticDropdown history={history} property="averageGain"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Avg. gain</div>
           <div className="all-trades">{usd.format(current.averageGain)}</div>
@@ -216,8 +206,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Avg. loss */}
-      <StatisticDropdown history={history} property="averageLoss"
-                         valueTextTransform={usd.format}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Avg. loss</div>
           <div className="all-trades">{usd.format(current.averageLoss)}</div>
@@ -227,8 +216,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Gain/Loss ratio */}
-      <StatisticDropdown history={history} property="gainLossRatio"
-                         valueTextTransform={(n) => `${n.toFixed(2)}`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Gain/Loss ratio</div>
           <div className="all-trades">{current.gainLossRatio.toFixed(2)}</div>
@@ -243,8 +231,7 @@ const Report = ({ project, loading }: Props) => {
       {/* Annualized return */}
       {project.starting_balance && (
         <>
-          <StatisticDropdown history={history} property="annualizedProfitPercent"
-                             valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>
+          <StatisticDropdown>
             <StatisticItem>
               <div className="statistic-name">Annualized return</div>
               <div className="all-trades">{(current.annualizedProfitPercent * 100).toFixed(2)}%</div>
@@ -256,16 +243,14 @@ const Report = ({ project, loading }: Props) => {
       )}
 
       {/* Sharpe ratio */}
-      <StatisticDropdown history={history} property="sharpeRatio"
-                         valueTextTransform={(n) => `${n.toFixed(2)}`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Sharpe ratio</div>
           <div className="all-trades">{(current.sharpeRatio).toFixed(2)}</div>
         </StatisticItem>
       </StatisticDropdown>
       {/* Avg. return on risk */}
-      <StatisticDropdown history={history} property="averageReturnOnRisk"
-                         valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Avg. return on risk</div>
           <div className="all-trades">{(current.averageReturnOnRisk * 100).toFixed(2)}%</div>
@@ -275,8 +260,7 @@ const Report = ({ project, loading }: Props) => {
       <br />
 
       {/* Trading period */}
-      <StatisticDropdown history={history} property="tradingPeriodDays"
-                         valueTransform={(n) => Math.floor(n)} valueTextTransform={(n) => `${n} days`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Trading period</div>
           <div className="all-trades">{humanizeDuration(current.tradingPeriodDays * 1000 * 3600 * 24, {
@@ -286,8 +270,7 @@ const Report = ({ project, loading }: Props) => {
         </StatisticItem>
       </StatisticDropdown>
       {/* Avg. trade length */}
-      <StatisticDropdown history={history} property="averageDurationDays"
-                         valueTransform={(n) => Math.round(n)} valueTextTransform={(n) => `${n} days`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Avg. trade length</div>
           <div className="all-trades">{numeral(current.averageDurationDays).format("0,0")} days</div>
@@ -300,8 +283,7 @@ const Report = ({ project, loading }: Props) => {
       <br />
 
       {/* Kelly % */}
-      <StatisticDropdown history={history} property="kellyPercentage"
-                         valueTransform={(n) => n * 100} valueTextTransform={(n) => `${n.toFixed(2)}%`}>
+      <StatisticDropdown>
         <StatisticItem>
           <div className="statistic-name">Kelly %</div>
           <div className="all-trades">{(current.kellyPercentage * 100).toFixed(2)}%</div>
@@ -309,8 +291,7 @@ const Report = ({ project, loading }: Props) => {
       </StatisticDropdown>
       {/* Risk per trade % */}
       {project.risk && (
-        <StatisticDropdown history={history} property="riskPerTrade"
-                           valueTextTransform={usd.format}>
+        <StatisticDropdown>
           <StatisticItem>
             <div className="statistic-name">Risk per trade ({project.risk}%)</div>
             <div className="all-trades">{usd.format(current.riskPerTrade)}</div>

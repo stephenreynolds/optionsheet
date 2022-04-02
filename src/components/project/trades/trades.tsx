@@ -79,7 +79,7 @@ enum SortDirection {
 
 const sortTrades = (trades: Trade[], { property, direction }) => {
   return trades.sort((a, b) => {
-    if (property === "openDate" || property === "closeDate") {
+    if (property === "open_date" || property === "close_date") {
       const aValue = !a[property] ? -1 : a[property].getTime();
       const bValue = !b[property] ? -1 : b[property].getTime();
       return direction === SortDirection.Descending ? bValue - aValue : aValue - bValue;
@@ -126,6 +126,10 @@ const sortTrades = (trades: Trade[], { property, direction }) => {
       }
       return 0;
     }
+  }).sort((a, b) => {
+    const aValue = new Date(a.updated_on).getTime();
+    const bValue = new Date(b.updated_on).getTime();
+    return direction === SortDirection.Descending ? bValue - aValue : aValue - bValue;
   });
 };
 
@@ -212,9 +216,9 @@ const Trades = () => {
       <Table>
         <thead>
         <tr>
-          <th onClick={() => sortBy("openDate")}>Open {sortMethod.property === "openDate" &&
+          <th onClick={() => sortBy("open_date")}>Open {sortMethod.property === "open_date" &&
             <SortIcon sortMethod={sortMethod} />}</th>
-          <th onClick={() => sortBy("closeDate")}>Close {sortMethod.property === "closeDate" &&
+          <th onClick={() => sortBy("close_date")}>Close {sortMethod.property === "close_date" &&
             <SortIcon sortMethod={sortMethod} />}</th>
           <th onClick={() => sortBy("expiration")}>Exp. {sortMethod.property === "expiration" &&
             <SortIcon sortMethod={sortMethod} />}</th>

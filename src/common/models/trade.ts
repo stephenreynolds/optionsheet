@@ -27,6 +27,8 @@ export interface Trade {
   opening_note?: string;
   closing_note?: string;
   tags?: string[];
+  created_on: Date;
+  updated_on: Date;
 }
 
 export interface TradeCreateModel {

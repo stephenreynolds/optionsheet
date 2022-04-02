@@ -39,6 +39,8 @@ export const getTrades = (username: string, projectName: string) => {
             ...trade,
             open_date: new Date(trade.open_date),
             close_date: trade.close_date ? new Date(trade.close_date) : null,
+            created_on: new Date(trade.created_on),
+            updated_on: new Date(trade.updated_on),
             legs: trade.legs.map((leg) => {
               return {
                 ...leg,

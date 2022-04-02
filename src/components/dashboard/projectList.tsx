@@ -8,26 +8,9 @@ import * as projectActions from "../../redux/actions/projectActions";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import { getProjects } from "../../redux/selectors/projectSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
+import VerticalNav from "../shared/verticalNav";
 
 const ProjectListNav = styled.div`
-  ul {
-    list-style: none;
-    padding-left: 0;
-
-    li {
-      margin-top: 0.5rem;
-
-      a {
-        color: ${props => props.theme.dark.text};
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
   input {
     margin: 0;
     width: 100%;
@@ -61,16 +44,14 @@ const ProjectList = () => {
   return (
     <ProjectListNav>
       <input type="text" placeholder="Find a project..." onChange={onSearchChange} />
-      <ul>
+      <VerticalNav>
         {projects
           .filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
           .sort((a, b) => b.updated_on.getTime() - a.updated_on.getTime())
           .map((project, i) => (
-            <li key={i}>
-              <Link to={`/${username}/${project.name}`}>{project.name}</Link>
-            </li>
+            <Link key={i} to={`/${username}/${project.name}`}>{project.name}</Link>
           ))}
-      </ul>
+      </VerticalNav>
     </ProjectListNav>
   );
 };

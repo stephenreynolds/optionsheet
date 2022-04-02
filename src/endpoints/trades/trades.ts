@@ -40,7 +40,7 @@ export const getTrades = async (request: Request, response: Response) => {
               side: leg.side,
               quantity: Number(leg.quantity),
               open_price: Number(leg.open_price),
-              closePrice: leg.close_price ? Number(leg.close_price) : undefined,
+              close_price: leg.close_price ? Number(leg.close_price) : undefined,
               strike: leg.strike ? Number(leg.strike) : undefined,
               expiration: leg.expiration ? new Date(leg.expiration) : undefined,
               put_call: leg.put_call ?? undefined

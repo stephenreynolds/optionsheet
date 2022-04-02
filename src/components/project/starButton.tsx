@@ -8,6 +8,7 @@ import { NumberCircle } from "../styles";
 const StarButton = ({ username, projectName, stars }) => {
   const [starred, setStarred] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [starCount, setStarCount] = useState(stars);
 
   useEffect(() => {
     checkProjectStarred(username, projectName)
@@ -20,10 +21,12 @@ const StarButton = ({ username, projectName, stars }) => {
     if (starred) {
       await unStarProject(username, projectName);
       setStarred(false);
+      setStarCount(prevState => prevState - 1);
     }
     else {
       await starProject(username, projectName);
       setStarred(true);
+      setStarCount(prevState => prevState + 1);
     }
   };
 
@@ -42,7 +45,7 @@ const StarButton = ({ username, projectName, stars }) => {
           <FontAwesomeIcon icon={faStar} /> Star
         </>
       )}
-      <NumberCircle>{stars}</NumberCircle>
+      <NumberCircle>{starCount}</NumberCircle>
     </button>
   );
 };

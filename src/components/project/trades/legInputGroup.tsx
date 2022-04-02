@@ -38,10 +38,10 @@ const incrementQuantity = (legs, setLegs, value = 1) => {
   setLegs(newLegs);
 };
 
-const AdjustButton = ({ adjustFunction, icon = faArrowRightArrowLeft }) => {
-  return (
+const AdjustButton = ({ show, adjustFunction, icon = faArrowRightArrowLeft }) => {
+  return show ? (
     <FontAwesomeIcon icon={icon} onClick={adjustFunction} className="adjust-icon" />
-  );
+  ) : null;
 };
 
 const DeleteLeg = styled.div`
@@ -174,7 +174,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
     <InputGroup className="d-flex">
       {/* Side */}
       <div>
-        {index === 0 && <label>Side<AdjustButton adjustFunction={() => invertSides(legs, setLegs)} /></label>}
+        {index === 0 && <label>Side<AdjustButton show={!close} adjustFunction={() => invertSides(legs, setLegs)} /></label>}
         <select value={leg.side} onChange={onSideChange} disabled={close}>
           {Object.keys(Side).map(key => (
             <option key={key} value={key}>{key}</option>
@@ -185,7 +185,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
       {/* Put or call */}
       {!isShares && (
         <div>
-          {index === 0 && <label>Option<AdjustButton adjustFunction={() => invertOptions(legs, setLegs)} /></label>}
+          {index === 0 && <label>Option<AdjustButton show={!close} adjustFunction={() => invertOptions(legs, setLegs)} /></label>}
           <select value={leg.put_call} onChange={onOptionChange} disabled={close}>
             {Object.keys(PutCall).map(key => (
               <option key={key} value={key}>{key}</option>
@@ -199,8 +199,8 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
         {index === 0 && (
           <label>Quantity
             <span>
-              <AdjustButton icon={faPlus} adjustFunction={() => incrementQuantity(legs, setLegs)} />
-              <AdjustButton icon={faMinus} adjustFunction={() => incrementQuantity(legs, setLegs, -1)} />
+              <AdjustButton show={!close} icon={faPlus} adjustFunction={() => incrementQuantity(legs, setLegs)} />
+              <AdjustButton show={!close} icon={faMinus} adjustFunction={() => incrementQuantity(legs, setLegs, -1)} />
             </span>
           </label>
         )}

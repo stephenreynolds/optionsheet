@@ -59,7 +59,9 @@ CREATE TABLE IF NOT EXISTS starred_project
 (
     project_id INTEGER NOT NULL,
     user_uuid  uuid    NOT NULL,
-    PRIMARY KEY (project_id, user_uuid)
+
+    CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE,
+    CONSTRAINT fk_user FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS trade

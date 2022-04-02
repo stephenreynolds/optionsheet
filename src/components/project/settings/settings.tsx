@@ -211,7 +211,7 @@ const Settings = ({ username }) => {
       </InputGroup>
 
       <DeleteProject username={username} projectName={project.name}
-                     show={showDeleteProject} toggleVisibility={setShowDeleteProject} />
+                     show={showDeleteProject} toggleVisibility={toggleShowDeleteProject} />
     </Container>
   );
 };

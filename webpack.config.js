@@ -33,7 +33,11 @@ module.exports = (env) => {
     },
     resolve: {
       modules: [paths.node_modules],
-      extensions: [".js", ".jsx", ".ts", ".tsx"]
+      extensions: [".js", ".jsx", ".ts", ".tsx"],
+      alias: {
+        "react/jsx-runtime.js": "react/jsx-runtime",
+        "react/jsx-dev-runtime.js": "react/jsx-dev-runtime"
+      }
     },
     optimization: {
       splitChunks: {

@@ -143,7 +143,7 @@ const Settings = ({ username }) => {
 
   const exportProject = () => {
     const exportedProject = { ...project, trades };
-    const json = JSON.stringify(exportedProject, undefined, "\t");
+    const json = JSON.stringify(exportedProject, null, 2);
 
     const a = document.createElement("a");
     a.href = `data:application/json;charset=utf-8,${json}`;

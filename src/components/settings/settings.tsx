@@ -4,8 +4,8 @@ import LoadingProgress from "../shared/loadingProgress";
 import { Container } from "../styles";
 import Sidebar from "./sidebar";
 import { useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { useLocation } from "react-router";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 
 const ProfileSettings = lazy(() => import(/* webpackChunkName: "settings-account" */ "./profile"));
 const AccountSettings = lazy(() => import(/* webpackChunkName: "settings-account" */ "./account/account"));

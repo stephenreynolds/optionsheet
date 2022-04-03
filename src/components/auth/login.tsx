@@ -1,9 +1,8 @@
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { Container } from "../styles";
 import styled from "styled-components";
 import { Credentials } from "../../common/models/user";
 import { useDispatch, useSelector } from "react-redux";
-import * as authActions from "../../redux/actions/authActions";
+import * as authActions from "../../redux/actions/userActions";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { ErrorMessage, Formik } from "formik";
 import * as yup from "yup";
@@ -12,6 +11,7 @@ import { Navigate, useLocation } from "react-router";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 
 const LoginContainer = styled(Container)`
   width: 400px;
@@ -72,12 +72,11 @@ const Login = () => {
   const [loginError, setLoginError] = useState("");
 
   if (isLoggedIn) {
-    return <Navigate to={state ? state : "/"} />
+    return <Navigate to={state ? state : "/"} />;
   }
 
   const handleSubmit = (credentials: Credentials) => {
     dispatch(authActions.login(credentials))
-      .then()
       .catch((error) => {
         setLoginError(error.message);
       });

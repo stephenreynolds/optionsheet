@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import VerticalNav from "../shared/verticalNav";
 import { getProjects } from "../../common/api/projects";
@@ -17,9 +16,9 @@ const ProjectListNav = styled.div`
 `;
 
 const ProjectList = () => {
-  const loading = useSelector((state) => apiCallsInProgress(state));
   const username = useSelector((state) => getUsername(state));
 
+  const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("");
 
@@ -33,6 +32,7 @@ const ProjectList = () => {
               updated_on: new Date(project.updated_on)
             };
           }));
+          setLoading(false);
         })
         .catch((error) => {
           toast.error(error.message);

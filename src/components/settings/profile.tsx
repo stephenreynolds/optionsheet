@@ -2,11 +2,11 @@ import styled from "styled-components";
 import { useEffect, useRef, useState } from "react";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useDispatch, useSelector } from "react-redux";
-import { getAuthenticatedUser, updateUser } from "../../redux/actions/userActions";
 import { toast } from "react-toastify";
 import { getUser } from "../../redux/selectors/userSelectors";
-import { setAvatar } from "../../common/api/user";
+import { setAvatar, updateUser } from "../../common/api/user";
 import ProfileImage from "../shared/profileImage";
+import { getAuthenticatedUser } from "../../redux/actions/userActions";
 
 const InputGroup = styled.div`
   margin: 1rem 0;
@@ -19,11 +19,11 @@ const InputGroup = styled.div`
 const ProfileImageSetting = styled.div`
   width: 200px;
   height: 200px;
-  
+
   &:hover {
     cursor: pointer;
   }
-  
+
   button {
     display: block;
     position: relative;
@@ -47,7 +47,7 @@ const ProfileSettings = () => {
   };
 
   const onUpdateProfile = () => {
-    dispatch(updateUser({ bio: newBio }))
+    updateUser({ bio: newBio })
       .then(() => {
         toast.success("Profile updated.");
       })

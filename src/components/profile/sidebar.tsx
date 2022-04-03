@@ -1,17 +1,15 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import { useEffect, useState } from "react";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
-import { updateUser } from "../../redux/actions/userActions";
 import { toast } from "react-toastify";
 import ProfileImage from "../shared/profileImage";
+import { updateUser } from "../../common/api/user";
 
 const ProfileSidebar = ({ user }) => {
   const myUsername = useSelector((state) => getUsername(state));
   const myProfile = myUsername === user.username;
   const [editing, setEditing] = useState(false);
   const [newBio, setNewBio] = useState("");
-  const dispatch: PromiseDispatch = useDispatch();
 
   useEffect(() => {
     setNewBio(user.bio);
@@ -27,18 +25,20 @@ const ProfileSidebar = ({ user }) => {
   };
 
   const onSaveEdits = () => {
-    dispatch(updateUser({ bio: newBio }))
+    updateUser({ bio: newBio })
       .then(() => {
         user.bio = newBio;
         setEditing(false);
       })
-      .catch((error) => toast.error(error.message));
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   return (
     <div style={{ maxWidth: "296px", marginTop: "-50px", marginRight: "2rem" }}>
       <div>
-        <div style={{width: "300px", height: "300px", marginBottom: "1em"}}>
+        <div style={{ width: "300px", height: "300px", marginBottom: "1em" }}>
           <ProfileImage imageUrl={user.avatar_url} username={user.username} />
         </div>
         <h1 className="fw-bold text-center">{user.username}</h1>

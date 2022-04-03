@@ -6,10 +6,8 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import * as yup from "yup";
 import { Project, ProjectCreateModel } from "../../common/models/project";
-import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
-import { getUsername } from "../../redux/selectors/userSelectors";
+import { getIsLoggedIn, getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { getDefaultProjectSettings } from "../../common/api/user";
 import { createProject, getProjects } from "../../common/api/projects";
 import _ from "lodash";
@@ -70,11 +68,11 @@ const validationSchema = yup.object({
 
 const NewProject = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
-  const loading = useSelector((state) => apiCallsInProgress(state));
   const username = useSelector((state) => getUsername(state));
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [loading, setLoading] = useState(true);
   const [tagSuggestions, setTagSuggestions] = useState([]);
   const [initialValues, setInitialValues] = useState<{}>();
 
@@ -92,6 +90,7 @@ const NewProject = () => {
             .map((project) => project.tags)
             .flat());
           setTagSuggestions(tags);
+          setLoading(false);
         })
         .catch((error) => {
           toast.error(error.message);

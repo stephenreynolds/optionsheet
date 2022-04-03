@@ -1,12 +1,9 @@
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { deleteUser } from "../../../redux/actions/userActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import Modal from "../../shared/modal";
+import { deleteUser } from "../../../common/api/user";
 
 const DeleteAccount = ({ show, toggleVisibility }) => {
-  const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
 
   if (!show) {
@@ -21,7 +18,7 @@ const DeleteAccount = ({ show, toggleVisibility }) => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(deleteUser())
+    deleteUser()
       .then(() => {
         navigate("/");
         toggleVisibility();

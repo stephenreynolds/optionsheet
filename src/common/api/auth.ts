@@ -25,7 +25,7 @@ export const login = async (credentials: Credentials) => {
     });
 };
 
-export const logout = async () => {
+export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("refresh_token");
 };

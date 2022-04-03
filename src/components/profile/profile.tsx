@@ -4,18 +4,15 @@ import ProfileTabs from "./tabs";
 import ProfileTab from "./profileTab";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
-import { useDispatch } from "react-redux";
-import { getUser } from "../../redux/actions/userActions";
 import { toast } from "react-toastify";
+import { getUser } from "../../common/api/user";
 
 const Profile = () => {
   const { username } = useParams<{ username: string }>();
   const [user, setUser] = useState({});
-  const dispatch: PromiseDispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getUser(username))
+    getUser(username)
       .then(result => {
         setUser(result);
       })

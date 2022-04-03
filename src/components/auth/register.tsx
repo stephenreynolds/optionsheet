@@ -2,8 +2,7 @@ import styled from "styled-components";
 import { ErrorMessage, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
-import * as authActions from "../../redux/actions/authActions";
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
+import * as authActions from "../../redux/actions/userActions";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
@@ -14,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { checkCredentials } from "../../common/api/auth";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 
 const RegisterContainer = styled(Container)`
   width: 400px;

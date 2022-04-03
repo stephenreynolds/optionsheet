@@ -1,10 +1,8 @@
 import { ErrorMessage, Formik } from "formik";
-import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { updateUser } from "../../../redux/actions/userActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
+import { updateUser } from "../../../common/api/user";
 
 const initialValues = {
   currentPassword: "",
@@ -52,10 +50,8 @@ const isValid = (values, errors) => {
 };
 
 const PasswordForm = () => {
-  const dispatch: PromiseDispatch = useDispatch();
-
   const onSubmit = (values, { resetForm }) => {
-    dispatch(updateUser(values))
+    updateUser(values)
       .then(() => {
         toast.success("Password changed.");
       })

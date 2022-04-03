@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/actions/authActions";
+import { logout } from "../../redux/actions/userActions";
 import { getUser } from "../../redux/selectors/userSelectors";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

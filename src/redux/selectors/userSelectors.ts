@@ -9,9 +9,9 @@ export const getUser = (state): User => {
 };
 
 export const getUsername = (state): string => {
-  return state.user.username ?? undefined;
+  return state.user ? state.user.username : undefined;
 };
 
 export const getEmail = (state): string => {
-  return state.user.email ?? undefined;
+  return state.user ? state.user.email : undefined;
 };

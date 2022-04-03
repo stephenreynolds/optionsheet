@@ -1,5 +1,5 @@
 import produce from "immer";
-import { GET_AUTHENTICATED_USER_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL } from "../actions/actionTypes";
+import { GET_AUTHENTICATED_USER_SUCCESS, LOGOUT_SUCCESS } from "../actions/actionTypes";
 import { User } from "../../common/models/user";
 import { logout } from "../../common/api/auth";
 
@@ -13,8 +13,6 @@ const userReducer = produce((state, action) => {
       state = payload;
       break;
     case LOGOUT_SUCCESS:
-    case LOGIN_FAIL:
-    case REGISTER_FAIL:
       logout();
       state = initialState;
       break;

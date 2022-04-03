@@ -4,16 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
-import { checkCredentials } from "../../common/api/auth";
+import { checkCredentials, register } from "../../common/api/auth";
 import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
-import { register } from "../../redux/actions/userActions";
+import { getAuthenticatedUser, logout } from "../../redux/actions/userActions";
 
 const RegisterContainer = styled(Container)`
   width: 400px;
@@ -125,7 +124,7 @@ const validationSchema = yup.object({
 
 const Register = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
-  const dispatch: PromiseDispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [registerError, setRegisterError] = useState("");
 
@@ -136,8 +135,12 @@ const Register = () => {
   }, [isLoggedIn, navigate]);
 
   const onSubmit = (model: CreateUserModel) => {
-    dispatch(register(model))
+    register(model)
+      .then(() => {
+        dispatch(getAuthenticatedUser());
+      })
       .catch((error) => {
+        dispatch(logout());
         setRegisterError(error.message);
       });
   };

@@ -2,7 +2,6 @@ import { Container } from "../styles";
 import styled from "styled-components";
 import { Credentials } from "../../common/models/user";
 import { useDispatch, useSelector } from "react-redux";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { ErrorMessage, Formik } from "formik";
 import * as yup from "yup";
 import { useState } from "react";
@@ -11,7 +10,8 @@ import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
-import { login } from "../../redux/actions/userActions";
+import { login } from "../../common/api/auth";
+import { getAuthenticatedUser, logout } from "../../redux/actions/userActions";
 
 const LoginContainer = styled(Container)`
   width: 400px;
@@ -67,7 +67,7 @@ const validationScheme = yup.object({
 
 const Login = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
-  const dispatch: PromiseDispatch = useDispatch();
+  const dispatch = useDispatch();
   const { state } = useLocation();
   const [loginError, setLoginError] = useState("");
 
@@ -76,8 +76,12 @@ const Login = () => {
   }
 
   const handleSubmit = (credentials: Credentials) => {
-    dispatch(login(credentials))
+    login(credentials)
+      .then(() => {
+        dispatch(getAuthenticatedUser());
+      })
       .catch((error) => {
+        dispatch(logout());
         setLoginError(error.message);
       });
   };

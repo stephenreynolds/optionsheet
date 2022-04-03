@@ -1,19 +1,18 @@
 import { ErrorMessage, Formik } from "formik";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, Navigate } from "react-router";
+import { useSelector } from "react-redux";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import * as yup from "yup";
-import { ProjectCreateModel } from "../../common/models/project";
-import * as projectActions from "../../redux/actions/projectActions";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
+import { Project, ProjectCreateModel } from "../../common/models/project";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
-import { getProjectTags } from "../../redux/selectors/projectSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
 import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { getDefaultProjectSettings } from "../../common/api/user";
+import { createProject, getProjects } from "../../common/api/projects";
+import _ from "lodash";
 
 const NewProjectContainer = styled.div`
   margin: 0 auto;
@@ -73,21 +72,32 @@ const NewProject = () => {
   const isLoggedIn = useSelector((state) => getIsLoggedIn(state));
   const loading = useSelector((state) => apiCallsInProgress(state));
   const username = useSelector((state) => getUsername(state));
-  const tagSuggestions = useSelector((state) => getProjectTags(state));
-  const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [tagSuggestions, setTagSuggestions] = useState([]);
   const [initialValues, setInitialValues] = useState<{}>();
 
   useEffect(() => {
-    if (username && !tagSuggestions) {
-      dispatch(projectActions.getProjects(username))
+    if (username) {
+      getProjects(username)
+        .then(({ data }) => {
+          const projects = data.map((project: Project) => {
+            return {
+              ...project,
+              updated_on: new Date(project.updated_on)
+            };
+          });
+          const tags = _.uniq(projects
+            .map((project) => project.tags)
+            .flat());
+          setTagSuggestions(tags);
+        })
         .catch((error) => {
           toast.error(error.message);
         });
     }
-  }, [dispatch, tagSuggestions, username]);
+  }, [username]);
 
   useEffect(() => {
     getDefaultProjectSettings()
@@ -122,12 +132,10 @@ const NewProject = () => {
       risk: data.risk !== "" ? data.risk : null
     };
 
-    console.log(model);
-
-    dispatch(projectActions.createProject(model))
-      .then((res) => {
+    createProject(model)
+      .then(({ data }) => {
         toast.success("Project created.");
-        navigate(res);
+        navigate(data.project_url);
       })
       .catch((error) => {
         toast.error(error.message);

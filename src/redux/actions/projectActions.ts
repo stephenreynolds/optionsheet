@@ -2,11 +2,10 @@ import * as projectApi from "../../common/api/projects";
 import {
   GET_PROJECTS_SUCCESS,
   GET_PROJECT_SUCCESS,
-  CREATE_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
   DELETE_PROJECT_SUCCESS
 } from "./actionTypes";
-import { Project, ProjectCreateModel, ProjectUpdateModel } from "../../common/models/project";
+import { Project, ProjectUpdateModel } from "../../common/models/project";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
 
 export const getProjects = (username: string) => {
@@ -40,22 +39,6 @@ export const getProject = (username: string, projectName: string) => {
           updated_on: new Date(response.data.updated_on)
         };
         dispatch({ type: GET_PROJECT_SUCCESS, payload: project });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
-
-export const createProject = (model: ProjectCreateModel) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return projectApi
-      .createProject(model)
-      .then((response) => {
-        dispatch({ type: CREATE_PROJECT_SUCCESS });
-        return response.data.project_url;
       })
       .catch((error) => {
         dispatch(apiCallError());

@@ -2,7 +2,6 @@ import styled from "styled-components";
 import { ErrorMessage, Formik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
-import * as authActions from "../../redux/actions/userActions";
 import { Container } from "../styles";
 import { CreateUserModel } from "../../common/models/user";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
@@ -14,6 +13,7 @@ import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { checkCredentials } from "../../common/api/auth";
 import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
+import { register } from "../../redux/actions/userActions";
 
 const RegisterContainer = styled(Container)`
   width: 400px;
@@ -136,7 +136,7 @@ const Register = () => {
   }, [isLoggedIn, navigate]);
 
   const onSubmit = (model: CreateUserModel) => {
-    dispatch(authActions.register(model))
+    dispatch(register(model))
       .catch((error) => {
         setRegisterError(error.message);
       });

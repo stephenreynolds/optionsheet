@@ -2,7 +2,6 @@ import { Container } from "../styles";
 import styled from "styled-components";
 import { Credentials } from "../../common/models/user";
 import { useDispatch, useSelector } from "react-redux";
-import * as authActions from "../../redux/actions/userActions";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { ErrorMessage, Formik } from "formik";
 import * as yup from "yup";
@@ -12,6 +11,7 @@ import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import color from "color";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
+import { login } from "../../redux/actions/userActions";
 
 const LoginContainer = styled(Container)`
   width: 400px;
@@ -76,7 +76,7 @@ const Login = () => {
   }
 
   const handleSubmit = (credentials: Credentials) => {
-    dispatch(authActions.login(credentials))
+    dispatch(login(credentials))
       .catch((error) => {
         setLoginError(error.message);
       });

@@ -72,7 +72,7 @@ const Project = () => {
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Route>
           <Route path="analytics" element={<Report project={project} loading={loading} />} />
-          <Route path="settings" element={myProject ? <Settings username={username} /> : <Navigate to="/notfound" />} />
+          <Route path="settings" element={myProject ? <Settings project={project} /> : <Navigate to="/notfound" />} />
           <Route path="*" element={<Navigate to="/notfound" />} />
         </Routes>
       </Suspense>

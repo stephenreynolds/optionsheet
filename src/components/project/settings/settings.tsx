@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { Project } from "../../../common/models/project";
 import { Trade } from "../../../common/models/trade";
-import { updateProject } from "../../../redux/actions/projectActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { getProject } from "../../../redux/selectors/projectSelectors";
 import { getTrades } from "../../../redux/selectors/tradeSelectors";
 import TagInput from "../../shared/tagInput";
 import { Container } from "../../styles";
 import DeleteProject from "./deleteProject";
+import { updateProject } from "../../../common/api/projects";
 
 const InputGroup = styled.div`
   margin: 1rem 0;
@@ -35,10 +32,8 @@ const InputGroup = styled.div`
   }
 `;
 
-const Settings = ({ username }) => {
-  const dispatch: PromiseDispatch = useDispatch();
+const Settings = ({ project }) => {
   const navigate = useNavigate();
-  const project: Project = useSelector((state) => getProject(state));
   const trades: Trade[] = useSelector((state) => getTrades(state));
 
   const [newProjectName, setNewProjectName] = useState("");
@@ -69,12 +64,14 @@ const Settings = ({ username }) => {
   const onRename = (e) => {
     e.preventDefault();
 
-    dispatch(updateProject(username, project.name, { name: newProjectName })).then(() => {
-      toast.success("Renamed project.");
-      navigate(`/${username}/${newProjectName}`);
-    }, (error) => {
-      toast.error(error.message);
-    });
+    updateProject(project.username, project.name, { name: newProjectName })
+      .then(() => {
+        toast.success("Renamed project.");
+        navigate(`/${project.username}/${newProjectName}`);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const onDescriptionChange = (e) => {
@@ -84,11 +81,13 @@ const Settings = ({ username }) => {
   const onUpdateDescription = (e) => {
     e.preventDefault();
 
-    dispatch(updateProject(username, project.name, { description: newDescription })).then(() => {
-      toast.success("Updated description.");
-    }, (error) => {
-      toast.error(error);
-    });
+    updateProject(project.username, project.name, { description: newDescription })
+      .then(() => {
+        toast.success("Updated description.");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const onStartingBalanceChange = (e) => {
@@ -100,11 +99,13 @@ const Settings = ({ username }) => {
 
     const startingBalance = newStartingBalance === "" ? null : Number(newStartingBalance);
 
-    dispatch(updateProject(username, project.name, { starting_balance: startingBalance })).then(() => {
-      toast.success("Updated starting balance.");
-    }, (error) => {
-      toast.error(error);
-    });
+    updateProject(project.username, project.name, { starting_balance: startingBalance })
+      .then(() => {
+        toast.success("Updated starting balance.");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const onRiskChange = (e) => {
@@ -116,11 +117,13 @@ const Settings = ({ username }) => {
 
     const risk = newRisk === "" ? null : Number(newRisk);
 
-    dispatch(updateProject(username, project.name, { risk })).then(() => {
-      toast.success("Updated risk %.");
-    }, (error) => {
-      toast.error(error);
-    });
+    updateProject(project.username, project.name, { risk })
+      .then(() => {
+        toast.success("Updated risk %.");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const onTagsChange = (tags) => {
@@ -130,11 +133,13 @@ const Settings = ({ username }) => {
   const onUpdateTags = (e) => {
     e.preventDefault();
 
-    dispatch(updateProject(username, project.name, { tags: newTags })).then(() => {
-      toast.success("Updated tags.");
-    }, (error) => {
-      toast.error(error);
-    });
+    updateProject(project.username, project.name, { tags: newTags })
+      .then(() => {
+        toast.success("Updated tags.");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const toggleShowDeleteProject = () => {
@@ -210,7 +215,7 @@ const Settings = ({ username }) => {
         <button className="text-red" onClick={toggleShowDeleteProject}>Delete project</button>
       </InputGroup>
 
-      <DeleteProject username={username} projectName={project.name}
+      <DeleteProject username={project.username} projectName={project.name}
                      show={showDeleteProject} toggleVisibility={toggleShowDeleteProject} />
     </Container>
   );

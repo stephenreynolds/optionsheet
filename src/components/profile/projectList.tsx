@@ -1,6 +1,11 @@
 import ProjectCard from "../shared/projectCard";
+import { Project } from "../../common/models/project";
 
-const ProjectList = ({ projects }) => {
+interface Props {
+  projects: Project[];
+}
+
+const ProjectList = ({ projects }: Props) => {
   return (
     <>
       {projects.map((project, key) => (

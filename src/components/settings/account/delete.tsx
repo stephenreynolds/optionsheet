@@ -3,7 +3,12 @@ import { toast } from "react-toastify";
 import Modal from "../../shared/modal";
 import { deleteUser } from "../../../common/api/user";
 
-const DeleteAccount = ({ show, toggleVisibility }) => {
+interface Props {
+  show: boolean;
+  toggleVisibility: () => void;
+}
+
+const DeleteAccount = ({ show, toggleVisibility }: Props) => {
   const navigate = useNavigate();
 
   if (!show) {

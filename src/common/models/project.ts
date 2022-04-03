@@ -2,7 +2,7 @@ export interface Project {
   id: number;
   name: string;
   description: string;
-  tags?: string[];
+  tags: string[];
   starting_balance?: number;
   risk?: number;
   created_on: Date;
@@ -26,11 +26,4 @@ export interface ProjectUpdateModel {
   tags?: string[];
   starting_balance?: number;
   risk?: number;
-}
-
-export interface ProjectSummaryModel {
-  name: string;
-  description: string;
-  tags?: string[];
-  updated_on: Date;
 }

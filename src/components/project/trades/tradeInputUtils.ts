@@ -1,15 +1,15 @@
 import { Leg, PutCall, Side } from "../../../common/models/trade";
 
-export const symbolIsValid = (symbol: string) => {
+export const symbolIsValid = (symbol: string): boolean => {
   const regexp = new RegExp("^[a-zA-Z]+(\\.[a-zA-Z]+)?$");
   return regexp.test(symbol) && symbol.length <= 5;
 };
 
-export const closeDateIsValid = (open: Date, close: Date) => {
+export const closeDateIsValid = (open: Date, close: Date): boolean => {
   return close.getTime() - open.getTime() >= 0;
 };
 
-export const legStrikesAreValid = (legs: Leg[]) => {
+export const legStrikesAreValid = (legs: Leg[]): boolean => {
   for (const { strike } of legs) {
     if (isNaN(strike)) {
       return false;
@@ -32,25 +32,11 @@ export const onTradeDateChange = (e, setDate) => {
   setDate(e);
 };
 
-export const onPriceChange = (e, setPriceStr, setPrice) => {
-  const priceStr = e.target.value;
-
-  const regexp = new RegExp("^-?\\d*\\.?\\d*$");
-  const isValid = regexp.test(priceStr);
-
-  if (!isValid) {
-    return;
-  }
-
-  setPriceStr(priceStr);
-  setPrice(Number.parseFloat(priceStr));
-};
-
 export const onNoteChange = (e, setNote) => {
   setNote(e.target.value);
 };
 
-export const addDays = (date: Date, days: number) => {
+export const addDays = (date: Date, days: number): Date => {
   const newDate = new Date(date);
   newDate.setDate(newDate.getDate() + days);
   return newDate;

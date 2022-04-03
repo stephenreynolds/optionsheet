@@ -75,7 +75,12 @@ enum SortDirection {
   Descending
 }
 
-const sortTrades = (trades: Trade[], { property, direction }) => {
+interface SortMethod {
+  property: string;
+  direction: SortDirection;
+}
+
+const sortTrades = (trades: Trade[], { property, direction }: SortMethod): Trade[] => {
   return trades.sort((a, b) => {
     if (property === "open_date" || property === "close_date") {
       const aValue = !a[property] ? -1 : a[property].getTime();
@@ -131,11 +136,11 @@ const sortTrades = (trades: Trade[], { property, direction }) => {
   });
 };
 
-const toggleSortDirection = (direction: SortDirection) => {
+const toggleSortDirection = (direction: SortDirection): SortDirection => {
   return direction === SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
 };
 
-const SortIcon = ({ sortMethod }) => <FontAwesomeIcon
+const SortIcon = ({ sortMethod }: { sortMethod: SortMethod }) => <FontAwesomeIcon
   icon={sortMethod.direction === SortDirection.Ascending ? faCaretUp : faCaretDown} />;
 
 interface Props {

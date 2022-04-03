@@ -32,7 +32,14 @@ const ProjectListItem = styled.div`
   }
 `;
 
-const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinnedProjects }) => {
+interface Props {
+  show: boolean;
+  setShow: (show: boolean) => void;
+  pinnedProjects: Project[];
+  setPinnedProjects: (projects: Project[]) => void;
+}
+
+const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinnedProjects }: Props) => {
   const username = useSelector((state) => getUsername(state));
   const maxPins = 6;
 

@@ -6,20 +6,26 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getUser } from "../../common/api/user";
+import { User } from "../../common/models/user";
 
 const Profile = () => {
   const { username } = useParams<{ username: string }>();
-  const [user, setUser] = useState({});
+
+  const [user, setUser] = useState<User>();
 
   useEffect(() => {
     getUser(username)
-      .then(result => {
-        setUser(result);
+      .then(({ data }) => {
+        setUser(data);
       })
       .catch(error => {
         toast.error(error.message);
       });
   }, [username]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>

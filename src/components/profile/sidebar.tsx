@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ProfileImage from "../shared/profileImage";
 import { updateUser } from "../../common/api/user";
+import { User } from "../../common/models/user";
 
-const ProfileSidebar = ({ user }) => {
+interface Props {
+  user: User;
+}
+
+const ProfileSidebar = ({ user }: Props) => {
   const myUsername = useSelector((state) => getUsername(state));
   const myProfile = myUsername === user.username;
   const [editing, setEditing] = useState(false);

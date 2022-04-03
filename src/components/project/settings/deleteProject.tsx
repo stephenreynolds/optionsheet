@@ -4,7 +4,14 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import { deleteProject } from "../../../common/api/projects";
 
-const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
+interface Props {
+  username: string;
+  projectName: string;
+  show: boolean;
+  toggleVisibility: () => void;
+}
+
+const DeleteProject = ({ username, projectName, show, toggleVisibility }: Props) => {
   const navigate = useNavigate();
   const [confirmInput, setConfirmInput] = useState("");
 

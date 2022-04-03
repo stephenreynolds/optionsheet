@@ -3,7 +3,7 @@ import { getStrategyFromLegs, Strategy } from "./strategy";
 import _ from "lodash";
 import numeral from "numeral";
 
-export const getTradeQuantity = (legs: Leg[]) => {
+export const getTradeQuantity = (legs: Leg[]): number => {
   if (!legs.length) {
     return 0;
   }
@@ -12,7 +12,7 @@ export const getTradeQuantity = (legs: Leg[]) => {
   return Math.min(...quantities);
 };
 
-export const getFirstExpiration = (legs: Leg[]) => {
+export const getFirstExpiration = (legs: Leg[]): Date => {
   if (!legs.length) {
     return undefined;
   }
@@ -28,7 +28,7 @@ export const getFirstExpiration = (legs: Leg[]) => {
   return new Date(expirations.sort((a, b) => a - b)[0]);
 };
 
-export const formatPrice = (price: number, digits = 2) => {
+export const formatPrice = (price: number, digits = 2): string => {
   if (isNaN(price)) {
     return "--";
   }
@@ -39,11 +39,11 @@ export const formatPrice = (price: number, digits = 2) => {
   return numeral(price).format(`$0,0.${"0".repeat(digits)}`);
 };
 
-export const tradeIsOption = (legs: Leg[]) => {
+export const tradeIsOption = (legs: Leg[]): boolean => {
   return _.every(legs, (leg) => leg.put_call && leg.strike >= 0 && leg.expiration);
 };
 
-export const getNetCost = (legs: Leg[]) => {
+export const getNetCost = (legs: Leg[]): number => {
   let sum = 0;
 
   for (const { side, open_price, quantity } of legs) {
@@ -54,7 +54,7 @@ export const getNetCost = (legs: Leg[]) => {
   return sum;
 };
 
-export const getOpenPrice = (legs: Leg[]) => {
+export const getOpenPrice = (legs: Leg[]): number => {
   let sum = 0;
 
   for (const { side, open_price } of legs) {
@@ -65,7 +65,7 @@ export const getOpenPrice = (legs: Leg[]) => {
   return sum;
 };
 
-export const getProfitLoss = ({ close_date, legs }: Trade) => {
+export const getProfitLoss = ({ close_date, legs }: Trade): number => {
   if (!close_date) {
     return NaN;
   }
@@ -88,11 +88,11 @@ export const getProfitLoss = ({ close_date, legs }: Trade) => {
   return sum;
 };
 
-export const formatDate = (date: Date) => {
+export const formatDate = (date: Date): string => {
   return date ? date.toLocaleDateString() : "";
 };
 
-export const getMaxProfit = (trade: Trade) => {
+export const getMaxProfit = (trade: Trade): number => {
   const legs = trade.legs;
   const cost = getOpenPrice(legs);
   const strategy = getStrategyFromLegs(legs);
@@ -127,7 +127,7 @@ export const getMaxProfit = (trade: Trade) => {
   return undefined;
 };
 
-export const getMaxLoss = (trade: Trade) => {
+export const getMaxLoss = (trade: Trade): number => {
   const legs = trade.legs;
   const cost = getOpenPrice(legs);
   const strategy = getStrategyFromLegs(legs);
@@ -172,7 +172,7 @@ export const getMaxLoss = (trade: Trade) => {
   return undefined;
 };
 
-export const getReturnOnRisk = (trade: Trade) => {
+export const getReturnOnRisk = (trade: Trade): number => {
   const maxProfit = getMaxProfit(trade);
   const maxLoss = getMaxLoss(trade);
 
@@ -183,13 +183,8 @@ export const getReturnOnRisk = (trade: Trade) => {
   return Math.abs(maxProfit / maxLoss);
 };
 
-export const getTradeDurationDays = (trade: Trade) => {
+export const getTradeDurationDays = (trade: Trade): number => {
   const diff = trade.close_date.getTime() - trade.open_date.getTime();
-  return Math.floor((diff / (1000 * 3600 * 24)));
-};
-
-export const getDaysToExpiration = (openDate: Date, leg: Leg) => {
-  const diff = leg.expiration.getTime() - openDate.getTime();
   return Math.floor((diff / (1000 * 3600 * 24)));
 };
 

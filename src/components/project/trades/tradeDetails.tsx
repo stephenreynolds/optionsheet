@@ -34,7 +34,11 @@ const DetailsSection = styled.div`
   }
 `;
 
-const TradeDetails = () => {
+interface Props {
+  trades: Trade[];
+}
+
+const TradeDetails = ({ trades }: Props) => {
   const myUsername = useSelector((state) => getUsername(state));
 
   const { username, projectName, id } = useParams<{
@@ -168,7 +172,7 @@ const TradeDetails = () => {
 
       {myProject && (
         <>
-          <TradeForm trade={trade} close={showCloseTrade} show={showCloseTrade || showEditTrade}
+          <TradeForm trade={trade} trades={trades} close={showCloseTrade} show={showCloseTrade || showEditTrade}
                      toggleVisibility={showCloseTrade ? toggleCloseModal : toggleEditModal} />
           <DeleteTrade username={username} projectName={projectName} trade={trade} show={showDeleteTrade}
                        toggleVisibility={toggleDeleteModal} />

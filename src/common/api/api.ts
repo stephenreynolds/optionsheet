@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const baseURL = "http://localhost:5000";
 
-const getToken = () => {
+const getToken = (): string => {
   return JSON.parse(window.localStorage.getItem("token"));
 };
 
@@ -10,7 +10,7 @@ const setToken = (token) => {
   return window.localStorage.setItem("token", JSON.stringify(token));
 };
 
-const getRefreshToken = () => {
+const getRefreshToken = (): string => {
   return JSON.parse(window.localStorage.getItem("refresh_token"));
 };
 

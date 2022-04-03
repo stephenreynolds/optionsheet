@@ -16,7 +16,11 @@ const PinGrid = styled.div`
   gap: 1em;
 `;
 
-const PinnedProjects = ({ username }) => {
+interface Props {
+  username: string;
+}
+
+const PinnedProjects = ({ username }: Props) => {
   const myUsername = useSelector((state) => getUsername(state));
   const myProfile = myUsername === username;
 

@@ -3,7 +3,11 @@ import { getStarredProjects } from "../../common/api/user";
 import { toast } from "react-toastify";
 import ProjectList from "./projectList";
 
-const ProfileStars = ({ username }) => {
+interface Props {
+  username: string;
+}
+
+const ProfileStars = ({ username }: Props) => {
   const [starredProjects, setStarredProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 

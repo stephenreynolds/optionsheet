@@ -1,6 +1,10 @@
 import PinnedProjects from "./pinnedProjects";
 
-const ProfileOverview = ({ username }) => {
+interface Props {
+  username: string;
+}
+
+const ProfileOverview = ({ username }: Props) => {
   return (
     <div>
       <PinnedProjects username={username} />

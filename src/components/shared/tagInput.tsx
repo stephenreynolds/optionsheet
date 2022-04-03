@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 
 const TagInputContainer = styled.div`
@@ -66,7 +66,14 @@ const Suggestions = styled.div`
   }
 `;
 
-const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }) => {
+interface Props {
+  tags?: string[];
+  setTags: Dispatch<SetStateAction<string[]>>;
+  suggestions?: string[];
+  className?: string;
+}
+
+const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }: Props) => {
   const [input, setInput] = useState("");
   const [isKeyReleased, setIsKeyReleased] = useState(true);
   const [shownSuggestions, setShownSuggestions] = useState([]);

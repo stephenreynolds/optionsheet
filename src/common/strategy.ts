@@ -10,7 +10,6 @@ export enum Strategy {
   LongPut = "Long Put",
   ShortCall = "Short Call",
   ShortPut = "Short Put",
-  //CoveredStock = "Covered Stock",
   LongCallVertical = "Long Call Vertical",
   LongPutVertical = "Long Put Vertical",
   ShortCallVertical = "Short Call Vertical",
@@ -24,32 +23,29 @@ export enum Strategy {
   Butterfly = "Butterfly",
   DoubleDiagonal = "Double Diagonal",
   Strangle = "Strangle",
-  Straddle = "Straddle",
-  Ratio = "Ratio",
-  JadeLizard = "Jade Lizard",
-  IronFly = "Iron Fly"
+  Straddle = "Straddle"
 }
 
-const sameExpiration = (legs: Leg[]) => {
+const sameExpiration = (legs: Leg[]): boolean => {
   return legs.map(l => new Date(l.expiration).getTime()).every((val, i, arr) => val === arr[0]);
 };
 
-const sameOptionType = (legs: Leg[]) => {
+const sameOptionType = (legs: Leg[]): boolean => {
   return legs.map(l => l.put_call).every((val, i, arr) => val === arr[0]);
 };
 
-const getLowestQuantity = (legs: Leg[]) => {
+const getLowestQuantity = (legs: Leg[]): number => {
   const quantities = legs.map(l => l.quantity);
   return Math.min(...quantities);
 };
 
-const getLowestExpiration = (legs: Leg[]) => {
+const getLowestExpiration = (legs: Leg[]): Date => {
   return legs
     .map(l => l.expiration)
     .sort((a, b) => a.getTime() - b.getTime())[0];
 };
 
-export const getStrategyFromLegs = (legs: Leg[]) => {
+export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
   if (!tradeIsOption(legs)) {
     return legs[0].side === Side.Buy ? Strategy.LongShares : Strategy.ShortShares;
   }
@@ -168,13 +164,13 @@ export const getStrategyFromLegs = (legs: Leg[]) => {
   return Strategy.Custom;
 };
 
-export enum Direction {
+export enum TradeDirection {
   Long,
   Short,
   Neutral
 }
 
-export const getTradeDirection = (trade: Trade) => {
+export const getTradeDirection = (trade: Trade): TradeDirection => {
   const strategy = getStrategyFromLegs(trade.legs);
 
   switch (strategy) {
@@ -185,7 +181,7 @@ export const getTradeDirection = (trade: Trade) => {
     case Strategy.ShortPutVertical:
     case Strategy.LongCallDiagonal:
     case Strategy.ShortPutDiagonal:
-      return Direction.Long;
+      return TradeDirection.Long;
     case Strategy.ShortShares:
     case Strategy.ShortCall:
     case Strategy.LongPut:
@@ -193,8 +189,8 @@ export const getTradeDirection = (trade: Trade) => {
     case Strategy.ShortCallVertical:
     case Strategy.LongPutDiagonal:
     case Strategy.ShortCallDiagonal:
-      return Direction.Short;
+      return TradeDirection.Short;
     default:
-      return Direction.Neutral;
+      return TradeDirection.Neutral;
   }
 };

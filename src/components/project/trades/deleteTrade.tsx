@@ -2,8 +2,17 @@ import Modal from "../../shared/modal";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { deleteTradeById } from "../../../common/api/trades";
+import { Trade } from "../../../common/models/trade";
 
-const DeleteTrade = ({ username, projectName, trade, show, toggleVisibility }) => {
+interface Props {
+  username: string;
+  projectName: string;
+  trade: Trade;
+  show: boolean;
+  toggleVisibility: () => void;
+}
+
+const DeleteTrade = ({ username, projectName, trade, show, toggleVisibility }: Props) => {
   const navigate = useNavigate();
 
   if (!show) {

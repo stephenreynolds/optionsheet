@@ -37,7 +37,7 @@ export interface ProjectCardProps {
   updated_on: Date;
   username: string;
   tags: string[];
-  trades: number;
+  trades?: number;
 }
 
 const ProjectCard = ({ project }: { project: ProjectCardProps }) => {

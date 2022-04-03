@@ -8,6 +8,7 @@ import { TagPill } from "../../shared/pill";
 import { useDrag, useDrop } from "react-dnd";
 import type { Identifier, XYCoord } from "dnd-core";
 import { useRef } from "react";
+import { Project } from "../../../common/models/project";
 
 const CardContainer = styled.div`
   opacity: ${props => props.isDragging ? 0 : 1};
@@ -38,7 +39,16 @@ interface DragItem {
   type: string;
 }
 
-const DraggableProject = ({ username, project, id, index, moveCard, onDropped }) => {
+interface Props {
+  username: string;
+  project: Project;
+  id: number;
+  index: number;
+  moveCard: (dragIndex: number, hoverIndex: number) => void;
+  onDropped: () => void;
+}
+
+const DraggableProject = ({ username, project, id, index, moveCard, onDropped } : Props) => {
   const dragRef = useRef(null);
   const previewRef = useRef(null);
 

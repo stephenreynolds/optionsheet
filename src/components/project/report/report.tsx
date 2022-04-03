@@ -3,7 +3,7 @@ import humanizeDuration from "humanize-duration";
 import { Project } from "../../../common/models/project";
 import { Trade } from "../../../common/models/trade";
 import { Container } from "../../styles";
-import { AnalyticsSnapshot, calculateAnalyticsHistory } from "./analyticsUtils";
+import { AnalyticsSnapshot, calculateAnalyticsHistory } from "./utils";
 import { usd } from "../../../common/tradeUtils";
 import numeral from "numeral";
 import styled from "styled-components";

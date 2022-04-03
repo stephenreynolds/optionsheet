@@ -5,7 +5,11 @@ const Overview = lazy(() => import(/* webpackChunkName: "profile-overview" */ ".
 const Projects = lazy(() => import(/* webpackChunkName: "profile-projects" */ "./projects"));
 const Stars = lazy(() => import(/* webpackChunkName: "profile-stars" */ "./stars"));
 
-const ProfileTab = ({ username }) => {
+interface Props {
+  username: string;
+}
+
+const ProfileTab = ({ username }: Props) => {
   const [params] = useSearchParams();
 
   const currentTab = params.get("tab");

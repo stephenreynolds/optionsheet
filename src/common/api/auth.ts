@@ -4,24 +4,20 @@ import api from "./api";
 export const register = async (user: CreateUserModel) => {
   return api
     .post(`/users`, user)
-    .then((response) => {
-      const { token, refresh_token } = response.data;
+    .then(({ data }) => {
+      const { token, refresh_token } = data;
       localStorage.setItem("token", JSON.stringify(token));
       localStorage.setItem("refresh_token", JSON.stringify(refresh_token));
-
-      return response.data;
     });
 };
 
 export const login = async (credentials: Credentials) => {
   return api
     .post(`/auth`, credentials)
-    .then((response) => {
-      const { token, refresh_token } = response.data;
+    .then(({ data }) => {
+      const { token, refresh_token } = data;
       localStorage.setItem("token", JSON.stringify(token));
       localStorage.setItem("refresh_token", JSON.stringify(refresh_token));
-
-      return response.data;
     });
 };
 
@@ -35,7 +31,7 @@ interface EmailUsername {
   email?: string;
 }
 
-export const checkCredentials = async (params: EmailUsername) => {
+export const checkCredentials = async (params: EmailUsername): Promise<boolean> => {
   return await api.get(`/auth/check-credentials`, { params })
     .then(() => true)
     .catch(() => false);

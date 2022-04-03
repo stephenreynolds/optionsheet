@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { std } from "mathjs";
 import { Trade } from "../../../common/models/trade";
-import { Direction, getTradeDirection } from "../../../common/strategy";
+import { TradeDirection, getTradeDirection } from "../../../common/strategy";
 import { getProfitLoss, getReturnOnRisk, getTradeDurationDays, treasury10Y } from "../../../common/tradeUtils";
 
 export type AnalyticsSnapshot = {
@@ -33,7 +33,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
     })
     .sort((a, b) => a.close.getTime() - b.close.getTime());
 
-  // Get analytics up to each date.
+  // Get report up to each date.
   let history: AnalyticsSnapshot[] = [];
 
   for (let currentDate = 0; currentDate < groupedTrades.length; ++currentDate) {
@@ -141,7 +141,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
   };
 
   // Long trades
-  const longTrades = closedTrades.filter((trade) => getTradeDirection(trade) === Direction.Long);
+  const longTrades = closedTrades.filter((trade) => getTradeDirection(trade) === TradeDirection.Long);
   if (longTrades.length > 0) {
     const winningTradesLong = getWinningTrades(longTrades);
     const losingTradesLong = getLosingTrades(longTrades);
@@ -180,7 +180,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
   }
 
   // Short trades
-  const shortTrades = closedTrades.filter((trade) => getTradeDirection(trade) === Direction.Short);
+  const shortTrades = closedTrades.filter((trade) => getTradeDirection(trade) === TradeDirection.Short);
   if (shortTrades.length > 0) {
     const winningTradesShort = getWinningTrades(shortTrades);
     const losingTradesShort = getLosingTrades(shortTrades);
@@ -219,7 +219,7 @@ export const calculateAnalyticsHistory = (startingBalance: number, risk: number,
   }
 
   // Neutral trades
-  const neutralTrades = closedTrades.filter((trade) => getTradeDirection(trade) === Direction.Neutral);
+  const neutralTrades = closedTrades.filter((trade) => getTradeDirection(trade) === TradeDirection.Neutral);
   if (neutralTrades.length > 0) {
     const winningTradesNeutral = getWinningTrades(neutralTrades);
     const losingTradesNeutral = getLosingTrades(neutralTrades);

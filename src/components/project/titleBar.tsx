@@ -4,6 +4,7 @@ import { formatPrice, getProfitLoss } from "../../common/tradeUtils";
 import StarButton from "./starButton";
 import styled from "styled-components";
 import { Trade } from "../../common/models/trade";
+import { Project } from "../../common/models/project";
 
 const TitleBarDiv = styled.div`
   padding: 1.5rem 40px 0.5rem 40px;
@@ -26,7 +27,7 @@ const TitleBarDiv = styled.div`
   }
 `;
 
-const getNetProfit = (trades: Trade[]) => {
+const getNetProfit = (trades: Trade[]): number => {
   if (!trades || trades.length === 0) {
     return NaN;
   }
@@ -37,7 +38,13 @@ const getNetProfit = (trades: Trade[]) => {
   return Number(pl.reduce((a, b) => a + b, 0));
 };
 
-const TitleBar = ({ username, project, trades }) => {
+interface Props {
+  username: string;
+  project: Project;
+  trades: Trade[];
+}
+
+const TitleBar = ({ username, project, trades }: Props) => {
   const netProfit = getNetProfit(trades);
 
   return (

@@ -1,11 +1,11 @@
-import { faArrowRightArrowLeft, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightArrowLeft, faMinus, faPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Leg, PutCall, Side } from "../../../common/models/trade";
 import DateInput from "../../shared/dateInput";
 
-const invertSides = (legs: Leg[], setLegs) => {
+const invertSides = (legs: Leg[], setLegs: (legs: Leg[]) => void) => {
   const newLegs = legs.map((leg) => {
     return {
       ...leg,
@@ -16,7 +16,7 @@ const invertSides = (legs: Leg[], setLegs) => {
   setLegs(newLegs);
 };
 
-const invertOptions = (legs: Leg[], setLegs) => {
+const invertOptions = (legs: Leg[], setLegs: (legs: Leg[]) => void) => {
   const newLegs = legs.map((leg) => {
     return {
       ...leg,
@@ -27,7 +27,7 @@ const invertOptions = (legs: Leg[], setLegs) => {
   setLegs(newLegs);
 };
 
-const incrementQuantity = (legs, setLegs, value = 1) => {
+const incrementQuantity = (legs: Leg[], setLegs: (legs: Leg[]) => void, value = 1) => {
   const newLegs = legs.map((leg) => {
     return {
       ...leg,
@@ -38,7 +38,13 @@ const incrementQuantity = (legs, setLegs, value = 1) => {
   setLegs(newLegs);
 };
 
-const AdjustButton = ({ show, adjustFunction, icon = faArrowRightArrowLeft }) => {
+interface AdjustButtonProps {
+  show: boolean;
+  adjustFunction: MouseEventHandler<SVGSVGElement>;
+  icon?: IconDefinition;
+}
+
+const AdjustButton = ({ show, adjustFunction, icon = faArrowRightArrowLeft }: AdjustButtonProps) => {
   return show ? (
     <FontAwesomeIcon icon={icon} onClick={adjustFunction} className="adjust-icon" />
   ) : null;
@@ -69,7 +75,16 @@ const InputGroup = styled.div`
   }
 `;
 
-const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
+interface Props {
+  index: number;
+  legs: Leg[];
+  setLegs: (legs: Leg[]) => void;
+  isShares: boolean;
+  isClosing: boolean;
+  isClosed: boolean;
+}
+
+const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: Props) => {
   const leg: Leg = legs[index];
 
   const [strikeStr, setStrikeStr] = useState("");
@@ -174,8 +189,8 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
     <InputGroup className="d-flex">
       {/* Side */}
       <div>
-        {index === 0 && <label>Side<AdjustButton show={!close} adjustFunction={() => invertSides(legs, setLegs)} /></label>}
-        <select value={leg.side} onChange={onSideChange} disabled={close}>
+        {index === 0 && <label>Side<AdjustButton show={!isClosing} adjustFunction={() => invertSides(legs, setLegs)} /></label>}
+        <select value={leg.side} onChange={onSideChange} disabled={isClosing}>
           {Object.keys(Side).map(key => (
             <option key={key} value={key}>{key}</option>
           ))}
@@ -185,8 +200,8 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
       {/* Put or call */}
       {!isShares && (
         <div>
-          {index === 0 && <label>Option<AdjustButton show={!close} adjustFunction={() => invertOptions(legs, setLegs)} /></label>}
-          <select value={leg.put_call} onChange={onOptionChange} disabled={close}>
+          {index === 0 && <label>Option<AdjustButton show={!isClosing} adjustFunction={() => invertOptions(legs, setLegs)} /></label>}
+          <select value={leg.put_call} onChange={onOptionChange} disabled={isClosing}>
             {Object.keys(PutCall).map(key => (
               <option key={key} value={key}>{key}</option>
             ))}
@@ -199,12 +214,12 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
         {index === 0 && (
           <label>Quantity
             <span>
-              <AdjustButton show={!close} icon={faPlus} adjustFunction={() => incrementQuantity(legs, setLegs)} />
-              <AdjustButton show={!close} icon={faMinus} adjustFunction={() => incrementQuantity(legs, setLegs, -1)} />
+              <AdjustButton show={!isClosing} icon={faPlus} adjustFunction={() => incrementQuantity(legs, setLegs)} />
+              <AdjustButton show={!isClosing} icon={faMinus} adjustFunction={() => incrementQuantity(legs, setLegs, -1)} />
             </span>
           </label>
         )}
-        <input type="number" min="1" step="1" value={leg.quantity} onChange={onQuantityChange} disabled={close} />
+        <input type="number" min="1" step="1" value={leg.quantity} onChange={onQuantityChange} disabled={isClosing} />
       </div>
 
       {!isShares && (
@@ -212,13 +227,13 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
           {/* Expiration date */}
           <div>
             {index === 0 && <label>Expiration</label>}
-            <DateInput value={leg.expiration} onChange={onExpirationChange} clearIcon={null} disabled={close} />
+            <DateInput value={leg.expiration} onChange={onExpirationChange} clearIcon={null} disabled={isClosing} />
           </div>
 
           {/* Strike */}
           <div>
             {index === 0 && <label>Strike</label>}
-            <input type="text" value={strikeStr} onChange={onStrikeChange} disabled={close} />
+            <input type="text" value={strikeStr} onChange={onStrikeChange} disabled={isClosing} />
           </div>
         </>
       )}
@@ -226,11 +241,11 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
       {/* Open Price */}
       <div>
         {index === 0 && <label>Open price</label>}
-        <input type="text" value={openPriceStr} onChange={onOpenPriceChange} disabled={close} />
+        <input type="text" value={openPriceStr} onChange={onOpenPriceChange} disabled={isClosing} />
       </div>
 
       {/* Close Price */}
-      {(close || closed) && (
+      {(isClosing || isClosed) && (
         <div>
           {index === 0 && <label>Close price</label>}
           <input type="text" value={closePriceStr} onChange={onClosePriceChange} />
@@ -238,7 +253,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, close, closed }) => {
       )}
 
       {/* Delete leg button */}
-      {!(close || isShares) && (
+      {!(isClosing || isShares) && (
         <DeleteLeg>
           <button className="btn-red" onClick={onDelete} disabled={legs.length === 1}>
             <FontAwesomeIcon icon={faMinus} />

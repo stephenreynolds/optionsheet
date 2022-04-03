@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Dispatch, SetStateAction } from "react";
 
 const PaginationContainer = styled.div`
   button {
@@ -16,7 +17,15 @@ const PaginationContainer = styled.div`
   }
 `;
 
-export const Pagination = ({ increment, index, setIndex, min = 0, max }) => {
+interface Props {
+  increment: number;
+  index: number;
+  setIndex: Dispatch<SetStateAction<number>>
+  min?: number;
+  max: number;
+}
+
+export const Pagination = ({ increment, index, setIndex, min = 0, max }: Props) => {
   const onFirst = () => {
     setIndex(min);
   };

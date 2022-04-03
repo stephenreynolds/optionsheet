@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { getProjects } from "../../common/api/projects";
 import { toast } from "react-toastify";
 import ProjectList from "./projectList";
+import { Project } from "../../common/models/project";
 
-const ProfileProjects = ({ username }) => {
-  const [projects, setProjects] = useState([]);
+interface Props {
+  username: string;
+}
+
+const ProfileProjects = ({ username }: Props) => {
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     if (username) {

@@ -5,9 +5,15 @@ import { useEffect, useState } from "react";
 import { checkProjectStarred, starProject, unStarProject } from "../../common/api/user";
 import { NumberCircle } from "../styles";
 
-const StarButton = ({ username, projectName, stars }) => {
-  const [starred, setStarred] = useState(false);
+interface Props {
+  username: string;
+  projectName: string;
+  stars: number;
+}
+
+const StarButton = ({ username, projectName, stars }: Props) => {
   const [loading, setLoading] = useState(true);
+  const [starred, setStarred] = useState(false);
   const [starCount, setStarCount] = useState(stars);
 
   useEffect(() => {

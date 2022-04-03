@@ -14,7 +14,7 @@ import { getTrades } from "../../common/api/trades";
 
 const Trades = lazy(() => import(/* webpackChunkName: "project-trades" */ "./trades/trades"));
 const TradeDetails = lazy(() => import(/* webpackChunkName: "trade-details" */ "./trades/tradeDetails"));
-const Report = lazy(() => import(/* webpackChunkName: "project-report" */ "./analytics/report"));
+const Report = lazy(() => import(/* webpackChunkName: "project-report" */ "./report/report"));
 const Settings = lazy(() => import(/* webpackChunkName: "project-settings" */ "./settings/settings"));
 
 const Project = () => {
@@ -80,7 +80,7 @@ const Project = () => {
         <Routes>
           <Route>
             <Route index element={<Trades trades={trades} />} />
-            <Route path=":id" element={<TradeDetails />} />
+            <Route path=":id" element={<TradeDetails trades={trades} />} />
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Route>
           <Route path="analytics" element={<Report project={project} trades={trades} loading={loading} />} />

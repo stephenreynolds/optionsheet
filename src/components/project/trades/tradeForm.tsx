@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, FormEvent } from "react";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -75,9 +75,9 @@ const getAllTradeTags = (trades: Trade[]) => {
 };
 
 const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVisibility }: Props) => {
-  const { id } = useParams<{ id: string; }>();
-
-  const tagSuggestions = getAllTradeTags(trades);
+  if (!show) {
+    return null;
+  }
 
   const initialValues = {
     symbol: trade ? trade.symbol : "",
@@ -111,9 +111,17 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
   const [strategy, setStrategy] = useState(initialValues.strategy);
   const [errorMessages, setErrorMessages] = useState(initialValues.errorMessages);
 
-  if (!show) {
-    return null;
-  }
+  const clear = () => {
+    setSymbol(initialValues.symbol);
+    setOpenDate(initialValues.open_date);
+    setCloseDate(initialValues.close_date);
+    setLegs(initialValues.legs);
+    setOpeningNote(initialValues.opening_note);
+    setClosingNote(initialValues.closing_note);
+    setTags(initialValues.tags);
+    setStrategy(StrategyOptions.Call);
+    setErrorMessages([]);
+  };
 
   const inputsValid = (): boolean => {
     let messages = [];
@@ -143,83 +151,87 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     return true;
   };
 
-  const clear = () => {
-    setSymbol(initialValues.symbol);
-    setOpenDate(initialValues.open_date);
-    setCloseDate(initialValues.close_date);
-    setLegs(initialValues.legs);
-    setOpeningNote(initialValues.opening_note);
-    setClosingNote(initialValues.closing_note);
-    setTags(initialValues.tags);
-    setStrategy(StrategyOptions.Call);
-    setErrorMessages([]);
+  const closeTrade = (id: string) => {
+    const updatedTrade: TradeUpdateModel = {
+      symbol,
+      open_date: openDate,
+      close_date: closeDate,
+      legs,
+      opening_note: openingNote,
+      closing_note: closingNote,
+      tags
+    };
+
+    updateTradeById(id, updatedTrade)
+      .then(() => {
+        toast.success("Edited trade.");
+        toggleVisibility();
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
-  const onSubmit = (e) => {
+  const editTrade = (id: string) => {
+    const updatedTrade: TradeUpdateModel = {
+      symbol,
+      open_date: openDate,
+      close_date: trade.close_date ? closeDate : null,
+      legs,
+      opening_note: openingNote,
+      closing_note: trade.closing_note ? closingNote : null,
+      tags
+    };
+
+    updateTradeById(id, updatedTrade)
+      .then(() => {
+        toast.success("Edited trade.");
+        toggleVisibility();
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
+  const createTrade = () => {
+    const newTrade: TradeCreateModel = {
+      symbol,
+      open_date: openDate,
+      legs,
+      opening_note: openingNote,
+      tags
+    };
+
+    addTrade(username, projectName, newTrade)
+      .then(async () => {
+        toast.success("Trade added.");
+        clear();
+        toggleVisibility();
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
+  };
+
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (!inputsValid()) {
       return;
     }
 
-    if (trade && close) {
-      const updatedTrade: TradeUpdateModel = {
-        symbol,
-        open_date: openDate,
-        close_date: closeDate,
-        legs,
-        opening_note: openingNote,
-        closing_note: closingNote,
-        tags
-      };
+    if (trade) {
+      const { id } = useParams<{ id: string; }>();
 
-      updateTradeById(id, updatedTrade)
-        .then(() => {
-          toast.success("Edited trade.");
-          toggleVisibility();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        });
-    }
-    else if (trade) {
-      const updatedTrade: TradeUpdateModel = {
-        symbol,
-        open_date: openDate,
-        close_date: trade.close_date ? closeDate : null,
-        legs,
-        opening_note: openingNote,
-        closing_note: trade.closing_note ? closingNote : null,
-        tags
-      };
-
-      updateTradeById(id, updatedTrade)
-        .then(() => {
-          toast.success("Edited trade.");
-          toggleVisibility();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        });
+      if (close) {
+        closeTrade(id);
+      }
+      else {
+        editTrade(id);
+      }
     }
     else {
-      const newTrade: TradeCreateModel = {
-        symbol,
-        open_date: openDate,
-        legs,
-        opening_note: openingNote,
-        tags
-      };
-
-      addTrade(username, projectName, newTrade)
-        .then(async () => {
-          toast.success("Trade added.");
-          clear();
-          toggleVisibility();
-        })
-        .catch((error) => {
-          toast.error(error.message);
-        });
+      createTrade();
     }
   };
 
@@ -230,6 +242,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
   };
 
   const isShares = strategy === StrategyOptions.Shares || trade && !tradeIsOption(trade.legs);
+  const tagSuggestions = getAllTradeTags(trades);
 
   return (
     <Modal toggleVisibility={toggleVisibility}>

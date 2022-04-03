@@ -74,7 +74,7 @@ const Project = () => {
   return (
     <>
       <TitleBar username={username} project={project} trades={trades} />
-      <ProjectTabs userIsOwner={myProject} username={username} projectName={projectName} trades={trades} />
+      <ProjectTabs userIsOwner={myProject} username={username} projectName={projectName} trades={trades} setTrades={setTrades} />
 
       <Suspense fallback={<LoadingProgress />}>
         <Routes>

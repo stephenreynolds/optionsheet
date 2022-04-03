@@ -66,6 +66,7 @@ interface Props {
   close?: boolean;
   show: boolean;
   toggleVisibility: () => void;
+  setUpdatedTrade: (trade: TradeCreateModel | TradeUpdateModel) => void;
 }
 
 const getAllTradeTags = (trades: Trade[]) => {
@@ -74,7 +75,7 @@ const getAllTradeTags = (trades: Trade[]) => {
     .flat());
 };
 
-const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVisibility }: Props) => {
+const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVisibility, setUpdatedTrade }: Props) => {
   if (!show) {
     return null;
   }
@@ -164,6 +165,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
 
     updateTradeById(id, updatedTrade)
       .then(() => {
+        setUpdatedTrade(updatedTrade);
         toast.success("Edited trade.");
         toggleVisibility();
       })
@@ -185,6 +187,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
 
     updateTradeById(id, updatedTrade)
       .then(() => {
+        setUpdatedTrade(updatedTrade);
         toast.success("Edited trade.");
         toggleVisibility();
       })
@@ -203,15 +206,17 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     };
 
     addTrade(username, projectName, newTrade)
-      .then(async () => {
+      .then(() => {
+        setUpdatedTrade(newTrade);
         toast.success("Trade added.");
-        clear();
         toggleVisibility();
       })
       .catch((error) => {
         toast.error(error.message);
       });
   };
+
+  const { id } = useParams<{ id: string; }>();
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -221,8 +226,6 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     }
 
     if (trade) {
-      const { id } = useParams<{ id: string; }>();
-
       if (close) {
         closeTrade(id);
       }
@@ -233,6 +236,8 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     else {
       createTrade();
     }
+
+    clear();
   };
 
   const onCancel = (e: MouseEvent) => {

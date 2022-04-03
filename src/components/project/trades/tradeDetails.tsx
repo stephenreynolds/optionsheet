@@ -93,6 +93,13 @@ const TradeDetails = ({ trades }: Props) => {
   const maxLoss = isOption ? getMaxLoss(trade) * 100 : getMaxLoss(trade);
   const returnOnRisk = getReturnOnRisk(trade);
 
+  const setUpdatedTrade = (updatedTrade: Partial<Trade>) => {
+    setTrade({
+      ...trade,
+      ...updatedTrade
+    });
+  };
+
   return (
     <Container>
       <div className="d-flex space-between">
@@ -100,8 +107,8 @@ const TradeDetails = ({ trades }: Props) => {
           <div>
             <h1 className="mb-0">{trade.symbol}</h1>
             <h3>{getStrategyFromLegs(trade.legs)}</h3>
-            {trade.tags.length > 0 && trade.tags.map((tag) => (
-              <TagPill key={tag}>{tag}</TagPill>
+            {trade.tags.length > 0 && trade.tags.map((tag, key) => (
+              <TagPill key={key}>{tag}</TagPill>
             ))}
           </div>
           <div>
@@ -173,7 +180,8 @@ const TradeDetails = ({ trades }: Props) => {
       {myProject && (
         <>
           <TradeForm trade={trade} trades={trades} close={showCloseTrade} show={showCloseTrade || showEditTrade}
-                     toggleVisibility={showCloseTrade ? toggleCloseModal : toggleEditModal} />
+                     toggleVisibility={showCloseTrade ? toggleCloseModal : toggleEditModal}
+                     setUpdatedTrade={setUpdatedTrade} />
           <DeleteTrade username={username} projectName={projectName} trade={trade} show={showDeleteTrade}
                        toggleVisibility={toggleDeleteModal} />
         </>

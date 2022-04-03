@@ -3,7 +3,7 @@ import { faChartLine, faGear, faList } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { lazy, useState } from "react";
-import { Trade } from "../../common/models/trade";
+import { Trade, TradeCreateModel } from "../../common/models/trade";
 
 const TradeForm = lazy(() => import(/* webpackChunkName: "trade-form" */ "./trades/tradeForm"));
 
@@ -72,13 +72,21 @@ interface Props {
   username: string;
   projectName: string;
   trades: Trade[];
+  setTrades: (trades: Trade[]) => void;
 }
 
-const ProjectTabs = ({ userIsOwner, username, projectName, trades }: Props) => {
+const ProjectTabs = ({ userIsOwner, username, projectName, trades, setTrades }: Props) => {
   const [showNewTradeModel, setShowNewTradeModel] = useState(false);
 
   const toggleShowNewTradeModel = () => {
     setShowNewTradeModel(!showNewTradeModel);
+  };
+
+  const setUpdatedTrade = (newTrade: TradeCreateModel) => {
+    setTrades([
+      ...trades,
+      newTrade as Trade
+    ]);
   };
 
   return (
@@ -113,7 +121,8 @@ const ProjectTabs = ({ userIsOwner, username, projectName, trades }: Props) => {
 
       {userIsOwner && (
         <TradeForm username={username} projectName={projectName} trades={trades}
-                   show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel} />
+                   show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel}
+                   setUpdatedTrade={setUpdatedTrade} />
       )}
     </TabNav>
   );

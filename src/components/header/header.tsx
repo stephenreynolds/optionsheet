@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import UserMenu from "./userMenu";
 import LoginMenu from "./loginMenu";
 import Search from "./search";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 
 const StyledHeader = styled.header`
   background-color: ${props => props.theme.dark.fg};

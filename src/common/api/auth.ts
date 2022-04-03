@@ -25,7 +25,7 @@ export const login = async (credentials: Credentials) => {
     });
 };
 
-export const logout = async () => {
+export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("refresh_token");
 };
@@ -40,3 +40,5 @@ export const checkCredentials = async (params: EmailUsername) => {
     .then(() => true)
     .catch(() => false);
 };
+
+export const isLoggedIn = !!window.localStorage.getItem("token");

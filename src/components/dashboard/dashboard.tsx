@@ -1,8 +1,8 @@
 import Sidebar from "./sidebar";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { getIsLoggedIn } from "../../redux/selectors/authSelectors";
 import { lazy } from "react";
+import { getIsLoggedIn } from "../../redux/selectors/userSelectors";
 
 const Home = lazy(() => import (/* webpackChunkName: "home" */ "../home/home"));
 

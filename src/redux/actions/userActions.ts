@@ -1,69 +1,49 @@
-import { UserUpdateModel } from "../../common/models/user";
+import * as authApi from "../../common/api/auth";
+import { CreateUserModel, Credentials } from "../../common/models/user";
+import { GET_AUTHENTICATED_USER_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL } from "./actionTypes";
 import * as userApi from "../../common/api/user";
-import {
-  DELETE_USER_SUCCESS,
-  GET_AUTHENTICATED_USER_SUCCESS,
-  UPDATE_USER_SUCCESS,
-  LOGIN_FAIL, GET_USER_SUCCESS
-} from "./actionTypes";
-import { apiCallError, beginApiCall } from "./apiStatusActions";
-import { logout } from "./authActions";
 
 export const getAuthenticatedUser = () => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.getAuthenticatedUser()
-      .then(response => {
-        dispatch({ type: GET_AUTHENTICATED_USER_SUCCESS, payload: response.data });
-      })
-      .catch(error => {
-        dispatch({ type: LOGIN_FAIL });
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
+  return async (dispatch) => {
+    try {
+      const response = await userApi.getAuthenticatedUser();
+      dispatch({ type: GET_AUTHENTICATED_USER_SUCCESS, payload: response.data });
+    }
+    catch (error) {
+      dispatch({ type: LOGIN_FAIL });
+      throw error.response.data;
+    }
   };
 };
 
-export const getUser = (username: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.getUser(username)
-      .then(response => {
-        dispatch({ type: GET_USER_SUCCESS });
-        return response.data;
-      })
-      .catch(error => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
+export const register = (model: CreateUserModel) => {
+  return async (dispatch) => {
+    try {
+      await authApi.register(model);
+      dispatch(getAuthenticatedUser());
+    }
+    catch (error) {
+      dispatch({ type: REGISTER_FAIL });
+      throw error.response.data;
+    }
   };
 };
 
-export const updateUser = (data: UserUpdateModel) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.updateUser(data)
-      .then((response) => {
-        dispatch({ type: UPDATE_USER_SUCCESS, payload: response.data });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
+export const login = (credentials: Credentials) => {
+  return async (dispatch) => {
+    try {
+      await authApi.login(credentials);
+      dispatch(getAuthenticatedUser());
+    }
+    catch (error) {
+      dispatch({ type: LOGIN_FAIL });
+      throw error.response.data;
+    }
   };
 };
 
-export const deleteUser = () => {
+export const logout = () => {
   return (dispatch) => {
-    dispatch(beginApiCall());
-    return userApi.deleteUser()
-      .then(() => {
-        dispatch({ type: DELETE_USER_SUCCESS });
-        dispatch(logout());
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
+    dispatch({ type: LOGOUT_SUCCESS });
   };
 };

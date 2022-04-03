@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { Navigate, useParams } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import { toast } from "react-toastify";
-import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
 import LoadingProgress from "../shared/loadingProgress";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import TitleBar from "./titleBar";
@@ -19,7 +18,6 @@ const Report = lazy(() => import(/* webpackChunkName: "project-report" */ "./ana
 const Settings = lazy(() => import(/* webpackChunkName: "project-settings" */ "./settings/settings"));
 
 const Project = () => {
-  const loading = useSelector((state) => apiCallsInProgress(state));
   const myUsername = useSelector((state) => getUsername(state));
 
   const { username, projectName } = useParams<{
@@ -27,6 +25,7 @@ const Project = () => {
     projectName: string;
   }>();
 
+  const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<ProjectModel>();
   const [trades, setTrades] = useState<Trade[]>([]);
 
@@ -38,9 +37,6 @@ const Project = () => {
             ...data,
             updated_on: new Date(data.updated_on)
           });
-        })
-        .catch((error) => {
-          toast.error(error.message);
         });
 
       getTrades(username, projectName)
@@ -60,10 +56,9 @@ const Project = () => {
               })
             };
           }));
-        })
-        .catch((error) => {
-          toast.error(error.message);
         });
+
+      setLoading(false);
     }
     catch (error) {
       toast.error(error.message);
@@ -89,7 +84,8 @@ const Project = () => {
             <Route path="*" element={<Navigate to="/notfound" />} />
           </Route>
           <Route path="analytics" element={<Report project={project} trades={trades} loading={loading} />} />
-          <Route path="settings" element={myProject ? <Settings project={project} trades={trades} /> : <Navigate to="/notfound" />} />
+          <Route path="settings"
+                 element={myProject ? <Settings project={project} trades={trades} /> : <Navigate to="/notfound" />} />
           <Route path="*" element={<Navigate to="/notfound" />} />
         </Routes>
       </Suspense>

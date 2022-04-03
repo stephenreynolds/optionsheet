@@ -1,20 +1,18 @@
 import { ErrorMessage, Formik } from "formik";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { updateUser } from "../../../redux/actions/userActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { HelpBlock } from "../utils";
 import { getEmail } from "../../../redux/selectors/userSelectors";
 import { checkCredentials } from "../../../common/api/auth";
+import { updateUser } from "../../../common/api/user";
 
 const EmailForm = () => {
   const currentEmail = useSelector(state => getEmail(state));
-  const dispatch: PromiseDispatch = useDispatch();
 
   const [email, setEmail] = useState(currentEmail);
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmed] = useState(false);
 
   const validationSchema = yup.object({
     email: yup
@@ -37,7 +35,7 @@ const EmailForm = () => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    dispatch(updateUser(values))
+    updateUser(values)
       .then(() => {
         toast.success("Email address changed.");
         setEmail(values.email);

@@ -1,5 +1,9 @@
 import { User } from "../../common/models/user";
 
+export const getIsLoggedIn = (state): boolean => {
+  return !!state.user;
+};
+
 export const getUser = (state): User => {
   return state.user;
 };

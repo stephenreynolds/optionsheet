@@ -1,16 +1,14 @@
 import { ErrorMessage, Formik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { updateUser } from "../../../redux/actions/userActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getUsername } from "../../../redux/selectors/userSelectors";
 import { HelpBlock } from "../utils";
 import { checkCredentials } from "../../../common/api/auth";
+import { updateUser } from "../../../common/api/user";
 
 const UsernameForm = () => {
   const username = useSelector((state) => getUsername(state));
-  const dispatch: PromiseDispatch = useDispatch();
 
   if (!username) {
     return null;
@@ -32,7 +30,7 @@ const UsernameForm = () => {
   });
 
   const onSubmit = (values) => {
-    dispatch(updateUser(values))
+    updateUser(values)
       .then(() => {
         toast.success("Username changed.");
       })

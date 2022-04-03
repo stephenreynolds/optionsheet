@@ -1,13 +1,10 @@
 import Modal from "../../shared/modal";
-import { deleteProject } from "../../../redux/actions/projectActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import { deleteProject } from "../../../common/api/projects";
 
 const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
-  const dispatch: PromiseDispatch = useDispatch();
   const navigate = useNavigate();
   const [confirmInput, setConfirmInput] = useState("");
 
@@ -27,12 +24,15 @@ const DeleteProject = ({ username, projectName, show, toggleVisibility }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(deleteProject(username, projectName)).then(() => {
-      toast.success("Project deleted.");
-      navigate(`/`);
-    }, (error) => {
-      toast.error(error.message);
-    });
+
+    deleteProject(username, projectName)
+      .then(() => {
+        toast.success("Project deleted.");
+        navigate(`/`);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   };
 
   const confirmText = `${username}/${projectName}`;

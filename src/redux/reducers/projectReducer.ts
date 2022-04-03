@@ -1,7 +1,7 @@
 import {
   GET_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
-  DELETE_PROJECT_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
+  LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
 import { Project, ProjectSummaryModel } from "../../common/models/project";
 import produce from "immer";
@@ -23,9 +23,6 @@ const projectReducer = produce((state, action) => {
       break;
     case UPDATE_PROJECT_SUCCESS:
       state.project = { ...state.project, ...payload };
-      break;
-    case DELETE_PROJECT_SUCCESS:
-      delete state.project;
       break;
     case LOGIN_FAIL:
     case LOGOUT_SUCCESS:

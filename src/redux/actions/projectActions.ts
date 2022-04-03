@@ -1,8 +1,7 @@
 import * as projectApi from "../../common/api/projects";
 import {
   GET_PROJECT_SUCCESS,
-  UPDATE_PROJECT_SUCCESS,
-  DELETE_PROJECT_SUCCESS
+  UPDATE_PROJECT_SUCCESS
 } from "./actionTypes";
 import { Project, ProjectUpdateModel } from "../../common/models/project";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
@@ -33,21 +32,6 @@ export const updateProject = (username: string, projectName: string, model: Proj
       .updateProject(username, projectName, model)
       .then(() => {
         dispatch({ type: UPDATE_PROJECT_SUCCESS, payload: model });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
-
-export const deleteProject = (username: string, projectName: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return projectApi
-      .deleteProject(username, projectName)
-      .then(() => {
-        dispatch({ type: DELETE_PROJECT_SUCCESS });
       })
       .catch((error) => {
         dispatch(apiCallError());

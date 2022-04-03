@@ -1,17 +1,17 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useParams } from "react-router";
 import { Route, Routes } from "react-router-dom";
 import { toast } from "react-toastify";
-import * as projectActions from "../../redux/actions/projectActions";
 import * as tradeActions from "../../redux/actions/tradeActions";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
-import { getProject } from "../../redux/selectors/projectSelectors";
 import LoadingProgress from "../shared/loadingProgress";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import TitleBar from "./titleBar";
 import ProjectTabs from "./projectTabs";
+import { getProjectByName } from "../../common/api/projects";
+import { Project as ProjectModel } from "../../common/models/project";
 
 const Trades = lazy(() => import(/* webpackChunkName: "project-trades" */ "./trades/trades"));
 const TradeDetails = lazy(() => import(/* webpackChunkName: "trade-details" */ "./trades/tradeDetails"));
@@ -20,7 +20,6 @@ const Settings = lazy(() => import(/* webpackChunkName: "project-settings" */ ".
 
 const Project = () => {
   const loading = useSelector((state) => apiCallsInProgress(state));
-  const project = useSelector((state) => getProject(state));
   const myUsername = useSelector((state) => getUsername(state));
   const dispatch: PromiseDispatch = useDispatch();
 
@@ -29,12 +28,21 @@ const Project = () => {
     projectName: string;
   }>();
 
+  const [project, setProject] = useState<ProjectModel>();
+
   useEffect(() => {
     try {
-      dispatch(projectActions.getProject(username, projectName))
+      getProjectByName(username, projectName)
+        .then(({ data }) => {
+          setProject({
+            ...data,
+            updated_on: new Date(data.updated_on)
+          });
+        })
         .catch((error) => {
           toast.error(error.message);
         });
+
       dispatch(tradeActions.getTrades(username, projectName))
         .catch((error) => {
           toast.error(error.message);

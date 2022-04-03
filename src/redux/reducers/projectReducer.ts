@@ -1,5 +1,4 @@
 import {
-  GET_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
   LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
@@ -18,9 +17,6 @@ const projectReducer = produce((state, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case GET_PROJECT_SUCCESS:
-      state.project = payload;
-      break;
     case UPDATE_PROJECT_SUCCESS:
       state.project = { ...state.project, ...payload };
       break;

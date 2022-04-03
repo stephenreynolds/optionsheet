@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { PromiseDispatch } from "../../redux/promiseDispatch";
 import styled from "styled-components";
-import * as projectActions from "../../redux/actions/projectActions";
 import { apiCallsInProgress } from "../../redux/selectors/apiSelectors";
-import { getProjects } from "../../redux/selectors/projectSelectors";
 import { getUsername } from "../../redux/selectors/userSelectors";
 import VerticalNav from "../shared/verticalNav";
+import { getProjects } from "../../common/api/projects";
+import { Project } from "../../common/models/project";
 
 const ProjectListNav = styled.div`
   input {
@@ -20,18 +19,26 @@ const ProjectListNav = styled.div`
 const ProjectList = () => {
   const loading = useSelector((state) => apiCallsInProgress(state));
   const username = useSelector((state) => getUsername(state));
-  const projects = useSelector((state) => getProjects(state));
-  const dispatch: PromiseDispatch = useDispatch();
 
+  const [projects, setProjects] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
     if (username) {
-      dispatch(projectActions.getProjects(username)).then().catch((error) => {
-        toast.error(error.message);
-      });
+      getProjects(username)
+        .then(({ data }) => {
+          setProjects(data.map((project: Project) => {
+            return {
+              ...project,
+              updated_on: new Date(project.updated_on)
+            };
+          }));
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
     }
-  }, [dispatch, username]);
+  }, [username]);
 
   const onSearchChange = (e) => {
     setFilter(e.target.value);

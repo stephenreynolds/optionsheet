@@ -48,7 +48,7 @@ interface Props {
   onDropped: () => void;
 }
 
-const DraggableProject = ({ username, project, id, index, moveCard, onDropped } : Props) => {
+const DraggableProject = ({ username, project, id, index, moveCard, onDropped }: Props) => {
   const dragRef = useRef(null);
   const previewRef = useRef(null);
 

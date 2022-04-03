@@ -1,6 +1,6 @@
 import { faArrowRightArrowLeft, faMinus, faPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { ChangeEvent, MouseEvent, MouseEventHandler, useEffect, useState } from "react";
 import styled from "styled-components";
 import { Leg, PutCall, Side } from "../../../common/models/trade";
 import DateInput from "../../shared/dateInput";
@@ -103,33 +103,32 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     }
   }, [leg.close_price, leg.expiration, leg.open_price, leg.strike]);
 
-  const updateLegs = (leg) => {
+  const updateLegs = (leg: Leg) => {
     const newLegs = [...legs];
     newLegs.splice(index, 1, leg);
     setLegs(newLegs);
   };
 
-  const onSideChange = (e) => {
+  const onSideChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const side = Side[e.target.value];
     updateLegs({ ...leg, side });
   };
 
-  const onOptionChange = (e) => {
+  const onOptionChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const put_call = PutCall[e.target.value];
     updateLegs({ ...leg, put_call });
   };
 
-  const onQuantityChange = (e) => {
+  const onQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
     const quantity = e.target.valueAsNumber;
     updateLegs({ ...leg, quantity });
   };
 
-  const onExpirationChange = (e) => {
-    const expiration = e;
+  const onExpirationChange = (expiration: Date) => {
     updateLegs({ ...leg, expiration });
   };
 
-  const onStrikeChange = (e) => {
+  const onStrikeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const strStr = e.target.value;
 
     const regexp = new RegExp("^\\d*\\.?\\d*$");
@@ -145,7 +144,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     updateLegs({ ...leg, strike });
   };
 
-  const onOpenPriceChange = (e) => {
+  const onOpenPriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const priceStr = e.target.value;
 
     const regexp = new RegExp("^-?\\d*\\.?\\d*$");
@@ -161,7 +160,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     updateLegs({ ...leg, open_price: openPrice });
   };
 
-  const onClosePriceChange = (e) => {
+  const onClosePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const priceStr = e.target.value;
 
     const regexp = new RegExp("^-?\\d*\\.?\\d*$");
@@ -177,7 +176,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     updateLegs({ ...leg, close_price });
   };
 
-  const onDelete = (e) => {
+  const onDelete = (e: MouseEvent) => {
     e.preventDefault();
 
     if (legs.length > 1) {

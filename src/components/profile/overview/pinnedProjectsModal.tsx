@@ -4,7 +4,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSelector } from "react-redux";
 import { getUsername } from "../../../redux/selectors/userSelectors";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import color from "color";
 import { getProjects } from "../../../common/api/projects";
@@ -63,7 +63,7 @@ const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinnedProjects 
     }
   }, [username]);
 
-  const onFilterChange = (e) => {
+  const onFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
   };
 

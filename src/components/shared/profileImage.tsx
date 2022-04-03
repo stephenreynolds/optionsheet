@@ -17,10 +17,10 @@ interface ProfileImageProps {
 const fallbackUri = "/img/profile.png";
 
 const ProfileImage = ({ imageUrl, username }: ProfileImageProps) => {
-  const onError = ({currentTarget}) => {
+  const onError = ({ currentTarget }) => {
     currentTarget.onerror = null;
     currentTarget.src = fallbackUri;
-  }
+  };
 
   return (
     <CircleImage src={getAvatarUrl(imageUrl)} crossOrigin="anonymous" alt={username} onError={onError} />

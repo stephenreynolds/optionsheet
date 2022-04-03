@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import { MouseEvent } from "react";
 import { toast } from "react-toastify";
 import Modal from "../../shared/modal";
 import { deleteUser } from "../../../common/api/user";
@@ -15,12 +16,12 @@ const DeleteAccount = ({ show, toggleVisibility }: Props) => {
     return null;
   }
 
-  const onCancel = (e) => {
+  const onCancel = (e: MouseEvent) => {
     e.preventDefault();
     toggleVisibility();
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: MouseEvent) => {
     e.preventDefault();
 
     deleteUser()

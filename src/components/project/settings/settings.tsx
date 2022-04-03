@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -60,11 +60,11 @@ const Settings = ({ project, trades }: Props) => {
     return null;
   }
 
-  const onProjectNameChange = (e) => {
+  const onProjectNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewProjectName(e.target.value);
   };
 
-  const onRename = (e) => {
+  const onRename = (e: MouseEvent) => {
     e.preventDefault();
 
     updateProject(project.username, project.name, { name: newProjectName })
@@ -77,11 +77,11 @@ const Settings = ({ project, trades }: Props) => {
       });
   };
 
-  const onDescriptionChange = (e) => {
+  const onDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNewDescription(e.target.value);
   };
 
-  const onUpdateDescription = (e) => {
+  const onUpdateDescription = (e: MouseEvent) => {
     e.preventDefault();
 
     updateProject(project.username, project.name, { description: newDescription })
@@ -93,11 +93,11 @@ const Settings = ({ project, trades }: Props) => {
       });
   };
 
-  const onStartingBalanceChange = (e) => {
+  const onStartingBalanceChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewStartingBalance(e.target.value);
   };
 
-  const onUpdateStartingBalance = (e) => {
+  const onUpdateStartingBalance = (e: MouseEvent) => {
     e.preventDefault();
 
     const startingBalance = newStartingBalance === "" ? null : Number(newStartingBalance);
@@ -111,11 +111,11 @@ const Settings = ({ project, trades }: Props) => {
       });
   };
 
-  const onRiskChange = (e) => {
+  const onRiskChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewRisk(e.target.value);
   };
 
-  const onUpdateRisk = (e) => {
+  const onUpdateRisk = (e: MouseEvent) => {
     e.preventDefault();
 
     const risk = newRisk === "" ? null : Number(newRisk);
@@ -129,11 +129,11 @@ const Settings = ({ project, trades }: Props) => {
       });
   };
 
-  const onTagsChange = (tags) => {
+  const onTagsChange = (tags: string[]) => {
     setNewTags(tags);
   };
 
-  const onUpdateTags = (e) => {
+  const onUpdateTags = (e: MouseEvent) => {
     e.preventDefault();
 
     updateProject(project.username, project.name, { tags: newTags })

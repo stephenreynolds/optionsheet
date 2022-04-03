@@ -5,7 +5,7 @@ import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import ProfileImage from "../shared/profileImage";
 
 const StyledIcon = styled(FontAwesomeIcon)`
@@ -88,7 +88,7 @@ const UserMenu = () => {
     return null;
   }
 
-  const onToggleUserDropdown = (e) => {
+  const onToggleUserDropdown = (e: MouseEvent) => {
     e.preventDefault();
     setShowDropdown(!showDropdown);
   };
@@ -98,7 +98,7 @@ const UserMenu = () => {
     navigate("/");
   };
 
-  const navigateTo = (e, path) => {
+  const navigateTo = (e: MouseEvent, path: string) => {
     onToggleUserDropdown(e);
     navigate(path);
   };

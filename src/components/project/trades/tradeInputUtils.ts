@@ -1,4 +1,5 @@
 import { Leg, PutCall, Side } from "../../../common/models/trade";
+import { ChangeEvent, MouseEvent } from "react";
 
 export const symbolIsValid = (symbol: string): boolean => {
   const regexp = new RegExp("^[a-zA-Z]+(\\.[a-zA-Z]+)?$");
@@ -19,7 +20,7 @@ export const legStrikesAreValid = (legs: Leg[]): boolean => {
   return true;
 };
 
-export const onSymbolChange = (e, setSymbol) => {
+export const onSymbolChange = (e: ChangeEvent<HTMLInputElement>, setSymbol: (symbol: string) => void) => {
   const str = e.target.value.toUpperCase();
   const regexp = new RegExp("^(?!\\.)[a-zA-Z]*\\.?[a-zA-Z]*$");
 
@@ -28,11 +29,11 @@ export const onSymbolChange = (e, setSymbol) => {
   }
 };
 
-export const onTradeDateChange = (e, setDate) => {
-  setDate(e);
+export const onTradeDateChange = (date: Date, setDate: (date: Date) => void) => {
+  setDate(date);
 };
 
-export const onNoteChange = (e, setNote) => {
+export const onNoteChange = (e: ChangeEvent<HTMLTextAreaElement>, setNote: (note: string) => void) => {
   setNote(e.target.value);
 };
 
@@ -51,7 +52,7 @@ export const initialLegValues: Leg = {
   open_price: NaN
 };
 
-export const onAddLegClick = (e, legs, setLegs) => {
+export const onAddLegClick = (e: MouseEvent, legs: Leg[], setLegs: (legs: Leg[]) => void) => {
   e.preventDefault();
 
   if (legs.length < 4) {

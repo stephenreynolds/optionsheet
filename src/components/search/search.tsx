@@ -31,7 +31,7 @@ const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchResults, setSearchResults] = useState([]);
   const [counts, setCounts] = useState({ trades: 0, projects: 0, users: 0 });
-  const [index, setIndex] = useState(searchParams.get("page") ?? 1);
+  const [index, setIndex] = useState(parseInt(searchParams.get("page")) ?? 1);
   const [increment] = useState(1);
   const [limit] = useState(searchParams.get("limit") ?? 20);
 

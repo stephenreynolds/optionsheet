@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { createSearchParams } from "react-router-dom";
@@ -18,11 +18,11 @@ const Search = () => {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLElement>();
 
-  const onSearchInputChange = (e) => {
+  const onSearchInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     navigate({
       pathname: "/search",

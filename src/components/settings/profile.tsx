@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { PromiseDispatch } from "../../redux/promiseDispatch";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -42,7 +42,7 @@ const ProfileSettings = () => {
     setNewBio(user.bio);
   }, [user]);
 
-  const onBioChange = (e) => {
+  const onBioChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNewBio(e.target.value);
   };
 
@@ -58,7 +58,7 @@ const ProfileSettings = () => {
     profilePictureInput.current.click();
   };
 
-  const onChangeAvatar = (e) => {
+  const onChangeAvatar = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
 
     // Max file size of 200KB

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { getUsername } from "../../redux/selectors/userSelectors";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ProfileImage from "../shared/profileImage";
 import { updateUser } from "../../common/api/user";
@@ -20,7 +20,7 @@ const ProfileSidebar = ({ user }: Props) => {
     setNewBio(user.bio);
   }, [user]);
 
-  const onBioChange = (e) => {
+  const onBioChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNewBio(e.target.value);
   };
 

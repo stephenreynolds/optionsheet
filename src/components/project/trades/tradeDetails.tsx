@@ -57,7 +57,7 @@ const TradeDetails = ({ trades }: Props) => {
         setTrade({
           ...data,
           open_date: new Date(data.open_date),
-          close_date: data.closeDate ? new Date(data.close_date) : null,
+          close_date: data.close_date ? new Date(data.close_date) : null,
           legs: data.legs.map((leg) => {
             return {
               ...leg,

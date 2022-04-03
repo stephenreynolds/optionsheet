@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { ChangeEvent, KeyboardEvent, MouseEvent, Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components";
 
 const TagInputContainer = styled.div`
@@ -78,7 +78,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }: Prop
   const [isKeyReleased, setIsKeyReleased] = useState(true);
   const [shownSuggestions, setShownSuggestions] = useState([]);
 
-  const onKeyDown = (e) => {
+  const onKeyDown = (e: KeyboardEvent) => {
     const key = e.key;
     const trimmedInput = input.trim().toLowerCase();
 
@@ -110,7 +110,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }: Prop
     setIsKeyReleased(true);
   };
 
-  const onInputChange = (e) => {
+  const onInputChange = (e: ChangeEvent<HTMLInputElement> | { target: { value: string } }) => {
     const value = e.target.value;
 
     setInput(value);
@@ -124,7 +124,7 @@ const TagInput = ({ tags = [], setTags, suggestions = [], className = "" }: Prop
     setShownSuggestions(sortedSuggestions);
   };
 
-  const deleteTag = (e, index) => {
+  const deleteTag = (e: MouseEvent, index: number) => {
     e.preventDefault();
     setTags(tags.filter((tag, i) => i !== index));
   };

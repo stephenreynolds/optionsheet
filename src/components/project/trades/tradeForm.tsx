@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -115,7 +115,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     return null;
   }
 
-  const inputsValid = () => {
+  const inputsValid = (): boolean => {
     let messages = [];
 
     if (!symbolIsValid(symbol)) {
@@ -223,7 +223,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     }
   };
 
-  const onCancel = (e) => {
+  const onCancel = (e: MouseEvent) => {
     e.preventDefault();
     clear();
     toggleVisibility();

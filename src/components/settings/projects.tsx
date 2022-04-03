@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { getDefaultProjectSettings, updateDefaultProjectSettings } from "../../common/api/user";
 import { DefaultProjectSettingsModel } from "../../common/models/user";
 import { toast } from "react-toastify";
@@ -28,11 +28,11 @@ const ProjectSettings = () => {
       .catch((error) => toast.error(error.message));
   }, []);
 
-  const onStartingBalanceChange = (e) => {
+  const onStartingBalanceChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewStartingBalance(e.target.value);
   };
 
-  const onRiskChange = (e) => {
+  const onRiskChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewRisk(e.target.value);
   };
 

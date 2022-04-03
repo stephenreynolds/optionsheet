@@ -1,7 +1,7 @@
 import Modal from "../../shared/modal";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { ChangeEvent, MouseEvent, useState } from "react";
 import { deleteProject } from "../../../common/api/projects";
 
 interface Props {
@@ -19,17 +19,17 @@ const DeleteProject = ({ username, projectName, show, toggleVisibility }: Props)
     return null;
   }
 
-  const onConfirmTextChange = (e) => {
+  const onConfirmTextChange = (e: ChangeEvent<HTMLInputElement>) => {
     setConfirmInput(e.target.value);
   };
 
-  const onCancel = (e) => {
+  const onCancel = (e: MouseEvent) => {
     e.preventDefault();
     setConfirmInput("");
     toggleVisibility();
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = (e: MouseEvent) => {
     e.preventDefault();
 
     deleteProject(username, projectName)

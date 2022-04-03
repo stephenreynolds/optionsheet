@@ -1,32 +1,11 @@
 import * as projectApi from "../../common/api/projects";
 import {
-  GET_PROJECTS_SUCCESS,
   GET_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
   DELETE_PROJECT_SUCCESS
 } from "./actionTypes";
 import { Project, ProjectUpdateModel } from "../../common/models/project";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
-
-export const getProjects = (username: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return projectApi.getProjects(username)
-      .then((response) => {
-        const projects = response.data.map((project: Project) => {
-          return {
-            ...project,
-            updated_on: new Date(project.updated_on)
-          };
-        });
-        dispatch({ type: GET_PROJECTS_SUCCESS, payload: projects });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
 
 export const getProject = (username: string, projectName: string) => {
   return (dispatch) => {

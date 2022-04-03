@@ -1,11 +1,9 @@
 import {
-  GET_PROJECTS_SUCCESS,
   GET_PROJECT_SUCCESS,
   UPDATE_PROJECT_SUCCESS,
   DELETE_PROJECT_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
 import { Project, ProjectSummaryModel } from "../../common/models/project";
-import _ from "lodash";
 import produce from "immer";
 
 interface ProjectReducerState {
@@ -16,20 +14,10 @@ interface ProjectReducerState {
 
 const initialState: Readonly<Partial<ProjectReducerState>> = {};
 
-const getAllProjectTags = (projects: Project[]) => {
-  return _.uniq(projects
-    .map((project) => project.tags)
-    .flat());
-};
-
 const projectReducer = produce((state, action) => {
   const { type, payload } = action;
 
   switch (type) {
-    case GET_PROJECTS_SUCCESS:
-      state.projects = payload;
-      state.tags = getAllProjectTags(payload);
-      break;
     case GET_PROJECT_SUCCESS:
       state.project = payload;
       break;

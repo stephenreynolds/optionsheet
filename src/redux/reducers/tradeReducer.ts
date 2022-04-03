@@ -1,5 +1,4 @@
 import {
-  GET_TRADE_SUCCESS,
   GET_TRADES_SUCCESS, LOGIN_FAIL, LOGOUT_SUCCESS, REGISTER_FAIL
 } from "../actions/actionTypes";
 import { Trade } from "../../common/models/trade";
@@ -28,7 +27,6 @@ const tradeReducer = produce((state, action) => {
       state.trades = payload;
       state.tags = getAllTradeTags(payload);
       break;
-    case GET_TRADE_SUCCESS:
     case LOGIN_FAIL:
     case LOGOUT_SUCCESS:
     case REGISTER_FAIL:

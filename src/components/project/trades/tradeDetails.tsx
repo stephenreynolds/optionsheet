@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -18,14 +18,13 @@ import {
   tradeIsOption,
   usd
 } from "../../../common/tradeUtils";
-import * as tradeActions from "../../../redux/actions/tradeActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { getTrade } from "../../../redux/selectors/tradeSelectors";
 import { PLPill, TagPill } from "../../shared/pill";
 import { Container } from "../../styles";
 import DeleteTrade from "./deleteTrade";
 import TradeForm from "./tradeForm";
 import { getUsername } from "../../../redux/selectors/userSelectors";
+import { Trade } from "../../../common/models/trade";
+import { getTradeById } from "../../../common/api/trades";
 
 const DetailsSection = styled.div`
   margin-top: 1.5em;
@@ -36,25 +35,37 @@ const DetailsSection = styled.div`
 `;
 
 const TradeDetails = () => {
-  const trade = useSelector((state) => getTrade(state));
   const myUsername = useSelector((state) => getUsername(state));
-  const dispatch: PromiseDispatch = useDispatch();
 
   const { username, projectName, id } = useParams<{
     username: string;
     projectName: string;
     id: string;
   }>();
+  const [trade, setTrade] = useState<Trade>();
   const [showCloseTrade, setShowCloseTrade] = useState(false);
   const [showEditTrade, setShowEditTrade] = useState(false);
   const [showDeleteTrade, setShowDeleteTrade] = useState(false);
 
   useEffect(() => {
-    dispatch(tradeActions.getTradeById(id))
+    getTradeById(id)
+      .then(({ data }) => {
+        setTrade({
+          ...data,
+          open_date: new Date(data.open_date),
+          close_date: data.closeDate ? new Date(data.close_date) : null,
+          legs: data.legs.map((leg) => {
+            return {
+              ...leg,
+              expiration: new Date(leg.expiration)
+            };
+          })
+        });
+      })
       .catch((error) => {
         toast.error(error.message);
       });
-  }, [dispatch, id]);
+  }, [id]);
 
   if (!trade) {
     return null;
@@ -110,7 +121,7 @@ const TradeDetails = () => {
         )}
       </div>
 
-      <div className="details mb-1" style={{width: "fit-content", marginRight: "5rem"}}>
+      <div className="details mb-1" style={{ width: "fit-content", marginRight: "5rem" }}>
         <DetailsSection>
           <p>Open: {formatDate(trade.open_date)}</p>
           {isOption && <p>Expiration: {formatDate(trade.legs[0].expiration)}</p>}

@@ -1,13 +1,11 @@
 import { Trade, TradeCreateModel } from "../../common/models/trade";
 import {
   ADD_TRADE_SUCCESS,
-  GET_TRADE_SUCCESS,
   GET_TRADES_SUCCESS
 } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
 import {
   addTrade as addTrade1,
-  getTradeById as getTradeById1,
   getTrades as getTrades1
 } from "../../common/api/trades";
 
@@ -46,31 +44,6 @@ export const getTrades = (username: string, projectName: string) => {
           };
         });
         dispatch({ type: GET_TRADES_SUCCESS, payload: trades });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
-
-export const getTradeById = (id: string) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return getTradeById1(id)
-      .then((response) => {
-        const trade: Trade = {
-          ...response.data,
-          open_date: new Date(response.data.open_date),
-          close_date: response.data.closeDate ? new Date(response.data.close_date) : null,
-          legs: response.data.legs.map((leg) => {
-            return {
-              ...leg,
-              expiration: new Date(leg.expiration)
-            };
-          })
-        };
-        dispatch({ type: GET_TRADE_SUCCESS, payload: trade });
       })
       .catch((error) => {
         dispatch(apiCallError());

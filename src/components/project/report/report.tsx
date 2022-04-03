@@ -3,7 +3,7 @@ import humanizeDuration from "humanize-duration";
 import { Project } from "../../../common/models/project";
 import { Trade } from "../../../common/models/trade";
 import { Container } from "../../styles";
-import { AnalyticsSnapshot, calculateAnalyticsHistory } from "./utils";
+import { StatsSnapshot, calculateStatsHistory } from "./calculateStats";
 import { usd } from "../../../common/tradeUtils";
 import numeral from "numeral";
 import styled from "styled-components";
@@ -40,12 +40,12 @@ const getClosedTrades = (trades: Trade[]) => {
 };
 
 const Report = ({ project, trades, loading }: Props) => {
-  const [history, setHistory] = useState<AnalyticsSnapshot[]>([]);
+  const [history, setHistory] = useState<StatsSnapshot[]>([]);
 
   useEffect(() => {
     if (trades && getClosedTrades(trades).length) {
       const closedTrades = getClosedTrades(trades);
-      setHistory(calculateAnalyticsHistory(project.starting_balance, project.risk, closedTrades));
+      setHistory(calculateStatsHistory(project.starting_balance, project.risk, closedTrades));
     }
   }, [project.risk, project.starting_balance, trades]);
 
@@ -65,7 +65,7 @@ const Report = ({ project, trades, loading }: Props) => {
     return null;
   }
 
-  const current = history[history.length - 1].analytics;
+  const current = history[history.length - 1].stats;
 
   return (
     <Container style={{ width: "fit-content", marginBottom: "2em" }}>

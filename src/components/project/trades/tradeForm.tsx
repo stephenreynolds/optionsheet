@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Trade, TradeCreateModel, TradeUpdateModel } from "../../../common/models/trade";
 import { tradeIsOption } from "../../../common/tradeUtils";
-import { addTrade, getTrades, updateTradeById } from "../../../redux/actions/tradeActions";
+import { addTrade, getTrades } from "../../../redux/actions/tradeActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getTradeTags } from "../../../redux/selectors/tradeSelectors";
 import DateInput from "../../shared/dateInput";
@@ -25,6 +25,7 @@ import {
   StrategyOptions,
   symbolIsValid
 } from "./tradeInputUtils";
+import { updateTradeById } from "../../../common/api/trades";
 
 const FormContainer = styled(Container)`
   width: fit-content;
@@ -168,12 +169,14 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
         tags
       };
 
-      dispatch(updateTradeById(id, updatedTrade)).then(() => {
-        toast.success("Edited trade.");
-        toggleVisibility();
-      }, (error) => {
-        toast.error(error.message);
-      });
+      updateTradeById(id, updatedTrade)
+        .then(() => {
+          toast.success("Edited trade.");
+          toggleVisibility();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
     }
     else if (trade) {
       const updatedTrade: TradeUpdateModel = {
@@ -186,12 +189,14 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
         tags
       };
 
-      dispatch(updateTradeById(id, updatedTrade)).then(() => {
-        toast.success("Edited trade.");
-        toggleVisibility();
-      }, (error) => {
-        toast.error(error.message);
-      });
+      updateTradeById(id, updatedTrade)
+        .then(() => {
+          toast.success("Edited trade.");
+          toggleVisibility();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
     }
     else {
       const newTrade: TradeCreateModel = {

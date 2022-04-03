@@ -1,12 +1,9 @@
 import Modal from "../../shared/modal";
-import { deleteTradeById, getTrades } from "../../../redux/actions/tradeActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { deleteTradeById } from "../../../common/api/trades";
 
-const DeleteTrade = ({username, projectName, trade, show, toggleVisibility}) => {
-  const dispatch: PromiseDispatch = useDispatch();
+const DeleteTrade = ({ username, projectName, trade, show, toggleVisibility }) => {
   const navigate = useNavigate();
 
   if (!show) {
@@ -20,14 +17,18 @@ const DeleteTrade = ({username, projectName, trade, show, toggleVisibility}) => 
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(deleteTradeById(trade.id)).then(async () => {
-      toast.success("Trade deleted.");
-      await dispatch(getTrades(username, projectName));
-    }, (error) => {
-      toast.error(error.message);
-    });
-    toggleVisibility();
-    navigate(`/${username}/${projectName}`);
+
+    deleteTradeById(trade.id)
+      .then(async () => {
+        toast.success("Trade deleted.");
+        navigate(`/${username}/${projectName}`);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      })
+      .finally(() => {
+        toggleVisibility();
+      });
   };
 
   return (

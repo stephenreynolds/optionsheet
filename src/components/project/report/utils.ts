@@ -394,33 +394,33 @@ export const calculateAnalytics = (startingBalance: number, risk: number, date: 
   };
 };
 
-const sumNumbers = (nums: number[]) => {
+const sumNumbers = (nums: number[]): number => {
   return Number(nums.reduce((a, b) => a + b, 0));
 };
 
-export const getWinningTrades = (trades: Trade[]) => {
+export const getWinningTrades = (trades: Trade[]): Trade[] => {
   return trades.filter((trade) => getProfitLoss(trade) > 0);
 };
 
-export const getLosingTrades = (trades: Trade[]) => {
+export const getLosingTrades = (trades: Trade[]): Trade[] => {
   return trades.filter((trade) => getProfitLoss(trade) < 0);
 };
 
-export const getEvenTrades = (trades: Trade[]) => {
+export const getEvenTrades = (trades: Trade[]): Trade[] => {
   return trades.filter((trade) => getProfitLoss(trade) === 0);
 };
 
-export const getGrossProfit = (trades: Trade[]) => {
+export const getGrossProfit = (trades: Trade[]): number => {
   const profits = trades.map((trade) => getProfitLoss(trade));
 
   return sumNumbers(profits);
 };
 
-export const getNetProfit = (grossProfit: number, grossLoss: number) => {
+export const getNetProfit = (grossProfit: number, grossLoss: number): number => {
   return grossProfit - grossLoss;
 };
 
-export const getProfitLossFactor = (grossProfit: number, grossLoss: number) => {
+export const getProfitLossFactor = (grossProfit: number, grossLoss: number): number => {
   if (grossLoss === 0) {
     return 1;
   }
@@ -428,21 +428,21 @@ export const getProfitLossFactor = (grossProfit: number, grossLoss: number) => {
   return grossProfit / grossLoss;
 };
 
-export const getPercentProfitable = (winners: number, losers: number) => {
+export const getPercentProfitable = (winners: number, losers: number): number => {
   return winners / (winners + losers);
 };
 
-export const getAverageProfit = (trades: Trade[]) => {
+export const getAverageProfit = (trades: Trade[]): number => {
   const profits = trades.map((trade) => getProfitLoss(trade));
   return profits.length ? Math.abs(_.mean(profits)) : 0;
 };
 
-export const getTradingPeriodDays = (trades: Trade[]) => {
+export const getTradingPeriodDays = (trades: Trade[]): number => {
   const diff = trades[trades.length - 1].close_date.getTime() - trades[0].open_date.getTime();
   return diff / (1000 * 3600 * 24);
 };
 
-export const getSharpeRatio = (trades: Trade[], startingBalance: number) => {
+export const getSharpeRatio = (trades: Trade[], startingBalance: number): number => {
   const closedTrades = trades.slice().sort((a, b) => {
     return a.close_date.getTime() - b.close_date.getTime();
   });
@@ -468,11 +468,11 @@ export const getSharpeRatio = (trades: Trade[], startingBalance: number) => {
   return (portfolioReturn - riskFreeRate) / std(...excessReturns);
 };
 
-export const getKellyPercentage = (percentProfitable: number, averageGain: number, averageLoss: number) => {
+export const getKellyPercentage = (percentProfitable: number, averageGain: number, averageLoss: number): number => {
   return percentProfitable - (1 - percentProfitable) / (averageGain / averageLoss);
 };
 
-export const getAnnualizedProfit = (startingBalance: number, netProfit: number, trades: Trade[]) => {
+export const getAnnualizedProfit = (startingBalance: number, netProfit: number, trades: Trade[]): number => {
   const openDates = trades.map((t) => t.open_date);
   const closeDates = trades.map((t) => t.close_date);
 

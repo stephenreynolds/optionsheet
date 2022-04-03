@@ -9,6 +9,7 @@ export interface Project {
   updated_on: Date;
   pinned?: boolean;
   stars?: number;
+  username: string;
 }
 
 export interface ProjectCreateModel {

@@ -9,6 +9,7 @@ import TagInput from "../../shared/tagInput";
 import { Container } from "../../styles";
 import DeleteProject from "./deleteProject";
 import { updateProject } from "../../../common/api/projects";
+import { Project } from "../../../common/models/project";
 
 const InputGroup = styled.div`
   margin: 1rem 0;
@@ -32,7 +33,11 @@ const InputGroup = styled.div`
   }
 `;
 
-const Settings = ({ project }) => {
+interface Props {
+  project: Project;
+}
+
+const Settings = ({ project }: Props) => {
   const navigate = useNavigate();
   const trades: Trade[] = useSelector((state) => getTrades(state));
 

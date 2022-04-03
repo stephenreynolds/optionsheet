@@ -1,13 +1,9 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Trade, TradeCreateModel, TradeUpdateModel } from "../../../common/models/trade";
 import { tradeIsOption } from "../../../common/tradeUtils";
-import { getTrades } from "../../../redux/actions/tradeActions";
-import { PromiseDispatch } from "../../../redux/promiseDispatch";
-import { getTradeTags } from "../../../redux/selectors/tradeSelectors";
 import DateInput from "../../shared/dateInput";
 import Modal from "../../shared/modal";
 import TagInput from "../../shared/tagInput";
@@ -26,6 +22,7 @@ import {
   symbolIsValid
 } from "./tradeInputUtils";
 import { addTrade, updateTradeById } from "../../../common/api/trades";
+import _ from "lodash";
 
 const FormContainer = styled(Container)`
   width: fit-content;
@@ -64,16 +61,23 @@ const FormContainer = styled(Container)`
 interface Props {
   username?: string;
   projectName?: string;
+  trades: Trade[];
   trade?: Trade;
   close?: boolean;
   show: boolean;
   toggleVisibility: () => void;
 }
 
-const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility }: Props) => {
+const getAllTradeTags = (trades: Trade[]) => {
+  return _.uniq(trades
+    .map((trade) => trade.tags)
+    .flat());
+};
+
+const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVisibility }: Props) => {
   const { id } = useParams<{ id: string; }>();
-  const tagSuggestions = useSelector((state) => getTradeTags(state));
-  const dispatch: PromiseDispatch = useDispatch();
+
+  const tagSuggestions = getAllTradeTags(trades);
 
   const initialValues = {
     symbol: trade ? trade.symbol : "",
@@ -210,7 +214,6 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
       addTrade(username, projectName, newTrade)
         .then(async () => {
           toast.success("Trade added.");
-          await dispatch(getTrades(username, projectName));
           clear();
           toggleVisibility();
         })

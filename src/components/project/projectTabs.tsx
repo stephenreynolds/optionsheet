@@ -3,6 +3,7 @@ import { faChartLine, faGear, faList } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { lazy, useState } from "react";
+import { Trade } from "../../common/models/trade";
 
 const TradeForm = lazy(() => import(/* webpackChunkName: "trade-form" */ "./trades/tradeForm"));
 
@@ -66,7 +67,14 @@ const TabNav = styled.nav`
 
 const activeClassName = ({ isActive }) => isActive ? "selected" : undefined;
 
-const ProjectTabs = ({ userIsOwner, username, projectName }) => {
+interface Props {
+  userIsOwner: boolean;
+  username: string;
+  projectName: string;
+  trades: Trade[];
+}
+
+const ProjectTabs = ({ userIsOwner, username, projectName, trades }: Props) => {
   const [showNewTradeModel, setShowNewTradeModel] = useState(false);
 
   const toggleShowNewTradeModel = () => {
@@ -104,7 +112,7 @@ const ProjectTabs = ({ userIsOwner, username, projectName }) => {
       </ul>
 
       {userIsOwner && (
-        <TradeForm username={username} projectName={projectName}
+        <TradeForm username={username} projectName={projectName} trades={trades}
                    show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel} />
       )}
     </TabNav>

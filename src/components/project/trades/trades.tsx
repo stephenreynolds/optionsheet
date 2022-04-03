@@ -1,7 +1,6 @@
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import styled from "styled-components";
 import { Leg, Trade } from "../../../common/models/trade";
@@ -16,7 +15,6 @@ import {
   getTradeQuantity,
   tradeIsOption
 } from "../../../common/tradeUtils";
-import { getTrades } from "../../../redux/selectors/tradeSelectors";
 import { PLPill, TagPill } from "../../shared/pill";
 import { Container } from "../../styles";
 import { PageSizeSelect, Pagination } from "../../shared/pagination";
@@ -140,8 +138,11 @@ const toggleSortDirection = (direction: SortDirection) => {
 const SortIcon = ({ sortMethod }) => <FontAwesomeIcon
   icon={sortMethod.direction === SortDirection.Ascending ? faCaretUp : faCaretDown} />;
 
-const Trades = () => {
-  const trades = useSelector((state) => getTrades(state));
+interface Props {
+  trades: Trade[];
+}
+
+const Trades = ({ trades }: Props) => {
   const navigate = useNavigate();
 
   const [sortMethod, setSortMethod] = useState({ property: "openDate", direction: SortDirection.Descending });

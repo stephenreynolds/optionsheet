@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import humanizeDuration from "humanize-duration";
 import { Project } from "../../../common/models/project";
 import { Trade } from "../../../common/models/trade";
-import { getTrades } from "../../../redux/selectors/tradeSelectors";
 import { Container } from "../../styles";
 import { AnalyticsSnapshot, calculateAnalyticsHistory } from "./analyticsUtils";
 import { usd } from "../../../common/tradeUtils";
@@ -33,6 +31,7 @@ const StatisticItem = styled.div`
 
 interface Props {
   project: Project;
+  trades: Trade[];
   loading: boolean;
 }
 
@@ -40,9 +39,7 @@ const getClosedTrades = (trades: Trade[]) => {
   return trades.filter((trade) => trade.close_date);
 };
 
-const Report = ({ project, loading }: Props) => {
-  const trades = useSelector((state) => getTrades(state));
-
+const Report = ({ project, trades, loading }: Props) => {
   const [history, setHistory] = useState<AnalyticsSnapshot[]>([]);
 
   useEffect(() => {

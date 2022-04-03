@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
 import { PLPill } from "../shared/pill";
-import { formatPrice } from "../../common/tradeUtils";
+import { formatPrice, getProfitLoss } from "../../common/tradeUtils";
 import StarButton from "./starButton";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { getNetProfit } from "../../redux/selectors/tradeSelectors";
+import { Trade } from "../../common/models/trade";
 
 const TitleBarDiv = styled.div`
   padding: 1.5rem 40px 0.5rem 40px;
@@ -27,8 +26,19 @@ const TitleBarDiv = styled.div`
   }
 `;
 
-const TitleBar = ({ username, project }) => {
-  const netProfit = useSelector((state) => getNetProfit(state));
+const getNetProfit = (trades: Trade[]) => {
+  if (!trades || trades.length === 0) {
+    return NaN;
+  }
+
+  const closedTrades = trades.filter((trade) => trade.close_date);
+  const pl = closedTrades.map((trade) => getProfitLoss(trade));
+
+  return Number(pl.reduce((a, b) => a + b, 0));
+};
+
+const TitleBar = ({ username, project, trades }) => {
+  const netProfit = getNetProfit(trades);
 
   return (
     <TitleBarDiv>

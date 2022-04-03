@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Trade } from "../../../common/models/trade";
-import { getTrades } from "../../../redux/selectors/tradeSelectors";
 import TagInput from "../../shared/tagInput";
 import { Container } from "../../styles";
 import DeleteProject from "./deleteProject";
@@ -35,11 +33,11 @@ const InputGroup = styled.div`
 
 interface Props {
   project: Project;
+  trades: Trade[];
 }
 
-const Settings = ({ project }: Props) => {
+const Settings = ({ project, trades }: Props) => {
   const navigate = useNavigate();
-  const trades: Trade[] = useSelector((state) => getTrades(state));
 
   const [newProjectName, setNewProjectName] = useState("");
   const [newDescription, setNewDescription] = useState("");

@@ -279,7 +279,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
           <div className="legs">
             {legs.map((leg, i) => <LegInputGroup key={i} index={i} legs={legs} setLegs={setLegs}
                                                  isShares={isShares} isClosing={close}
-                                                 isClosed={trade && trade.close_date} />)}
+                                                 isClosed={trade && !!trade.close_date} />)}
           </div>
 
           {/* Add leg button */}

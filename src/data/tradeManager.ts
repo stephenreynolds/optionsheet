@@ -59,8 +59,7 @@ export class TradeManager {
       // Trade
       const trade = await this.pool.query(`
           INSERT INTO trade(project_id, symbol, open_date, opening_note)
-          VALUES ($1, $2, $3, $4)
-          RETURNING *
+          VALUES ($1, $2, $3, $4) RETURNING *
       `, [projectId, model.symbol, model.open_date, model.opening_note]);
 
       const tradeId = trade.rows[0].id;
@@ -69,8 +68,7 @@ export class TradeManager {
       for (const leg of model.legs) {
         await this.pool.query(`
             INSERT INTO leg(trade_id, quantity, open_price, side, expiration, strike, put_call)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-            RETURNING id
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
         `, [tradeId, leg.quantity, leg.open_price, leg.side, leg.expiration, leg.strike, leg.put_call]);
       }
 
@@ -93,8 +91,7 @@ export class TradeManager {
               close_date   = COALESCE($4, close_date),
               opening_note = COALESCE($5, opening_note),
               closing_note = COALESCE($6, closing_note)
-          WHERE id = $1
-          RETURNING *
+          WHERE id = $1 RETURNING *
       `, [id, model.symbol, model.open_date, model.close_date, model.opening_note, model.closing_note]);
 
       const tradeId = trade.rows[0].id;
@@ -110,8 +107,7 @@ export class TradeManager {
         for (const leg of model.legs) {
           await this.pool.query(`
               INSERT INTO leg(trade_id, quantity, open_price, close_price, side, expiration, strike, put_call)
-              VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-              RETURNING id
+              VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
           `, [tradeId, leg.quantity, leg.open_price, leg.close_price, leg.side, leg.expiration, leg.strike, leg.put_call]);
         }
       }
@@ -149,25 +145,22 @@ export class TradeManager {
       for (const newTag of tags) {
         const name = newTag.trim().toLowerCase();
 
-        let tag = await this.pool.query(`
-            SELECT id, name
+        await this.pool.query(`
+            INSERT INTO tag(name)
+            VALUES ($1) ON CONFLICT DO NOTHING
+        `, [name]);
+
+        const tag = await this.pool.query(`
+            SELECT id
             FROM tag
             WHERE name = $1
         `, [name]);
-
-        if (!tag.rows.length) {
-          tag = await this.pool.query(`
-              INSERT INTO tag(name)
-              VALUES ($1)
-              RETURNING id, name
-          `, [name]);
-        }
 
         const tagId = tag.rows[0].id;
 
         await this.pool.query(`
             INSERT INTO trade_tag(trade_id, tag_id)
-            VALUES ($1, $2)
+            VALUES ($1, $2) ON CONFLICT DO NOTHING
         `, [id, tagId]);
       }
     }

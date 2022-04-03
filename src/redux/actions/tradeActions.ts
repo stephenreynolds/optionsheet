@@ -1,27 +1,11 @@
-import { Trade, TradeCreateModel } from "../../common/models/trade";
+import { Trade } from "../../common/models/trade";
 import {
-  ADD_TRADE_SUCCESS,
   GET_TRADES_SUCCESS
 } from "./actionTypes";
 import { apiCallError, beginApiCall } from "./apiStatusActions";
 import {
-  addTrade as addTrade1,
   getTrades as getTrades1
 } from "../../common/api/trades";
-
-export const addTrade = (username: string, projectName: string, model: TradeCreateModel) => {
-  return (dispatch) => {
-    dispatch(beginApiCall());
-    return addTrade1(username, projectName, model)
-      .then(() => {
-        dispatch({ type: ADD_TRADE_SUCCESS });
-      })
-      .catch((error) => {
-        dispatch(apiCallError());
-        throw error.response.data;
-      });
-  };
-};
 
 export const getTrades = (username: string, projectName: string) => {
   return (dispatch) => {

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 import { Trade, TradeCreateModel, TradeUpdateModel } from "../../../common/models/trade";
 import { tradeIsOption } from "../../../common/tradeUtils";
-import { addTrade, getTrades } from "../../../redux/actions/tradeActions";
+import { getTrades } from "../../../redux/actions/tradeActions";
 import { PromiseDispatch } from "../../../redux/promiseDispatch";
 import { getTradeTags } from "../../../redux/selectors/tradeSelectors";
 import DateInput from "../../shared/dateInput";
@@ -25,7 +25,7 @@ import {
   StrategyOptions,
   symbolIsValid
 } from "./tradeInputUtils";
-import { updateTradeById } from "../../../common/api/trades";
+import { addTrade, updateTradeById } from "../../../common/api/trades";
 
 const FormContainer = styled(Container)`
   width: fit-content;
@@ -207,14 +207,16 @@ const TradeForm = ({ username, projectName, trade, close, show, toggleVisibility
         tags
       };
 
-      dispatch(addTrade(username, projectName, newTrade)).then(async () => {
-        toast.success("Trade added.");
-        await dispatch(getTrades(username, projectName));
-        clear();
-        toggleVisibility();
-      }, (error) => {
-        toast.error(error.message);
-      });
+      addTrade(username, projectName, newTrade)
+        .then(async () => {
+          toast.success("Trade added.");
+          await dispatch(getTrades(username, projectName));
+          clear();
+          toggleVisibility();
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
     }
   };
 

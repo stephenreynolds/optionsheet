@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS app_user
     avatar_url               TEXT,
     bio                      TEXT,
     pinned_projects          INTEGER[]             DEFAULT '{}',
-    created_on               TIMESTAMP    NOT NULL DEFAULT current_timestamp,
-    updated_on               TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
+    created_on               TIMESTAMPTZ  NOT NULL DEFAULT current_timestamp,
+    updated_on               TIMESTAMPTZ           DEFAULT current_timestamp CHECK (updated_on >= app_user.created_on),
     refresh_token            VARCHAR(36),
-    refresh_token_expiry     TIMESTAMP,
+    refresh_token_expiry     TIMESTAMPTZ,
     default_starting_balance NUMERIC,
     default_risk             NUMERIC
 );
@@ -48,8 +48,8 @@ CREATE TABLE IF NOT EXISTS project
     description      TEXT,
     starting_balance NUMERIC,
     risk             NUMERIC,
-    created_on       TIMESTAMP    NOT NULL DEFAULT current_timestamp,
-    updated_on       TIMESTAMP             DEFAULT current_timestamp CHECK (updated_on >= project.created_on),
+    created_on       TIMESTAMPTZ  NOT NULL DEFAULT current_timestamp,
+    updated_on       TIMESTAMPTZ           DEFAULT current_timestamp CHECK (updated_on >= project.created_on),
     user_uuid        UUID         NOT NULL,
 
     CONSTRAINT fk_user FOREIGN KEY (user_uuid) REFERENCES app_user (uuid) ON DELETE CASCADE
@@ -68,12 +68,12 @@ CREATE TABLE IF NOT EXISTS trade
 (
     id           INTEGER     NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     symbol       VARCHAR(15) NOT NULL,
-    open_date    DATE        NOT NULL,
-    close_date   DATE CHECK (close_date >= trade.open_date),
+    open_date    TIMESTAMPTZ NOT NULL,
+    close_date   TIMESTAMPTZ CHECK (close_date >= trade.open_date),
     opening_note TEXT,
     closing_note TEXT,
-    created_on   TIMESTAMP   NOT NULL DEFAULT current_timestamp,
-    updated_on   TIMESTAMP            DEFAULT current_timestamp CHECK (updated_on >= trade.created_on),
+    created_on   TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
+    updated_on   TIMESTAMPTZ          DEFAULT current_timestamp CHECK (updated_on >= trade.created_on),
     project_id   INTEGER     NOT NULL,
 
     CONSTRAINT fk_project FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE

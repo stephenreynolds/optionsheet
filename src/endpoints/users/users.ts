@@ -19,8 +19,8 @@ export const getUserDetails = async (user, dataService): Promise<GetUserDto> => 
     email: user.email,
     avatar_url: user.avatar_url,
     bio: user.bio,
-    created_on: new Date(user.created_on),
-    updated_on: new Date(user.updated_on),
+    created_on: user.created_on,
+    updated_on: user.updated_on,
     is_admin: isAdmin
   };
 };

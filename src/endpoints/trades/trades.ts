@@ -27,28 +27,27 @@ export const getTrades = async (request: Request, response: Response) => {
       trades.map(async (trade) => {
         const legs = await dataService.trades.getLegsByTradeId(trade.id);
         const tags = await dataService.trades.getTradeTags(trade.id);
-
         return {
           id: trade.id,
           symbol: trade.symbol,
-          open_date: new Date(trade.open_date),
-          close_date: trade.close_date ? new Date(trade.close_date) : undefined,
+          open_date: trade.open_date,
+          close_date: trade.close_date ?? undefined,
           opening_note: trade.opening_note ?? undefined,
           closing_note: trade.closing_note ?? undefined,
           legs: legs.map((leg) => {
             return {
               side: leg.side,
-              quantity: Number(leg.quantity),
-              open_price: Number(leg.open_price),
-              close_price: leg.close_price ? Number(leg.close_price) : undefined,
-              strike: leg.strike ? Number(leg.strike) : undefined,
-              expiration: leg.expiration ? new Date(leg.expiration) : undefined,
+              quantity: parseInt(leg.quantity),
+              open_price: parseFloat(leg.open_price),
+              close_price: leg.close_price ? parseFloat(leg.close_price) : undefined,
+              strike: leg.strike ? parseFloat(leg.strike) : undefined,
+              expiration: leg.expiration ?? undefined,
               put_call: leg.put_call ?? undefined
             };
           }),
           tags: tags.map((tag) => tag.name),
-          created_on: new Date(trade.created_on),
-          updated_on: new Date(trade.updated_on),
+          created_on: trade.created_on,
+          updated_on: trade.updated_on,
           project_id: trade.project_id
         };
       })
@@ -79,24 +78,24 @@ export const getTrade = async (request: Request, response: Response) => {
     const res: GetTradeDto = {
       id: trade.id,
       symbol: trade.symbol,
-      open_date: new Date(trade.open_date),
-      close_date: trade.close_date ? new Date(trade.close_date) : undefined,
+      open_date: trade.open_date,
+      close_date: trade.close_date ?? undefined,
       opening_note: trade.opening_note ?? undefined,
       closing_note: trade.closing_note ?? undefined,
       legs: legs.map((leg) => {
         return {
           side: leg.side,
-          quantity: Number(leg.quantity),
-          open_price: Number(leg.open_price),
-          closePrice: leg.close_price ? Number(leg.close_price) : undefined,
-          strike: leg.strike ? Number(leg.strike) : undefined,
-          expiration: leg.expiration ? new Date(leg.expiration) : undefined,
+          quantity: parseInt(leg.quantity),
+          open_price: parseFloat(leg.open_price),
+          closePrice: leg.close_price ? parseFloat(leg.close_price) : undefined,
+          strike: leg.strike ? parseFloat(leg.strike) : undefined,
+          expiration: leg.expiration ?? undefined,
           put_call: leg.put_call ?? undefined
         };
       }),
       tags: tags.map((tag) => tag.name),
-      created_on: new Date(trade.created_on),
-      updated_on: new Date(trade.updated_on),
+      created_on: trade.created_on,
+      updated_on: trade.updated_on,
       project_id: trade.project_id
     };
 

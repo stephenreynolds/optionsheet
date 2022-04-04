@@ -69,12 +69,12 @@ export const getProjectByName = async (request: Request, response: Response) => 
       name: project.name,
       username: user.username,
       description: project.description ?? undefined,
-      starting_balance: project.starting_balance ? Number(project.starting_balance) : undefined,
-      risk: project.risk ? Number(project.risk) : undefined,
-      created_on: new Date(project.created_on),
-      updated_on: new Date(project.updated_on),
+      starting_balance: project.starting_balance ? parseFloat(project.starting_balance) : undefined,
+      risk: project.risk ? parseFloat(project.risk) : undefined,
+      created_on: project.created_on,
+      updated_on: project.updated_on,
       tags: tags.map((t) => t.name) ?? undefined,
-      stars: Number(project.stars)
+      stars: parseInt(project.stars)
     };
 
     response.send(res);

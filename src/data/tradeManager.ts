@@ -185,8 +185,10 @@ export class TradeManager {
   public async getTradesBySymbol(symbol: string, limit?: number, offset = 0) {
     try {
       const trades = await this.pool.query(`
-          SELECT *
+          SELECT trade.*, project.name AS project_name, app_user.username
           FROM trade
+                   LEFT JOIN project ON trade.project_id = project.id
+                   LEFT JOIN app_user ON project.user_uuid = app_user.uuid
           WHERE UPPER(symbol) = UPPER($1)
           ORDER BY close_date DESC, open_date DESC
           OFFSET COALESCE($2, 0) * $3 LIMIT $2

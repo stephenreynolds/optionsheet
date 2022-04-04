@@ -1,8 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 export const baseURL = "http://localhost:5000";
-
-export type ApiResponse<T> = Promise<AxiosResponse<T>>;
 
 const getToken = (): string => {
   return JSON.parse(window.localStorage.getItem("token"));

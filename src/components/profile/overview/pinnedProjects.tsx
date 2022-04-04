@@ -35,8 +35,8 @@ const PinnedProjects = ({ username }: Props) => {
 
   useEffect(() => {
     getPinnedProjects(username)
-      .then((result) => {
-        setPinnedProjects(result.data);
+      .then((data) => {
+        setPinnedProjects(data);
         setLoading(false);
       })
       .catch((error) => {

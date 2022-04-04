@@ -36,7 +36,7 @@ interface Props {
 }
 
 const getClosedTrades = (trades: Trade[]) => {
-  return trades.filter((trade) => trade.close_date);
+  return trades.filter((trade) => trade.closeDate);
 };
 
 const Report = ({ project, trades, loading }: Props) => {
@@ -45,9 +45,9 @@ const Report = ({ project, trades, loading }: Props) => {
   useEffect(() => {
     if (trades && getClosedTrades(trades).length) {
       const closedTrades = getClosedTrades(trades);
-      setHistory(calculateStatsHistory(project.starting_balance, project.risk, closedTrades));
+      setHistory(calculateStatsHistory(project.startingBalance, project.risk, closedTrades));
     }
-  }, [project.risk, project.starting_balance, trades]);
+  }, [project.risk, project.startingBalance, trades]);
 
   if (loading || !trades) {
     return null;
@@ -78,7 +78,7 @@ const Report = ({ project, trades, loading }: Props) => {
       </StatisticItem>
       <hr />
       {/* Balance */}
-      {project.starting_balance && (
+      {project.startingBalance && (
         <StatisticItem>
           <div className="statistic-name">Balance</div>
           <div className="all-trades">{usd.format(current.currentBalance)}</div>
@@ -93,7 +93,7 @@ const Report = ({ project, trades, loading }: Props) => {
         <div className="neutral-trades">{usd.format(current.neutral.netProfit)}</div>
       </StatisticItem>
       {/* Net profit % */}
-      {project.starting_balance && (
+      {project.startingBalance && (
         <StatisticItem>
           <div className="statistic-name">Net profit %</div>
           <div className="all-trades">{(current.netProfitPercent * 100).toFixed(2)}%</div>
@@ -127,7 +127,7 @@ const Report = ({ project, trades, loading }: Props) => {
         <div className="neutral-trades">{current.neutral.profitFactor.toFixed(2)}</div>
       </StatisticItem>
       {/* Alpha */}
-      {project.starting_balance && (
+      {project.startingBalance && (
         <StatisticItem>
           <div className="statistic-name">Alpha</div>
           <div className="all-trades">{(current.alpha * 100).toFixed(2)}%</div>
@@ -215,7 +215,7 @@ const Report = ({ project, trades, loading }: Props) => {
       <br />
 
       {/* Annualized return */}
-      {project.starting_balance && (
+      {project.startingBalance && (
         <>
           <StatisticItem>
             <div className="statistic-name">Annualized return</div>

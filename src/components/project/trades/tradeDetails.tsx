@@ -53,18 +53,8 @@ const TradeDetails = ({ trades }: Props) => {
 
   useEffect(() => {
     getTradeById(id)
-      .then(({ data }) => {
-        setTrade({
-          ...data,
-          open_date: new Date(data.open_date),
-          close_date: data.close_date ? new Date(data.close_date) : null,
-          legs: data.legs.map((leg) => {
-            return {
-              ...leg,
-              expiration: new Date(leg.expiration)
-            };
-          })
-        });
+      .then((data) => {
+        setTrade(data);
       })
       .catch((error) => {
         toast.error(error.message);
@@ -121,7 +111,7 @@ const TradeDetails = ({ trades }: Props) => {
         {myProject && (
           <div>
             {/* Close trade */}
-            {!trade.close_date && <button onClick={toggleCloseModal} className="ml-0 mr-1">Close trade</button>}
+            {!trade.closeDate && <button onClick={toggleCloseModal} className="ml-0 mr-1">Close trade</button>}
 
             {/* Edit trade */}
             <button className="ml-0 mr-1" onClick={toggleEditModal}>Edit trade</button>
@@ -134,11 +124,11 @@ const TradeDetails = ({ trades }: Props) => {
 
       <div className="details mb-1" style={{ width: "fit-content", marginRight: "5rem" }}>
         <DetailsSection>
-          <p>Open: {formatDate(trade.open_date)}</p>
+          <p>Open: {formatDate(trade.openDate)}</p>
           {isOption && <p>Expiration: {formatDate(trade.legs[0].expiration)}</p>}
-          {trade.close_date && (
+          {trade.closeDate && (
             <>
-              <p>Close: {new Date(trade.close_date).toLocaleDateString()}</p>
+              <p>Close: {new Date(trade.closeDate).toLocaleDateString()}</p>
               <p>Duration: {getTradeDurationDays(trade)} days</p>
             </>
           )}
@@ -148,7 +138,7 @@ const TradeDetails = ({ trades }: Props) => {
           <p>Quantity: {getTradeQuantity(trade.legs)}</p>
           <p>Open price: {!isOption ? usd.format(getOpenPrice(trade.legs)) : getOpenPrice(trade.legs).toFixed(2)}</p>
           <p>Net cost: {usd.format(getNetCost(trade.legs) * (isOption ? 100 : 1))}</p>
-          {trade.close_date && <p>P/L: {usd.format(getProfitLoss(trade))}</p>}
+          {trade.closeDate && <p>P/L: {usd.format(getProfitLoss(trade))}</p>}
         </DetailsSection>
 
         <DetailsSection>
@@ -159,18 +149,18 @@ const TradeDetails = ({ trades }: Props) => {
           )}
         </DetailsSection>
 
-        {(trade.opening_note || trade.closing_note) && (
+        {(trade.openingNote || trade.closingNote) && (
           <DetailsSection>
-            {trade.opening_note && (
+            {trade.openingNote && (
               <>
                 <b>Opening note:</b>
-                <blockquote>{trade.opening_note}</blockquote>
+                <blockquote>{trade.openingNote}</blockquote>
               </>
             )}
-            {trade.closing_note && (
+            {trade.closingNote && (
               <>
                 <b>Closing note:</b>
-                <blockquote>{trade.closing_note}</blockquote>
+                <blockquote>{trade.closingNote}</blockquote>
               </>
             )}
           </DetailsSection>

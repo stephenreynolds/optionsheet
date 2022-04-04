@@ -130,8 +130,8 @@ const sortTrades = (trades: Trade[], { property, direction }: SortMethod): Trade
       return 0;
     }
   }).sort((a, b) => {
-    const aValue = new Date(a.updated_on).getTime();
-    const bValue = new Date(b.updated_on).getTime();
+    const aValue = new Date(a.updatedOn).getTime();
+    const bValue = new Date(b.updatedOn).getTime();
     return direction === SortDirection.Descending ? bValue - aValue : aValue - bValue;
   });
 };
@@ -247,9 +247,9 @@ const Trades = ({ trades }: Props) => {
           .map((trade: Trade, i) => (
             <tr key={i} onClick={() => onTradeClick(trade)}>
               {/* Open date */}
-              <td>{formatDate(trade.open_date)}</td>
+              <td>{formatDate(trade.openDate)}</td>
               {/* Close date */}
-              <td>{trade.close_date ? formatDate(trade.close_date) : null}</td>
+              <td>{trade.closeDate ? formatDate(trade.closeDate) : null}</td>
               {/* Expiration */}
               <td>{formatDate(getTradeExpiration(trade.legs))}</td>
               {/* Symbol */}

@@ -31,16 +31,16 @@ const ProjectCardDiv = styled.div`
   }
 `;
 
-export interface ProjectCardProps {
+export interface ProjectSearchProps {
   name: string;
   description: string;
-  updated_on: Date;
+  updatedOn: Date;
   username: string;
   tags: string[];
   trades?: number;
 }
 
-const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
+const ProjectCard = ({ project }: { project: ProjectSearchProps }) => {
   if (!(project && project.username)) {
     return null;
   }
@@ -64,7 +64,7 @@ const ProjectCard = ({ project }: { project: ProjectCardProps }) => {
 
       {/* Last edited date */}
       <p>
-        <small>Last edited {moment(new Date(project.updated_on)).fromNow()}</small>
+        <small>Last edited {moment(new Date(project.updatedOn)).fromNow()}</small>
       </p>
     </ProjectCardDiv>
   );

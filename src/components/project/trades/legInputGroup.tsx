@@ -20,7 +20,7 @@ const invertOptions = (legs: Leg[], setLegs: (legs: Leg[]) => void) => {
   const newLegs = legs.map((leg) => {
     return {
       ...leg,
-      put_call: leg.put_call === PutCall.Call ? PutCall.Put : PutCall.Call
+      put_call: leg.putCall === PutCall.Call ? PutCall.Put : PutCall.Call
     };
   });
 
@@ -95,13 +95,13 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     if (!isNaN(leg.strike)) {
       setStrikeStr(leg.strike.toString());
     }
-    if (!isNaN(leg.open_price)) {
-      setOpenPriceStr(leg.open_price.toString());
+    if (!isNaN(leg.openPrice)) {
+      setOpenPriceStr(leg.openPrice.toString());
     }
-    if (!isNaN(leg.close_price) && leg.close_price) {
-      setClosePriceStr(leg.close_price.toString());
+    if (!isNaN(leg.closePrice) && leg.closePrice) {
+      setClosePriceStr(leg.closePrice.toString());
     }
-  }, [leg.close_price, leg.expiration, leg.open_price, leg.strike]);
+  }, [leg.closePrice, leg.expiration, leg.openPrice, leg.strike]);
 
   const updateLegs = (leg: Leg) => {
     const newLegs = [...legs];
@@ -116,7 +116,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
 
   const onOptionChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const put_call = PutCall[e.target.value];
-    updateLegs({ ...leg, put_call });
+    updateLegs({ ...leg, putCall: put_call });
   };
 
   const onQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +157,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     const openPrice = Number.parseFloat(priceStr);
 
     setOpenPriceStr(priceStr);
-    updateLegs({ ...leg, open_price: openPrice });
+    updateLegs({ ...leg, openPrice: openPrice });
   };
 
   const onClosePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -173,7 +173,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
     const close_price = Number.parseFloat(priceStr);
 
     setClosePriceStr(priceStr);
-    updateLegs({ ...leg, close_price });
+    updateLegs({ ...leg, closePrice: close_price });
   };
 
   const onDelete = (e: MouseEvent) => {
@@ -200,7 +200,7 @@ const LegInputGroup = ({ index, legs, setLegs, isShares, isClosing, isClosed }: 
       {!isShares && (
         <div>
           {index === 0 && <label>Option<AdjustButton show={!isClosing} adjustFunction={() => invertOptions(legs, setLegs)} /></label>}
-          <select value={leg.put_call} onChange={onOptionChange} disabled={isClosing}>
+          <select value={leg.putCall} onChange={onOptionChange} disabled={isClosing}>
             {Object.keys(PutCall).map(key => (
               <option key={key} value={key}>{key}</option>
             ))}

@@ -32,31 +32,10 @@ const Project = () => {
   useEffect(() => {
     try {
       getProjectByName(username, projectName)
-        .then(({ data }) => {
-          setProject({
-            ...data,
-            updated_on: new Date(data.updated_on)
-          });
-        });
+        .then((data) => setProject(data));
 
       getTrades(username, projectName)
-        .then(({ data }) => {
-          setTrades(data.map((trade: Trade) => {
-            return {
-              ...trade,
-              open_date: new Date(trade.open_date),
-              close_date: trade.close_date ? new Date(trade.close_date) : null,
-              created_on: new Date(trade.created_on),
-              updated_on: new Date(trade.updated_on),
-              legs: trade.legs.map((leg) => {
-                return {
-                  ...leg,
-                  expiration: new Date(leg.expiration)
-                };
-              })
-            };
-          }));
-        });
+        .then((data) => setTrades(data));
 
       setLoading(false);
     }

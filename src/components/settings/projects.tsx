@@ -19,10 +19,9 @@ const ProjectSettings = () => {
 
   useEffect(() => {
     getDefaultProjectSettings()
-      .then((res) => {
-        const data: DefaultProjectSettingsModel = res.data;
-        setNewStartingBalance(data.default_starting_balance ?? "");
-        setNewRisk(data.default_risk ?? "");
+      .then((data) => {
+        setNewStartingBalance(data.defaultStartingBalance ?? "");
+        setNewRisk(data.defaultRisk ?? "");
         setLoading(false);
       })
       .catch((error) => toast.error(error.message));
@@ -38,8 +37,8 @@ const ProjectSettings = () => {
 
   const onSave = () => {
     const model: DefaultProjectSettingsModel = {
-      default_starting_balance: newStartingBalance === "" ? null : Number(newStartingBalance),
-      default_risk: newRisk === "" ? null : Number(newRisk)
+      defaultStartingBalance: newStartingBalance === "" ? null : Number(newStartingBalance),
+      defaultRisk: newRisk === "" ? null : Number(newRisk)
     };
 
     updateDefaultProjectSettings(model)

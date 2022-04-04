@@ -15,8 +15,8 @@ const ProfileProjects = ({ username }: Props) => {
   useEffect(() => {
     if (username) {
       getProjects(username)
-        .then(results => {
-          setProjects(results.data);
+        .then((data) => {
+          setProjects(data);
           setLoading(false);
         })
         .catch(error => toast(error.message));

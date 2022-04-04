@@ -38,9 +38,9 @@ const Search = () => {
   const searchType = searchParams.get("type") ?? "trade";
 
   useEffect(() => {
-    search(searchParams).then((result) => {
-      setSearchResults(result.data.items);
-      setCounts(result.data.counts);
+    search(searchParams).then((data) => {
+      setSearchResults(data.items);
+      setCounts(data.counts);
     });
   }, [searchParams]);
 

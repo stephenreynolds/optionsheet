@@ -4,8 +4,8 @@ import * as userApi from "../../common/api/user";
 export const getAuthenticatedUser = () => {
   return async (dispatch) => {
     try {
-      const response = await userApi.getAuthenticatedUser();
-      dispatch({ type: GET_AUTHENTICATED_USER_SUCCESS, payload: response.data });
+      const payload = await userApi.getAuthenticatedUser();
+      dispatch({ type: GET_AUTHENTICATED_USER_SUCCESS, payload });
     }
     catch (error) {
       dispatch(logout());

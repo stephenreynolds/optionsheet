@@ -34,7 +34,7 @@ const TradeCardDiv = styled.div`
   }
 `;
 
-export interface TradeProps {
+export interface TradeSearchProps {
   id: number;
   symbol: string;
   openDate: Date;
@@ -43,15 +43,11 @@ export interface TradeProps {
   closingNote?: string;
   legs: Leg[];
   tags: string[];
-  project: {
-    name: string;
-    user: {
-      username: string;
-    }
-  };
+  projectName: number;
+  username: string;
 }
 
-const TradeCard = ({ trade }: { trade: TradeProps }) => {
+const TradeCard = ({ trade }: { trade: TradeSearchProps }) => {
   if (!(trade && trade.legs && trade.legs.length)) {
     return null;
   }
@@ -61,13 +57,13 @@ const TradeCard = ({ trade }: { trade: TradeProps }) => {
   return (
     <TradeCardDiv>
       {/* Symbol */}
-      <Link to={`/${trade.project.user.username}/${trade.project.name}/${trade.id}`} className="trade-link">
+      <Link to={`/${trade.username}/${trade.projectName}/${trade.id}`} className="trade-link">
         <h1>{trade.symbol}</h1>
       </Link>
 
       {/* Link to trade */}
-      <Link to={`/${trade.project.user.username}/${trade.project.name}`} className="user-link">
-        {trade.project.user.username}/{trade.project.name}
+      <Link to={`/${trade.username}/${trade.projectName}`} className="user-link">
+        {trade.username}/{trade.projectName}
       </Link>
 
       {/* Strategy */}
@@ -98,9 +94,9 @@ const TradeCard = ({ trade }: { trade: TradeProps }) => {
       {/* Created and closed dates */}
       <div>
         {trade.closeDate ? (
-          <small>Closed {moment(new Date(trade.closeDate)).fromNow()}</small>
+          <small>Closed {moment(trade.closeDate).fromNow()}</small>
         ) : (
-          <small>Opened {moment(new Date(trade.openDate)).fromNow()}</small>
+          <small>Opened {moment(trade.openDate).fromNow()}</small>
         )}
       </div>
     </TradeCardDiv>

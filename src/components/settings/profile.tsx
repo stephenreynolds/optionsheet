@@ -39,7 +39,7 @@ const ProfileSettings = () => {
   const dispatch: PromiseDispatch = useDispatch();
 
   useEffect(() => {
-    setNewBio(user.bio);
+    setNewBio(user.bio ?? "");
   }, [user]);
 
   const onBioChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -92,7 +92,7 @@ const ProfileSettings = () => {
             <label>Profile picture</label>
             <ProfileImageSetting>
               <div onClick={onChangeAvatarClick}>
-                <ProfileImage imageUrl={user.avatar_url} username={user.username} />
+                <ProfileImage imageUrl={user.avatarUrl} username={user.username} />
               </div>
               <button onClick={onChangeAvatarClick}>Edit</button>
               <input ref={profilePictureInput}

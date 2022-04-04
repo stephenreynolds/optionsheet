@@ -44,7 +44,7 @@ const ProfileSidebar = ({ user }: Props) => {
     <div style={{ maxWidth: "296px", marginTop: "-50px", marginRight: "2rem" }}>
       <div>
         <div style={{ width: "300px", height: "300px", marginBottom: "1em" }}>
-          <ProfileImage imageUrl={user.avatar_url} username={user.username} />
+          <ProfileImage imageUrl={user.avatarUrl} username={user.username} />
         </div>
         <h1 className="fw-bold text-center">{user.username}</h1>
         {editing ? (

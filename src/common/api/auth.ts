@@ -32,7 +32,7 @@ interface EmailUsername {
 }
 
 export const checkCredentials = async (params: EmailUsername): Promise<boolean> => {
-  return await api.get(`/auth/check-credentials`, { params })
+  return api.get(`/auth/check-credentials`, { params })
     .then(() => true)
     .catch(() => false);
 };

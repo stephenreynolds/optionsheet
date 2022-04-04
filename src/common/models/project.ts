@@ -3,10 +3,10 @@ export interface Project {
   name: string;
   description: string;
   tags: string[];
-  starting_balance?: number;
+  startingBalance?: number;
   risk?: number;
-  created_on: Date;
-  updated_on: Date;
+  createdOn: Date;
+  updatedOn: Date;
   pinned?: boolean;
   stars?: number;
   username: string;

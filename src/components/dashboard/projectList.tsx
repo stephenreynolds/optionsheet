@@ -19,19 +19,14 @@ const ProjectList = () => {
   const username = useSelector((state) => getUsername(state));
 
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
     if (username) {
       getProjects(username)
-        .then(({ data }) => {
-          setProjects(data.map((project: Project) => {
-            return {
-              ...project,
-              updated_on: new Date(project.updated_on)
-            };
-          }));
+        .then((data) => {
+          setProjects(data);
           setLoading(false);
         })
         .catch((error) => {
@@ -40,13 +35,13 @@ const ProjectList = () => {
     }
   }, [username]);
 
-  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
-  };
-
   if (!projects || loading) {
     return null;
   }
+
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
 
   return (
     <ProjectListNav>
@@ -54,7 +49,7 @@ const ProjectList = () => {
       <VerticalNav>
         {projects
           .filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()))
-          .sort((a, b) => b.updated_on.getTime() - a.updated_on.getTime())
+          .sort((a, b) => b.updatedOn.getTime() - a.updatedOn.getTime())
           .map((project, i) => (
             <Link key={i} to={`/${username}/${project.name}`}>{project.name}</Link>
           ))}

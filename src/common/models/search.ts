@@ -1,9 +1,9 @@
-import { User } from "./user";
-import { Project } from "./project";
-import { Trade } from "./trade";
+import { TradeSearchProps } from "../../components/search/tradeCard";
+import { ProjectSearchProps } from "../../components/shared/projectCard";
+import { UserSearchProps } from "../../components/search/userCard";
 
 export interface SearchModel {
-  items: Trade[] | Project[] | User[];
+  items: TradeSearchProps[] | ProjectSearchProps[] | UserSearchProps[];
   counts: {
     trades: number;
     projects: number;

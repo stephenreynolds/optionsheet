@@ -13,8 +13,8 @@ const ProfileStars = ({ username }: Props) => {
 
   useEffect(() => {
     getStarredProjects(username)
-      .then((response) => {
-        setStarredProjects(response.data);
+      .then((data) => {
+        setStarredProjects(data);
         setLoading(false);
       })
       .catch((error) => toast.error(error.message));

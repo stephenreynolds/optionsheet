@@ -48,17 +48,11 @@ const PinnedProjectsModal = ({ show, setShow, pinnedProjects, setPinnedProjects 
 
   useEffect(() => {
     if (username) {
-      getProjects(username).then((res) => {
-        const data = res.data
+      getProjects(username).then((data) => {
+        const unpinned = data
           .filter((project: Project) => !project.pinned)
-          .map((project: Project) => {
-            return {
-              ...project,
-              updated_on: new Date(project.updated_on)
-            };
-          })
-          .sort((a, b) => b.updated_on.getTime() - a.updated_on.getTime());
-        setProjects([...pinnedProjects, ...data]);
+          .sort((a, b) => b.updatedOn.getTime() - a.updatedOn.getTime());
+        setProjects([...pinnedProjects, ...unpinned]);
       });
     }
   }, [username]);

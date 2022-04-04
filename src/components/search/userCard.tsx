@@ -31,14 +31,14 @@ const UserCardDiv = styled.div`
   }
 `;
 
-export interface UserCardProps {
+export interface UserSearchProps {
   username: string;
   avatarUrl: string;
   bio: string;
   updatedOn: Date;
 }
 
-const UserCard = ({ user }: { user: UserCardProps }) => {
+const UserCard = ({ user }: { user: UserSearchProps }) => {
   if (!user) {
     return null;
   }

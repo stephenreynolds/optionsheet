@@ -31,7 +31,7 @@ const sameExpiration = (legs: Leg[]): boolean => {
 };
 
 const sameOptionType = (legs: Leg[]): boolean => {
-  return legs.map(l => l.put_call).every((val, i, arr) => val === arr[0]);
+  return legs.map(l => l.putCall).every((val, i, arr) => val === arr[0]);
 };
 
 const getLowestQuantity = (legs: Leg[]): number => {
@@ -53,7 +53,7 @@ export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
   // Single leg option
   if (legs.length === 1) {
     const l = legs[0];
-    if (l.put_call === PutCall.Call) {
+    if (l.putCall === PutCall.Call) {
       if (l.side === Side.Buy) {
         return Strategy.LongCall;
       }
@@ -72,7 +72,7 @@ export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
     if (sameOptionType(legs)) {
       if (legs[0].side !== legs[1].side) {
         if (sameExpiration(legs)) {
-          if (legs[0].put_call === PutCall.Call) {
+          if (legs[0].putCall === PutCall.Call) {
             if (legs[0].side === Side.Buy && legs[0].strike < legs[1].strike) {
               return Strategy.LongCallVertical;
             }
@@ -94,7 +94,7 @@ export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
           return Strategy.Calendar;
         }
 
-        if (legs[0].put_call === PutCall.Call) {
+        if (legs[0].putCall === PutCall.Call) {
           if (legs[0].side === Side.Buy && legs[0].strike < legs[1].strike ||
               legs[1].side === Side.Buy && legs[1].strike < legs[0].strike) {
             return Strategy.LongCallDiagonal;
@@ -143,10 +143,10 @@ export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
   // Four legs
   if (legs.length === 4) {
     if (sameExpiration(legs)) {
-      if (_.find(legs, l => l.put_call === PutCall.Put && l.side === Side.Sell) &&
-        _.find(legs, l => l.put_call === PutCall.Call && l.side === Side.Sell) &&
-        _.find(legs, l => l.put_call === PutCall.Put && l.side === Side.Buy) &&
-        _.find(legs, l => l.put_call === PutCall.Call && l.side === Side.Buy)) {
+      if (_.find(legs, l => l.putCall === PutCall.Put && l.side === Side.Sell) &&
+        _.find(legs, l => l.putCall === PutCall.Call && l.side === Side.Sell) &&
+        _.find(legs, l => l.putCall === PutCall.Put && l.side === Side.Buy) &&
+        _.find(legs, l => l.putCall === PutCall.Call && l.side === Side.Buy)) {
         return Strategy.IronCondor;
       }
     }
@@ -156,7 +156,7 @@ export const getStrategyFromLegs = (legs: Leg[]): Strategy => {
     const higher = legs.filter(l => l.expiration.getTime() > lowestExp.getTime());
     if (lowest.length === 2 && higher.length === 2 &&
       lowest[0].expiration.getTime() === lowest[1].expiration.getTime() && higher[0].expiration.getTime() === higher[1].expiration.getTime() &&
-      lowest[0].put_call !== lowest[1].put_call && higher[0].put_call !== higher[1].put_call) {
+      lowest[0].putCall !== lowest[1].putCall && higher[0].putCall !== higher[1].putCall) {
       return Strategy.DoubleDiagonal;
     }
   }

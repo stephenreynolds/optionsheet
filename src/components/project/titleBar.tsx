@@ -32,7 +32,7 @@ const getNetProfit = (trades: Trade[]): number => {
     return NaN;
   }
 
-  const closedTrades = trades.filter((trade) => trade.close_date);
+  const closedTrades = trades.filter((trade) => trade.closeDate);
   const pl = closedTrades.map((trade) => getProfitLoss(trade));
 
   return Number(pl.reduce((a, b) => a + b, 0));

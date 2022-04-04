@@ -13,14 +13,14 @@ export interface Credentials {
 export interface User {
   username: string;
   url: string;
-  html_url: string;
-  projects_url: string;
+  htmlUrl: string;
+  projectsUrl: string;
   email: string;
-  avatar_url: string;
+  avatarUrl: string;
   bio: string;
-  created_on: Date;
-  updated_on: Date;
-  is_admin: boolean;
+  createdOn: Date;
+  updatedOn: Date;
+  isAdmin: boolean;
 }
 
 export interface UserUpdateModel {
@@ -31,6 +31,6 @@ export interface UserUpdateModel {
 }
 
 export interface DefaultProjectSettingsModel {
-  default_starting_balance?: number;
-  default_risk?: number;
+  defaultStartingBalance?: number;
+  defaultRisk?: number;
 }

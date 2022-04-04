@@ -15,7 +15,7 @@ const Profile = () => {
 
   useEffect(() => {
     getUser(username)
-      .then(({ data }) => {
+      .then((data) => {
         setUser(data);
       })
       .catch(error => {

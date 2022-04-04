@@ -50,7 +50,7 @@ const Settings = ({ project, trades }: Props) => {
     if (project) {
       setNewProjectName(project.name);
       setNewDescription(project.description);
-      setNewStartingBalance(project.starting_balance != null ? project.starting_balance : "");
+      setNewStartingBalance(project.startingBalance != null ? project.startingBalance : "");
       setNewTags(project.tags);
       setNewRisk(project.risk != null ? project.risk : "");
     }

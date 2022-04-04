@@ -82,21 +82,21 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
 
   const initialValues = {
     symbol: trade ? trade.symbol : "",
-    open_date: trade ? trade.open_date : new Date(),
+    open_date: trade ? trade.openDate : new Date(),
     close_date: () => {
       if (trade) {
-        if (trade.close_date) {
-          return trade.close_date;
+        if (trade.closeDate) {
+          return trade.closeDate;
         }
-        if (trade.open_date) {
-          return trade.open_date;
+        if (trade.openDate) {
+          return trade.openDate;
         }
       }
       return undefined;
     },
     legs: trade ? trade.legs : [initialLegValues],
-    opening_note: trade && trade.opening_note ? trade.opening_note : "",
-    closing_note: trade && trade.closing_note ? trade.closing_note : "",
+    opening_note: trade && trade.openingNote ? trade.openingNote : "",
+    closing_note: trade && trade.closingNote ? trade.closingNote : "",
     tags: trade ? trade.tags : [],
     strategy: StrategyOptions.Call,
     errorMessages: []
@@ -137,7 +137,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
       messages = [...messages, m];
     }
 
-    if (trade && trade.close_date) {
+    if (trade && trade.closeDate) {
       if (!closeDateIsValid(openDate, closeDate)) {
         const m = "Close date must be after open date.";
         messages = [...messages, m];
@@ -152,7 +152,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
     return true;
   };
 
-  const closeTrade = (id: string) => {
+  const closeTrade = (id: number) => {
     const updatedTrade: TradeUpdateModel = {
       symbol,
       open_date: openDate,
@@ -174,14 +174,14 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
       });
   };
 
-  const editTrade = (id: string) => {
+  const editTrade = (id: number) => {
     const updatedTrade: TradeUpdateModel = {
       symbol,
       open_date: openDate,
-      close_date: trade.close_date ? closeDate : null,
+      close_date: trade.closeDate ? closeDate : null,
       legs,
       opening_note: openingNote,
-      closing_note: trade.closing_note ? closingNote : null,
+      closing_note: trade.closingNote ? closingNote : null,
       tags
     };
 
@@ -227,10 +227,10 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
 
     if (trade) {
       if (close) {
-        closeTrade(id);
+        closeTrade(parseInt(id));
       }
       else {
-        editTrade(id);
+        editTrade(parseInt(id));
       }
     }
     else {
@@ -285,7 +285,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
             )}
 
             {/* Close date */}
-            {trade && (close || trade.close_date) && (
+            {trade && (close || trade.closeDate) && (
               <div>
                 <label>Close date</label>
                 <DateInput value={closeDate} onChange={(e) => onTradeDateChange(e, setCloseDate)} clearIcon={null} />
@@ -297,7 +297,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
           <div className="legs">
             {legs.map((leg, i) => <LegInputGroup key={i} index={i} legs={legs} setLegs={setLegs}
                                                  isShares={isShares} isClosing={close}
-                                                 isClosed={trade && !!trade.close_date} />)}
+                                                 isClosed={trade && !!trade.closeDate} />)}
           </div>
 
           {/* Add leg button */}
@@ -322,7 +322,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
           )}
 
           {/* Closing notes */}
-          {trade && (close || trade.close_date) && (
+          {trade && (close || trade.closeDate) && (
             <div>
               <label>Closing note</label>
               <textarea rows={1} value={closingNote} onChange={(e) => onNoteChange(e, setClosingNote)} />

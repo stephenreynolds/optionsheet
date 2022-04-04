@@ -45,11 +45,11 @@ export const addDays = (date: Date, days: number): Date => {
 
 export const initialLegValues: Leg = {
   side: Side.Buy,
-  put_call: PutCall.Call,
+  putCall: PutCall.Call,
   quantity: 1,
   expiration: addDays(new Date(), 45),
   strike: NaN,
-  open_price: NaN
+  openPrice: NaN
 };
 
 export const onAddLegClick = (e: MouseEvent, legs: Leg[], setLegs: (legs: Leg[]) => void) => {

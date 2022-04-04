@@ -5,7 +5,7 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import * as yup from "yup";
-import { Project, ProjectCreateModel } from "../../common/models/project";
+import { ProjectCreateModel } from "../../common/models/project";
 import { getIsLoggedIn, getUsername } from "../../redux/selectors/userSelectors";
 import TagInput from "../shared/tagInput";
 import { getDefaultProjectSettings } from "../../common/api/user";
@@ -79,14 +79,8 @@ const NewProject = () => {
   useEffect(() => {
     if (username) {
       getProjects(username)
-        .then(({ data }) => {
-          const projects = data.map((project: Project) => {
-            return {
-              ...project,
-              updated_on: new Date(project.updated_on)
-            };
-          });
-          const tags = _.uniq(projects
+        .then((data) => {
+          const tags = _.uniq(data
             .map((project) => project.tags)
             .flat());
           setTagSuggestions(tags);
@@ -100,9 +94,9 @@ const NewProject = () => {
 
   useEffect(() => {
     getDefaultProjectSettings()
-      .then((res) => {
-        const startingBalance = res.data.default_starting_balance;
-        const risk = res.data.default_risk;
+      .then((data) => {
+        const startingBalance = data.defaultStartingBalance;
+        const risk = data.defaultRisk;
 
         setInitialValues({
           name: "",
@@ -132,9 +126,9 @@ const NewProject = () => {
     };
 
     createProject(model)
-      .then(({ data }) => {
+      .then((project_url) => {
         toast.success("Project created.");
-        navigate(data.project_url);
+        navigate(project_url);
       })
       .catch((error) => {
         toast.error(error.message);

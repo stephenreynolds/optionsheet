@@ -23,14 +23,14 @@ const getClosedTrades = (trades: Trade[]) => {
     .map((trade) => {
       return {
         ...trade,
-        close_date: new Date(trade.close_date.toDateString())
+        close_date: new Date(trade.closeDate.toDateString())
       };
     });
 };
 
 const getUniqueCloseDates = (trades: Trade[]): Date[] => {
   return trades
-    .map((t) => t.close_date.getTime())
+    .map((t) => t.closeDate.getTime())
     .filter((s, i, a) => a.indexOf(s) === i)
     .map((s) => new Date(s));
 };
@@ -40,7 +40,7 @@ const groupTradesByCloseDate = (trades: Trade[], closeDates: Date[]): { close_da
     .map((close_date) => {
       return {
         close_date,
-        trades: trades.filter((trade) => trade.close_date.getTime() === close_date.getTime())
+        trades: trades.filter((trade) => trade.closeDate.getTime() === close_date.getTime())
       };
     })
     .sort((a, b) => a.close_date.getTime() - b.close_date.getTime());
@@ -193,7 +193,7 @@ const getSideStats = (trades: Trade[], startingBalance: number) => {
   const gainLossRatio = averageGain && averageLoss ? averageGain / averageLoss : 1;
   const averageProfitLoss = netProfit / (winningTrades.length + losingTrades.length);
   const averageDurationDays = _.mean(trades
-    .filter((trade) => trade.close_date)
+    .filter((trade) => trade.closeDate)
     .map((trade) => getTradeDurationDays(trade)));
 
   return {
@@ -345,7 +345,7 @@ export const calculateStats = (startingBalance: number, risk: number, date: Date
     .filter((r) => isFinite(r)));
   const tradingPeriodDays = getTradingPeriodDays(trades);
   const averageDurationDays = _.mean(trades
-    .filter((trade) => trade.close_date)
+    .filter((trade) => trade.closeDate)
     .map((trade) => getTradeDurationDays(trade)));
   const kellyPercentage = getKellyPercentage(percentProfitable, averageGain, averageLoss);
   const riskAmount = risk != null ? currentBalance * risk / 100 : undefined;

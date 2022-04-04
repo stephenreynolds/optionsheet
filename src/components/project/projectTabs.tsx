@@ -85,7 +85,11 @@ const ProjectTabs = ({ userIsOwner, username, projectName, trades, setTrades }: 
   const setUpdatedTrade = (newTrade: TradeCreateModel) => {
     setTrades([
       ...trades,
-      newTrade as Trade
+      {
+        ...newTrade,
+        createdOn: new Date(),
+        updatedOn: new Date()
+      }
     ]);
   };
 

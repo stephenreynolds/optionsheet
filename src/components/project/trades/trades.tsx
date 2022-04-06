@@ -82,7 +82,7 @@ interface SortMethod {
 
 const sortTrades = (trades: Trade[], { property, direction }: SortMethod): Trade[] => {
   return trades.sort((a, b) => {
-    if (property === "open_date" || property === "close_date") {
+    if (property === "openDate" || property === "closeDate") {
       const aValue = !a[property] ? -1 : a[property].getTime();
       const bValue = !b[property] ? -1 : b[property].getTime();
       return direction === SortDirection.Descending ? bValue - aValue : aValue - bValue;
@@ -218,9 +218,9 @@ const Trades = ({ trades }: Props) => {
       <Table>
         <thead>
         <tr>
-          <th onClick={() => sortBy("open_date")}>Open {sortMethod.property === "open_date" &&
+          <th onClick={() => sortBy("openDate")}>Open {sortMethod.property === "openDate" &&
             <SortIcon sortMethod={sortMethod} />}</th>
-          <th onClick={() => sortBy("close_date")}>Close {sortMethod.property === "close_date" &&
+          <th onClick={() => sortBy("closeDate")}>Close {sortMethod.property === "closeDate" &&
             <SortIcon sortMethod={sortMethod} />}</th>
           <th onClick={() => sortBy("expiration")}>Exp. {sortMethod.property === "expiration" &&
             <SortIcon sortMethod={sortMethod} />}</th>

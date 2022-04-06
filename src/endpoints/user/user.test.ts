@@ -755,3 +755,41 @@ describe("GET /user/settings", () => {
     });
   });
 });
+
+describe("PATCH /user/settings", () => {
+  describe("if successful", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "updateDefaultProjectSettings").mockImplementation(() => Promise.resolve({}));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .patch("/user/settings")
+        .set(authHeader);
+      expect(response.status).toEqual(200);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "updateDefaultProjectSettings").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .patch("/user/settings")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});

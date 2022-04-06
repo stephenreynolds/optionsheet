@@ -1,6 +1,7 @@
 import { getReasonPhrase, StatusCodes } from "http-status-codes";
-import { sendError } from "./error";
+import { logError, sendError } from "./error";
 import { Request, Response } from "express";
+import logger from "./logger";
 
 describe("sendError", () => {
   const mockRequest = () => {
@@ -32,5 +33,13 @@ describe("sendError", () => {
     };
 
     expect(res.send).toBeCalledWith(expectedResponse);
+  });
+});
+
+describe("logError", () => {
+  it("should call logger.error", () => {
+    logger.error = jest.fn();
+    logError({}, "");
+    expect(logger.error).toBeCalled();
   });
 });

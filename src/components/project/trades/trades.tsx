@@ -143,6 +143,24 @@ const toggleSortDirection = (direction: SortDirection): SortDirection => {
 const SortIcon = ({ sortMethod }: { sortMethod: SortMethod }) => <FontAwesomeIcon
   icon={sortMethod.direction === SortDirection.Ascending ? faCaretUp : faCaretDown} />;
 
+const getTradeExpiration = (legs: Leg[]) => {
+  if (tradeIsOption(legs)) {
+    return getFirstExpiration(legs);
+  }
+
+  return undefined;
+};
+
+const getTradeCost = (legs: Leg[]) => {
+  const cost = getNetCost(legs);
+
+  if (tradeIsOption(legs)) {
+    return cost * 100;
+  }
+
+  return cost;
+};
+
 interface Props {
   trades: Trade[];
 }
@@ -158,8 +176,12 @@ const Trades = ({ trades }: Props) => {
     window.scrollTo(0, 0);
   }, [index]);
 
-  if (!trades) {
-    return null;
+  if (trades.length === 0) {
+    return (
+      <Container>
+        <h2 className="text-center">No trades yet...</h2>
+      </Container>
+    );
   }
 
   const onTradeClick = (trade: Trade) => {
@@ -172,32 +194,6 @@ const Trades = ({ trades }: Props) => {
       direction: toggleSortDirection(sortMethod.direction)
     });
   };
-
-  const getTradeExpiration = (legs: Leg[]) => {
-    if (tradeIsOption(legs)) {
-      return getFirstExpiration(legs);
-    }
-
-    return undefined;
-  };
-
-  const getTradeCost = (legs: Leg[]) => {
-    const cost = getNetCost(legs);
-
-    if (tradeIsOption(legs)) {
-      return cost * 100;
-    }
-
-    return cost;
-  };
-
-  if (trades.length === 0) {
-    return (
-      <Container>
-        <h2 className="text-center">No trades yet...</h2>
-      </Container>
-    );
-  }
 
   return (
     <Container>

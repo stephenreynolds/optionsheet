@@ -15,10 +15,6 @@ beforeAll(async () => {
   })}`;
 });
 
-afterAll(() => {
-  jest.restoreAllMocks();
-});
-
 describe("verifyJwtToken", () => {
   describe("if token valid", () => {
     it("should respond with 200 status code", async () => {

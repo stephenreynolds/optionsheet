@@ -210,7 +210,7 @@ export class UserManager implements IUserManager {
   async createToken(userUUID: string) {
     try {
       return jwt.sign({ uuid: userUUID }, config.jwt.secret, {
-        expiresIn: config.jwt.jwtExpiration
+        expiresIn: config.jwt.expiration
       });
     }
     catch (error) {
@@ -221,7 +221,7 @@ export class UserManager implements IUserManager {
   async createRefreshToken(userUUID: string) {
     try {
       const expiredAt = new Date();
-      expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
+      expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.refreshExpiration);
 
       const user = await this.getUserByUUID(userUUID);
 

@@ -4,7 +4,7 @@ export default {
   port: Number(process.env.PORT || 5000),
   jwt: {
     secret: process.env.SECRET,
-    jwtExpiration: 3600, // 1 hour
-    jwtRefreshExpiration: 86400 // 24 hours
+    expiration: 3600, // 1 hour
+    refreshExpiration: 86400 // 24 hours
   }
 };

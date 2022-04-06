@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import color from "color";
 import numeral from "numeral";
 import { NumberCircle } from "../styles";
+import { isSearchType, SearchType } from "../../common/api/search";
 
 const SidebarNav = styled.nav`
   border: 1px solid ${props => props.theme.dark.border};
@@ -52,7 +53,8 @@ interface SearchSidebarProps {
 }
 
 const SearchSidebar = ({ searchParams, counts }: SearchSidebarProps) => {
-  const searchType = searchParams.get("type") ?? "trade";
+  const searchParamsType = searchParams.get("type");
+  const searchType: SearchType = isSearchType(searchParamsType) ? searchParamsType : "trade";
 
   const tradeUrl = new URLSearchParams(searchParams);
   tradeUrl.set("type", "trade");

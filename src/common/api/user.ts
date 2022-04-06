@@ -1,59 +1,36 @@
 import api, { baseURL } from "./api";
 import { DefaultProjectSettingsModel, User, UserUpdateModel } from "../models/user";
 import { Project } from "../models/project";
+import { parseProject } from "./projects";
 
-export const getAuthenticatedUser = () => {
+export const parseUser = (data: any): Required<User> => {
+  return {
+    username: data.username,
+    url: data.url,
+    htmlUrl: data.html_url,
+    projectsUrl: data.projects_url,
+    email: data.email,
+    avatarUrl: data.avatar_url,
+    bio: data.bio,
+    createdOn: new Date(data.created_on),
+    updatedOn: new Date(data.updated_on),
+    isAdmin: data.isAdmin
+  };
+};
+
+export const getAuthenticatedUser = (): Promise<User> => {
   return api.get(`/user`)
-    .then(({ data }) => {
-      return {
-        username: data.username,
-        url: data.url,
-        htmlUrl: data.html_url,
-        projectsUrl: data.projects_url,
-        email: data.email,
-        avatarUrl: data.avatar_url,
-        bio: data.bio,
-        createdOn: new Date(data.created_on),
-        updatedOn: new Date(data.updated_on),
-        isAdmin: data.isAdmin
-      } as User;
-    });
+    .then(({ data }) => parseUser(data));
 };
 
 export const getUser = (username: string): Promise<User> => {
   return api.get(`/users/${username}`)
-    .then(({ data }) => {
-      return {
-        username: data.username,
-        url: data.url,
-        htmlUrl: data.html_url,
-        projectsUrl: data.projects_url,
-        email: data.email,
-        avatarUrl: data.avatar_url,
-        bio: data.bio,
-        createdOn: new Date(data.created_on),
-        updatedOn: new Date(data.updated_on),
-        isAdmin: data.isAdmin
-      } as User;
-    });
+    .then(({ data }) => parseUser(data));
 };
 
 export const updateUser = async (data: UserUpdateModel): Promise<User> => {
   return api.patch(`/user`, data)
-    .then(({ data }) => {
-      return {
-        username: data.username,
-        url: data.url,
-        htmlUrl: data.html_url,
-        projectsUrl: data.projects_url,
-        email: data.email,
-        avatarUrl: data.avatar_url,
-        bio: data.bio,
-        createdOn: new Date(data.created_on),
-        updatedOn: new Date(data.updated_on),
-        isAdmin: data.isAdmin
-      } as User;
-    });
+    .then(({ data }) => parseUser(data));
 };
 
 export const deleteUser = async (): Promise<void> => {
@@ -81,24 +58,21 @@ export const getAvatarUrl = (avatarUrl): string => {
   return `${baseURL}/${avatarUrl}`;
 };
 
+const parseDefaultProjectSettings = (data: any): DefaultProjectSettingsModel => {
+  return {
+    defaultStartingBalance: parseFloat(data.default_starting_balance),
+    defaultRisk: parseFloat(data.default_risk)
+  };
+};
+
 export const getDefaultProjectSettings = async (): Promise<DefaultProjectSettingsModel> => {
   return api.get(`/user/settings`)
-    .then(({ data }) => {
-      return {
-        defaultStartingBalance: parseFloat(data.default_starting_balance),
-        defaultRisk: parseFloat(data.default_risk)
-      } as DefaultProjectSettingsModel;
-    });
+    .then(({ data }) => parseDefaultProjectSettings(data));
 };
 
 export const updateDefaultProjectSettings = async (model: DefaultProjectSettingsModel): Promise<DefaultProjectSettingsModel> => {
   return api.patch(`/user/settings`, model)
-    .then(({ data }) => {
-      return {
-        defaultStartingBalance: parseFloat(data.default_starting_balance),
-        defaultRisk: parseFloat(data.default_risk)
-      } as DefaultProjectSettingsModel;
-    });
+    .then(({ data }) => parseDefaultProjectSettings(data));
 };
 
 export const starProject = async (ownerUsername: string, projectName: string): Promise<void> => {
@@ -119,40 +93,10 @@ export const checkProjectStarred = async (ownerUsername: string, projectName: st
 
 export const getStarredProjects = async (username: string): Promise<Project[]> => {
   return api.get(`/users/${username}/starred`)
-    .then(({ data }) => {
-      return data.map((project) => {
-        return {
-          id: parseInt(project.id),
-          name: project.name,
-          username: project.username,
-          description: project.description ?? undefined,
-          startingBalance: project.starting_balance ? parseFloat(project.starting_balance) : undefined,
-          risk: project.risk ? parseFloat(project.risk) : undefined,
-          createdOn: new Date(project.created_on),
-          updatedOn: new Date(project.updated_on),
-          tags: project.tags ?? []
-        } as Project;
-      });
-    });
+    .then(({ data }) => data.map((project) => parseProject(project)));
 };
 
 export const getPinnedProjects = async (username: string): Promise<Project[]> => {
   return api.get(`/users/${username}/pinned`)
-    .then(({ data }) => {
-      return data.map((project) => {
-        return {
-          id: parseInt(project.id),
-          name: project.name,
-          username: project.username,
-          description: project.description ?? undefined,
-          startingBalance: project.starting_balance ? parseFloat(project.starting_balance) : undefined,
-          risk: project.risk ? parseFloat(project.risk) : undefined,
-          createdOn: new Date(project.created_on),
-          updatedOn: new Date(project.updated_on),
-          tags: project.tags ?? [],
-          pinned: true,
-          stars: Number(project.stars)
-        } as Project;
-      });
-    });
+    .then(({ data }) => data.map((project) => parseProject(project)));
 };

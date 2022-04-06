@@ -1,9 +1,9 @@
-import { Leg } from "../../common/models/trade";
 import { getStrategyFromLegs } from "../../common/strategy";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { TagPill } from "../shared/pill";
 import moment from "moment";
+import { TradeSearchProps } from "../../common/models/search";
 
 const TradeCardDiv = styled.div`
   margin: 0.5rem 0.5rem 0.5rem 0;
@@ -18,7 +18,7 @@ const TradeCardDiv = styled.div`
 
   a.trade-link {
     color: ${props => props.theme.dark.text};
-    
+
     h1 {
       margin-bottom: 0;
       font-weight: 600;
@@ -33,19 +33,6 @@ const TradeCardDiv = styled.div`
     margin-top: 1rem;
   }
 `;
-
-export interface TradeSearchProps {
-  id: number;
-  symbol: string;
-  openDate: Date;
-  closeDate?: Date;
-  openingNote?: string;
-  closingNote?: string;
-  legs: Leg[];
-  tags: string[];
-  projectName: number;
-  username: string;
-}
 
 const TradeCard = ({ trade }: { trade: TradeSearchProps }) => {
   if (!(trade && trade.legs && trade.legs.length)) {

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { TagPill } from "./pill";
 import moment from "moment";
+import { ProjectSearchProps } from "../../common/models/search";
 
 const ProjectCardDiv = styled.div`
   margin: 0.5rem 0.5rem 1.5rem 0;
@@ -30,15 +31,6 @@ const ProjectCardDiv = styled.div`
     margin-top: 1rem;
   }
 `;
-
-export interface ProjectSearchProps {
-  name: string;
-  description: string;
-  updatedOn: Date;
-  username: string;
-  tags: string[];
-  trades?: number;
-}
 
 const ProjectCard = ({ project }: { project: ProjectSearchProps }) => {
   if (!(project && project.username)) {

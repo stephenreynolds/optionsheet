@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { UserSearchProps } from "../../common/models/search";
 
 const UserCardDiv = styled.div`
   margin: 0.5rem 0.5rem 0.5rem 0;
@@ -30,13 +31,6 @@ const UserCardDiv = styled.div`
     margin-top: 1rem;
   }
 `;
-
-export interface UserSearchProps {
-  username: string;
-  avatarUrl: string;
-  bio: string;
-  updatedOn: Date;
-}
 
 const UserCard = ({ user }: { user: UserSearchProps }) => {
   if (!user) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import numeral from "numeral";
-import { search } from "../../common/api/search";
+import { isSearchType, search, SearchType } from "../../common/api/search";
 import { Container } from "../styles";
 import TradeCard from "./tradeCard";
 import SearchSidebar from "./searchSidebar";
@@ -35,8 +35,6 @@ const Search = () => {
   const [increment] = useState(1);
   const [limit] = useState(searchParams.get("limit") ?? 20);
 
-  const searchType = searchParams.get("type") ?? "trade";
-
   useEffect(() => {
     search(searchParams).then((data) => {
       setSearchResults(data.items);
@@ -53,6 +51,8 @@ const Search = () => {
     }
   }, [index]);
 
+  const searchParamsType = searchParams.get("type");
+  const searchType: SearchType = isSearchType(searchParamsType) ? searchParamsType : "trade";
   const resultCount = counts[`${searchType}s`];
 
   return (
@@ -63,12 +63,12 @@ const Search = () => {
 
         {searchResults.map((result, i) => {
           switch (searchType) {
-            case "trade":
-              return <TradeCard key={i} trade={result} />;
             case "project":
               return <ProjectCard key={i} project={result} />;
             case "user":
               return <UserCard key={i} user={result} />;
+            default:
+              return <TradeCard key={i} trade={result} />;
           }
         })}
 

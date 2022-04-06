@@ -59,7 +59,7 @@ const TabNav = styled.nav`
       }
     }
 
-    button {
+    button.new-trade-btn {
       margin-left: 1rem;
     }
   }
@@ -121,7 +121,7 @@ const ProjectTabs = ({ userIsOwner, username, projectName, trades, setTrades }: 
               </NavLink>
             </li>
             <li>
-              <button className="btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
+              <button className="new-trade-btn btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
               <TradeForm username={username} projectName={projectName} trades={trades}
                          show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel}
                          setUpdatedTrade={setUpdatedTrade} />

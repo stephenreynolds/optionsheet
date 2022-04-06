@@ -583,3 +583,78 @@ describe("PUT /user/starred/:owner/:project", () => {
     });
   });
 });
+
+describe("DELETE /user/starred/:owner/:project", () => {
+  describe("given owner does not exist", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("given project does not exist", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(ProjectManager.prototype, "getProjectByName").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("given project exists", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(ProjectManager.prototype, "getProjectByName").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "unStarProject").mockImplementation(() => Promise.resolve());
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .delete("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .delete("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});

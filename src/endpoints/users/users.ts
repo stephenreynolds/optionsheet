@@ -1,9 +1,8 @@
 import bcrypt from "bcrypt";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UserCreateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
-import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { AuthTokenDto, GetUserDto } from "./usersDtos";
 import { Database } from "../../data/database";

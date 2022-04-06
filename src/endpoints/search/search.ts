@@ -1,7 +1,6 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../../error";
-import Request from "../../request";
 import { SearchDto } from "./searchDtos";
 import { Database } from "../../data/database";
 

@@ -1,5 +1,10 @@
 import path from "path";
 import multer from "multer";
+import { Request } from "express";
+
+export interface MulterRequest extends Request {
+  file: multer.File;
+}
 
 export const uploadImage = multer({
   storage: multer.diskStorage({

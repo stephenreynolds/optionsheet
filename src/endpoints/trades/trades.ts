@@ -1,8 +1,7 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { CreateTradeModel, TradeUpdateModel } from "../../data/models/trade";
 import { logError, sendError } from "../../error";
-import Request from "../../request";
 import { GetTradeDto } from "./tradeDtos";
 import { Database } from "../../data/database";
 

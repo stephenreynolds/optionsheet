@@ -1,16 +1,16 @@
 import bcrypt from "bcrypt";
-import { Response } from "express";
+import { Request, Response } from "express";
 import * as fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import * as path from "path";
 import { DefaultProjectSettingsUpdateModel, UserUpdateModel } from "../../data/models/user";
 import { logError, sendError } from "../../error";
 import logger from "../../logger";
-import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { getUserDetails } from "../users/users";
 import { UserSettings } from "./userDtos";
 import { Database } from "../../data/database";
+import { MulterRequest } from "../../middleware/fileUpload";
 
 const emailIsValid = (email: string) => {
   const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
@@ -131,7 +131,7 @@ export const deleteUser = async (request: Request, response: Response) => {
 };
 
 // POST /user/avatar
-export const setAvatar = async (request: Request, response: Response) => {
+export const setAvatar = async (request: MulterRequest, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
     const file = request.file;

@@ -1,9 +1,8 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import _ from "lodash";
 import { ProjectCreateModel, ProjectUpdateModel } from "../../data/models/project";
 import { logError, sendError } from "../../error";
-import Request from "../../request";
 import { CreateProjectDto, GetProjectDto } from "./projectDtos";
 import { Database } from "../../data/database";
 

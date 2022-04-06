@@ -658,3 +658,62 @@ describe("DELETE /user/starred/:owner/:project", () => {
     });
   });
 });
+
+describe("PUT /user/pinned", () => {
+  describe("given a project does not exist", () => {
+    beforeAll(() => {
+      jest.spyOn(ProjectManager.prototype, "getProjectById").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .put("/user/pinned")
+        .set(authHeader)
+        .send({ projectIds: [0] });
+      expect(response.status).toEqual(404);
+    });
+  });
+
+  describe("if successful", () => {
+    beforeAll(() => {
+      jest.spyOn(ProjectManager.prototype, "getProjectById").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "setPinnedProjects").mockImplementation(() => Promise.resolve([]));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .put("/user/pinned")
+        .set(authHeader)
+        .send({ projectIds: [0] });
+      expect(response.status).toEqual(200);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(ProjectManager.prototype, "getProjectById").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .put("/user/pinned")
+        .set(authHeader)
+        .send({ projectIds: [0] });
+      expect(response.status).toEqual(500);
+    });
+  });
+});

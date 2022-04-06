@@ -12,16 +12,16 @@ beforeAll(async () => {
   app.use(mockDataService, routes);
   app.use("/test", verifyJwtToken, (req, res) => res.sendStatus(200));
   config.jwt.secret = "test";
+
+  const tokenResponse = await request(app)
+    .post("/auth")
+    .send({ username: "username", password: "password" });
+  token = `Bearer ${tokenResponse.body.token}`;
 });
 
 describe("verifyJwtToken", () => {
   describe("if token valid", () => {
     it("should respond with 200 status code", async () => {
-      const tokenResponse = await request(app)
-        .post("/auth")
-        .send({ username: "username", password: "password" });
-      token = `Bearer ${tokenResponse.body.token}`;
-
       const response = await request(app)
         .get("/test")
         .set({ "authorization": token });
@@ -60,6 +60,20 @@ describe("verifyJwtToken", () => {
         .set({ "authorization": `Bearer ${expiredToken}` });
 
       expect(response.status).toEqual(401);
+    });
+  });
+
+  describe("if an unknown error occurs", () => {
+    it("should respond with 500 status code", async () => {
+      jwt.verify = jest.fn(() => {
+        throw new Error();
+      });
+
+      const response = await request(app)
+        .get("/test")
+        .set({ "authorization": token });
+
+      expect(response.status).toEqual(500);
     });
   });
 });

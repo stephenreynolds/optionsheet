@@ -8,6 +8,7 @@ import * as users from "../users/users";
 import { GetUserDto } from "../users/usersDtos";
 import bcrypt from "bcrypt";
 import * as fs from "fs";
+import { ProjectManager } from "../../data/projectManager";
 
 let authHeader;
 
@@ -20,6 +21,7 @@ beforeAll(async () => {
   authHeader = { "authorization": `Bearer ${token}` };
 
   Database.users = new UserManager({});
+  Database.projects = new ProjectManager({});
 });
 
 describe("GET /user", () => {
@@ -407,6 +409,100 @@ describe("GET /user/starred", () => {
     it("should respond with 500 status code", async () => {
       const response = await request(app)
         .get("/user/starred")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});
+
+describe("GET /user/starred/:owner/:project", () => {
+  describe("given owner does not exist", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(404);
+    });
+  });
+
+  describe("given project does not exist", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(ProjectManager.prototype, "getProjectByName").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(404);
+    });
+  });
+
+  describe("given project not starred", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(ProjectManager.prototype, "getProjectByName").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getStarredProject").mockImplementation(() => Promise.resolve(undefined));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 404 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(404);
+    });
+  });
+
+  describe("given project is starred", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(ProjectManager.prototype, "getProjectByName").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getStarredProject").mockImplementation(() => Promise.resolve({}));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 204 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred/test/test")
+        .set(authHeader);
+      expect(response.status).toEqual(204);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred/test/test")
         .set(authHeader);
       expect(response.status).toEqual(500);
     });

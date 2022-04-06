@@ -17,6 +17,6 @@ app.use(cors());
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(morgan("tiny"));
+app.use(morgan("tiny", { skip: () => process.env.NODE_ENV === "test" }));
 
 export default app;

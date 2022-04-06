@@ -2,8 +2,9 @@ import { Pool } from "pg";
 import { ProjectManager } from "./projectManager";
 import { TradeManager } from "./tradeManager";
 import { UserManager } from "./userManager";
+import { IDatabase } from "./interfaces";
 
-export class Database {
+export class Database implements IDatabase {
   private readonly pool: Pool;
 
   constructor() {

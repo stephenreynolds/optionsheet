@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Response } from "express";
 import * as fs from "fs";
 import * as path from "path";
 import swaggerUi from "swagger-ui-express";
@@ -13,7 +13,7 @@ import * as swaggerDocument from "./swagger.json";
 // Connect to the database and inject a wrapper into every request.
 const database = new Database();
 
-app.use(async (req: Request, res, next) => {
+app.use(async (req: Request, res: Response, next: NextFunction) => {
   req.dataService = database;
   next();
 }, routes);

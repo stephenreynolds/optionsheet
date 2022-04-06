@@ -1,15 +1,16 @@
 import { Pool } from "pg";
 import { logError } from "../error";
 import { CreateTradeModel, TradeUpdateModel } from "./models/trade";
+import { ITradeManager } from "./interfaces";
 
-export class TradeManager {
+export class TradeManager implements ITradeManager {
   private readonly pool: Pool;
 
   constructor(pool) {
     this.pool = pool;
   }
 
-  public async getTradeById(id: number) {
+  async getTradeById(id: number) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -24,7 +25,7 @@ export class TradeManager {
     }
   }
 
-  public async getTradesByProject(projectId: number) {
+  async getTradesByProject(projectId: number) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -39,7 +40,7 @@ export class TradeManager {
     }
   }
 
-  public async getLegsByTradeId(id: number) {
+  async getLegsByTradeId(id: number) {
     try {
       const res = await this.pool.query(`
           SELECT quantity, open_price, close_price, side, expiration, strike, put_call
@@ -54,7 +55,7 @@ export class TradeManager {
     }
   }
 
-  public async addTrade(projectId: number, model: CreateTradeModel) {
+  async addTrade(projectId: number, model: CreateTradeModel) {
     try {
       // Trade
       const trade = await this.pool.query(`
@@ -82,7 +83,7 @@ export class TradeManager {
     }
   }
 
-  public async updateTrade(id: number, model: TradeUpdateModel) {
+  async updateTrade(id: number, model: TradeUpdateModel) {
     try {
       const trade = await this.pool.query(`
           UPDATE trade
@@ -124,7 +125,7 @@ export class TradeManager {
     }
   }
 
-  public async getTradeTags(id: number) {
+  async getTradeTags(id: number) {
     try {
       const res = await this.pool.query(`
           SELECT id, name
@@ -140,7 +141,7 @@ export class TradeManager {
     }
   }
 
-  public async addTradeTags(id: number, tags: string[]) {
+  async addTradeTags(id: number, tags: string[]) {
     try {
       for (const newTag of tags) {
         const name = newTag.trim().toLowerCase();
@@ -169,7 +170,7 @@ export class TradeManager {
     }
   }
 
-  public async deleteTradeById(id: number) {
+  async deleteTradeById(id: number) {
     try {
       await this.pool.query(`
           DELETE
@@ -182,7 +183,7 @@ export class TradeManager {
     }
   }
 
-  public async getTradesBySymbol(symbol: string, limit?: number, offset = 0) {
+  async getTradesBySymbol(symbol: string, offset: number, limit?: number): Promise<any> {
     try {
       const trades = await this.pool.query(`
           SELECT trade.*, project.name AS project_name, app_user.username
@@ -207,7 +208,7 @@ export class TradeManager {
     }
   }
 
-  public async getTradeMatches(term: string) {
+  async getTradeMatches(term: string) {
     try {
       const res = await this.pool.query(`
           SELECT COUNT(trade)

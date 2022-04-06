@@ -3,16 +3,17 @@ import { Pool } from "pg";
 import { v4 as uuidv4 } from "uuid";
 import config from "../config";
 import { logError } from "../error";
-import { UserCreateModel, DefaultProjectSettingsUpdateModel, UserUpdateModel } from "./models/user";
+import { DefaultProjectSettingsUpdateModel, UserCreateModel, UserUpdateModel } from "./models/user";
+import { IUserManager } from "./interfaces";
 
-export class UserManager {
+export class UserManager implements IUserManager {
   private readonly pool: Pool;
 
   constructor(pool) {
     this.pool = pool;
   }
 
-  public async addUser(model: UserCreateModel) {
+  async addUser(model: UserCreateModel) {
     try {
       const res = await this.pool.query(`
           INSERT INTO app_user(uuid, username, email, password_hash)
@@ -27,7 +28,7 @@ export class UserManager {
     }
   }
 
-  public async updateUser(userUUID: string, model: UserUpdateModel) {
+  async updateUser(userUUID: string, model: UserUpdateModel) {
     try {
       const res = await this.pool.query(`
           UPDATE app_user
@@ -47,7 +48,7 @@ export class UserManager {
     }
   }
 
-  public async deleteUser(userUUID: string) {
+  async deleteUser(userUUID: string) {
     try {
       await this.pool.query(`
           DELETE
@@ -59,7 +60,7 @@ export class UserManager {
     }
   }
 
-  public async getUserByUUID(uuid: string) {
+  async getUserByUUID(uuid: string) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -74,7 +75,7 @@ export class UserManager {
     }
   }
 
-  public async getUserByUsername(username: string) {
+  async getUserByUsername(username: string) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -89,7 +90,7 @@ export class UserManager {
     }
   }
 
-  public async getUserByEmail(email: string) {
+  async getUserByEmail(email: string) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -104,19 +105,19 @@ export class UserManager {
     }
   }
 
-  public async addUserRole(userUUID: string, roleID: number) {
+  async addUserRole(userUUID: string, roleId: number) {
     try {
       await this.pool.query(`
           INSERT INTO user_role(user_id, role_id)
           VALUES ($1, $2)
-      `, [userUUID, roleID]);
+      `, [userUUID, roleId]);
     }
     catch (error) {
       logError(error, "Failed to add user role");
     }
   }
 
-  public async getRoleByName(name: string) {
+  async getRoleByName(name: string) {
     try {
       const res = await this.pool.query(`
           SELECT id, name
@@ -131,24 +132,7 @@ export class UserManager {
     }
   }
 
-  public async getUserRoles(userUUID: string) {
-    try {
-      const res = await this.pool.query(`
-          SELECT role.id, role.name
-          FROM user_role
-                   INNER JOIN role
-                              ON user_role.role_id = role.id
-          WHERE user_id = $1
-      `, [userUUID]);
-
-      return res.rows;
-    }
-    catch (error) {
-      logError(error, "Failed to get user roles");
-    }
-  }
-
-  public async getDefaultProjectSettings(userUUID: string) {
+  async getDefaultProjectSettings(userUUID: string) {
     try {
       const res = await this.pool.query(`
           SELECT default_starting_balance, default_risk
@@ -163,7 +147,7 @@ export class UserManager {
     }
   }
 
-  public async updateDefaultProjectSettings(userUUID: string, model: DefaultProjectSettingsUpdateModel) {
+  async updateDefaultProjectSettings(userUUID: string, model: DefaultProjectSettingsUpdateModel) {
     try {
       const res = await this.pool.query(`
           UPDATE app_user
@@ -180,7 +164,7 @@ export class UserManager {
     }
   }
 
-  public async addRefreshToken(userUUID: string, token: string, expiry: Date) {
+  async addRefreshToken(userUUID: string, token: string, expiry: Date) {
     try {
       const res = await this.pool.query(`UPDATE app_user
                                          SET refresh_token        = $2,
@@ -194,7 +178,7 @@ export class UserManager {
     }
   }
 
-  public async getRefreshToken(token: string) {
+  async getRefreshToken(token: string) {
     try {
       const res = await this.pool.query(`
           SELECT refresh_token, refresh_token_expiry
@@ -209,7 +193,7 @@ export class UserManager {
     }
   }
 
-  public async deleteRefreshToken(token: string) {
+  async deleteRefreshToken(token: string) {
     try {
       await this.pool.query(`
           UPDATE app_user
@@ -223,7 +207,7 @@ export class UserManager {
     }
   }
 
-  public async createToken(userUUID: string) {
+  async createToken(userUUID: string) {
     try {
       return jwt.sign({ uuid: userUUID }, config.jwt.secret, {
         expiresIn: config.jwt.jwtExpiration
@@ -234,7 +218,7 @@ export class UserManager {
     }
   }
 
-  public async createRefreshToken(userUUID: string) {
+  async createRefreshToken(userUUID: string) {
     try {
       const expiredAt = new Date();
       expiredAt.setSeconds(expiredAt.getSeconds() + config.jwt.jwtRefreshExpiration);
@@ -253,7 +237,7 @@ export class UserManager {
     }
   }
 
-  public async createTokenFromRefreshToken(refreshToken: string) {
+  async createTokenFromRefreshToken(refreshToken: string) {
     try {
       const res = await this.pool.query(`
           SELECT uuid
@@ -269,7 +253,7 @@ export class UserManager {
     }
   }
 
-  public async getStarredProjects(userUUID: string) {
+  async getStarredProjects(userUUID: string) {
     try {
       const res = await this.pool.query(`
           SELECT project.*
@@ -285,7 +269,7 @@ export class UserManager {
     }
   }
 
-  public async starProject(userUUID: string, projectId: number) {
+  async starProject(userUUID: string, projectId: number) {
     try {
       const res = await this.pool.query(`
           INSERT INTO starred_project(user_uuid, project_id)
@@ -301,7 +285,7 @@ export class UserManager {
     }
   }
 
-  public async unStarProject(userUUID: string, projectId: number) {
+  async unStarProject(userUUID: string, projectId: number) {
     try {
       await this.pool.query(`
           DELETE
@@ -315,7 +299,7 @@ export class UserManager {
     }
   }
 
-  public async getStarredProject(userUUID: string, projectId: number) {
+  async getStarredProject(userUUID: string, projectId: number) {
     try {
       const res = await this.pool.query(`
           SELECT *
@@ -331,7 +315,7 @@ export class UserManager {
     }
   }
 
-  public async getPinnedProjects(userUUID: string) {
+  async getPinnedProjects(userUUID: string) {
     try {
       const res = await this.pool.query(`
           SELECT pinned_projects
@@ -346,7 +330,7 @@ export class UserManager {
     }
   }
 
-  public async setPinnedProjects(userUUID: string, projectsIds: number[]) {
+  async setPinnedProjects(userUUID: string, projectsIds: number[]) {
     try {
       const res = await this.pool.query(`
           UPDATE app_user
@@ -362,7 +346,7 @@ export class UserManager {
     }
   }
 
-  public async getUsersByUsername(username: string, limit?: number, offset = 0) {
+  async getUsersByUsername(username: string, offset: number, limit?: number): Promise<any> {
     try {
       const res = await this.pool.query(`
           SELECT username, avatar_url, bio, updated_on
@@ -378,7 +362,7 @@ export class UserManager {
     }
   }
 
-  public async getUserMatches(term: string) {
+  async getUserMatches(term: string) {
     try {
       const res = await this.pool.query(`
           SELECT COUNT(app_user)

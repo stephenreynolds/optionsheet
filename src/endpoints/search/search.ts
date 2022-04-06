@@ -23,10 +23,10 @@ export const searchAll = async (request: Request, response: Response) => {
     let items = [];
 
     if (type === "trade" || !type) {
-      items = await dataService.trades.getTradesBySymbol(term, limit, page - 1);
+      items = await dataService.trades.getTradesBySymbol(term, page - 1, limit);
     }
     else if (type === "project") {
-      const projects = await dataService.projects.getProjectsByName(term, limit, page - 1);
+      const projects = await dataService.projects.getProjectsByName(term, page - 1, limit);
       items = projects.map((project) => {
         return {
           name: project.name,
@@ -39,7 +39,7 @@ export const searchAll = async (request: Request, response: Response) => {
       });
     }
     else if (type === "user") {
-      items = await dataService.users.getUsersByUsername(term, limit, page - 1);
+      items = await dataService.users.getUsersByUsername(term, page - 1, limit);
     }
 
     const res: SearchDto = {

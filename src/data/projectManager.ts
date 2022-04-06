@@ -1,15 +1,16 @@
 import { Pool } from "pg";
 import { logError } from "../error";
 import { ProjectCreateModel, ProjectUpdateModel } from "./models/project";
+import { IProjectManager } from "./interfaces";
 
-export class ProjectManager {
+export class ProjectManager implements IProjectManager {
   private readonly pool: Pool;
 
   constructor(pool) {
     this.pool = pool;
   }
 
-  public async getUserProjects(userUUID: string) {
+  async getUserProjects(userUUID: string) {
     try {
       const res = await this.pool.query(`
           SELECT project.*, COUNT(starred_project) stars
@@ -26,7 +27,7 @@ export class ProjectManager {
     }
   }
 
-  public async getProjectById(id: number) {
+  async getProjectById(id: number) {
     try {
       const res = await this.pool.query(`
           SELECT project.*, COUNT(starred_project) stars
@@ -43,7 +44,7 @@ export class ProjectManager {
     }
   }
 
-  public async getProjectByName(userUUID: string, name: string) {
+  async getProjectByName(userUUID: string, name: string) {
     try {
       const res = await this.pool.query(`
           SELECT project.*, COUNT(starred_project) stars
@@ -61,7 +62,7 @@ export class ProjectManager {
     }
   }
 
-  public async addProject(userUUID: string, model: ProjectCreateModel) {
+  async addProject(userUUID: string, model: ProjectCreateModel) {
     try {
       const res = await this.pool.query(`
           INSERT INTO project(user_uuid, name, description, starting_balance, risk)
@@ -78,7 +79,7 @@ export class ProjectManager {
     }
   }
 
-  public async updateProject(id: number, model: ProjectUpdateModel) {
+  async updateProject(id: number, model: ProjectUpdateModel) {
     try {
       const res = await this.pool.query(`
           UPDATE project
@@ -97,7 +98,7 @@ export class ProjectManager {
     }
   }
 
-  public async deleteProject(id: number) {
+  async deleteProject(id: number) {
     try {
       await this.pool.query(`
           DELETE
@@ -110,7 +111,7 @@ export class ProjectManager {
     }
   }
 
-  public async getProjectTags(id: number) {
+  async getProjectTags(id: number) {
     try {
       const res = await this.pool.query(`
           SELECT id, name
@@ -126,7 +127,7 @@ export class ProjectManager {
     }
   }
 
-  public async addProjectTags(id: number, tags: string[]) {
+  async addProjectTags(id: number, tags: string[]) {
     for (const newTag of tags) {
       const name = newTag.trim().toLowerCase();
 
@@ -152,7 +153,7 @@ export class ProjectManager {
     }
   }
 
-  public async getProjectsByName(name: string, limit?: number, offset = 0) {
+  async getProjectsByName(name: string, offset, limit?: number): Promise<any> {
     try {
       const projects = await this.pool.query(`
           SELECT project.id,
@@ -185,7 +186,7 @@ export class ProjectManager {
     }
   }
 
-  public async getProjectMatches(term: string) {
+  async getProjectMatches(term: string) {
     try {
       const res = await this.pool.query(`
           SELECT COUNT(project)

@@ -135,7 +135,8 @@ export const setAvatar = async (request: MulterRequest, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
     const file = request.file;
-    const avatar_url = `uploads/images/${file.filename}`;
+    const filename = file ? file.filename : undefined;
+    const avatar_url = `uploads/images/${filename}`;
 
     const { avatar_url: old_avatar_url } = await Database.users.getUserByUUID(userUUID);
 

@@ -7,6 +7,7 @@ import { Database } from "../../data/database";
 import * as users from "../users/users";
 import { GetUserDto } from "../users/usersDtos";
 import bcrypt from "bcrypt";
+import * as fs from "fs";
 
 let authHeader;
 
@@ -261,6 +262,26 @@ describe("PATCH /user", () => {
       });
     });
   });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(users, "getUserDetails").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .patch("/user")
+        .send({ bio: "" })
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
 });
 
 describe("DELETE /users", () => {
@@ -286,6 +307,69 @@ describe("DELETE /users", () => {
       const response = await request(app)
         .delete("/user");
       expect(response.status).toEqual(401);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "deleteUser").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .delete("/user")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});
+
+describe("POST /user/avatar", () => {
+  beforeAll(() => {
+    jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({
+      avatar_url: ""
+    }));
+    jest.spyOn(UserManager.prototype, "updateUser").mockImplementation(() => Promise.resolve());
+    jest.mock("fs", () => {
+      return { unlink: jest.fn() };
+    });
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe("if successful", () => {
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .post("/user/avatar")
+        .set(authHeader);
+      expect(response.status).toEqual(200);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .post("/user/avatar")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
     });
   });
 });

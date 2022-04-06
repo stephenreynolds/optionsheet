@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { faChartLine, faGear, faList } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { lazy, useState } from "react";
+import { lazy, ReactNode, useState } from "react";
 import { Trade, TradeCreateModel } from "../../common/models/trade";
 
 const TradeForm = lazy(() => import(/* webpackChunkName: "trade-form" */ "./trades/tradeForm"));
@@ -93,6 +93,10 @@ const ProjectTabs = ({ userIsOwner, username, projectName, trades, setTrades }: 
     ]);
   };
 
+  const renderIfOwner = (children: ReactNode) => {
+    return userIsOwner ? children : null;
+  };
+
   return (
     <TabNav>
       <ul>
@@ -108,26 +112,23 @@ const ProjectTabs = ({ userIsOwner, username, projectName, trades, setTrades }: 
             <span data-content="Report">Report</span>
           </NavLink>
         </li>
-        {userIsOwner && (
-          <li>
-            <NavLink to="settings" className={activeClassName}>
-              <StyledIcon icon={faGear} />
-              <span data-content="Settings">Settings</span>
-            </NavLink>
-          </li>
-        )}
-        {userIsOwner && (
-          <li>
-            <button className="btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
-          </li>
+        {renderIfOwner(
+          <>
+            <li>
+              <NavLink to="settings" className={activeClassName}>
+                <StyledIcon icon={faGear} />
+                <span data-content="Settings">Settings</span>
+              </NavLink>
+            </li>
+            <li>
+              <button className="btn-green m-0" onClick={toggleShowNewTradeModel}>New trade</button>
+              <TradeForm username={username} projectName={projectName} trades={trades}
+                         show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel}
+                         setUpdatedTrade={setUpdatedTrade} />
+            </li>
+          </>
         )}
       </ul>
-
-      {userIsOwner && (
-        <TradeForm username={username} projectName={projectName} trades={trades}
-                   show={showNewTradeModel} toggleVisibility={toggleShowNewTradeModel}
-                   setUpdatedTrade={setUpdatedTrade} />
-      )}
     </TabNav>
   );
 };

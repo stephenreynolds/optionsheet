@@ -16,6 +16,15 @@ describe("sendError", () => {
     return res;
   };
 
+  beforeAll(() => {
+    jest.useFakeTimers("modern");
+    jest.setSystemTime(new Date());
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it("should respond with an errorResponse object", async () => {
     const status = StatusCodes.INTERNAL_SERVER_ERROR;
     const message = "";
@@ -38,7 +47,6 @@ describe("sendError", () => {
 
 describe("logError", () => {
   it("should call logger.error", () => {
-    logger.error = jest.fn();
     logError({}, "");
     expect(logger.error).toBeCalled();
   });

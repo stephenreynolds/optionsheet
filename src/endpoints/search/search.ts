@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { SearchDto } from "./searchDtos";
+import { Database } from "../../data/database";
 
 // GET /search
 export const searchAll = async (request: Request, response: Response) => {
@@ -18,15 +19,13 @@ export const searchAll = async (request: Request, response: Response) => {
     const limit = query.limit ? Number(query.limit) : 20;
     const page = query.page ? Number(query.page) : 1;
 
-    const dataService = request.dataService;
-
     let items = [];
 
     if (type === "trade" || !type) {
-      items = await dataService.trades.getTradesBySymbol(term, page - 1, limit);
+      items = await Database.trades.getTradesBySymbol(term, page - 1, limit);
     }
     else if (type === "project") {
-      const projects = await dataService.projects.getProjectsByName(term, page - 1, limit);
+      const projects = await Database.projects.getProjectsByName(term, page - 1, limit);
       items = projects.map((project) => {
         return {
           name: project.name,
@@ -39,15 +38,15 @@ export const searchAll = async (request: Request, response: Response) => {
       });
     }
     else if (type === "user") {
-      items = await dataService.users.getUsersByUsername(term, page - 1, limit);
+      items = await Database.users.getUsersByUsername(term, page - 1, limit);
     }
 
     const res: SearchDto = {
       items,
       counts: {
-        trades: await dataService.trades.getTradeMatches(term),
-        projects: await dataService.projects.getProjectMatches(term),
-        users: await dataService.users.getUserMatches(term)
+        trades: await Database.trades.getTradeMatches(term),
+        projects: await Database.projects.getProjectMatches(term),
+        users: await Database.users.getUserMatches(term)
       }
     };
 

@@ -5,24 +5,24 @@ import { ProjectCreateModel, ProjectUpdateModel } from "../../data/models/projec
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { CreateProjectDto, GetProjectDto } from "./projectDtos";
+import { Database } from "../../data/database";
 
 // GET /projects/:username
 export const getProjects = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username } = request.params;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const projects = await dataService.projects.getUserProjects(user.uuid);
-    const pinnedProjectIds = await dataService.users.getPinnedProjects(user.uuid);
+    const projects = await Database.projects.getUserProjects(user.uuid);
+    const pinnedProjectIds = await Database.users.getPinnedProjects(user.uuid);
 
     const res: GetProjectDto[] = await Promise.all(
       projects.map(async (project) => {
-        const tags = await dataService.projects.getProjectTags(project.id);
+        const tags = await Database.projects.getProjectTags(project.id);
         return {
           id: project.id,
           name: project.name,
@@ -49,21 +49,20 @@ export const getProjects = async (request: Request, response: Response) => {
 // GET /projects/:username/:project
 export const getProjectByName = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username, project: projectName } = request.params;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    const project = await Database.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const pinnedProjectIds = await dataService.users.getPinnedProjects(user.uuid);
-    const tags = await dataService.projects.getProjectTags(project.id);
+    const pinnedProjectIds = await Database.users.getPinnedProjects(user.uuid);
+    const tags = await Database.projects.getProjectTags(project.id);
 
     const res: GetProjectDto = {
       id: project.id,
@@ -92,10 +91,9 @@ export const createProject = async (request: Request, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
     const name = request.body.name.trim();
-    const dataService = request.dataService;
 
     // Check that the user does not already have a project with that name.
-    const existingProject = await dataService.projects.getProjectByName(userUUID, name);
+    const existingProject = await Database.projects.getProjectByName(userUUID, name);
     if (existingProject) {
       return sendError(request, response, StatusCodes.BAD_REQUEST, "A project with that name already exists.");
     }
@@ -107,9 +105,9 @@ export const createProject = async (request: Request, response: Response) => {
       tags: request.body.tags
     };
 
-    await dataService.projects.addProject(userUUID, model);
+    await Database.projects.addProject(userUUID, model);
 
-    const { username } = await dataService.users.getUserByUUID(userUUID);
+    const { username } = await Database.users.getUserByUUID(userUUID);
     const res: CreateProjectDto = {
       project_url: `/${username}/${encodeURIComponent(name)}`
     };
@@ -125,10 +123,9 @@ export const createProject = async (request: Request, response: Response) => {
 // PATCH /projects/:username/:project
 export const updateProject = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username, project: projectName } = request.params;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
@@ -138,7 +135,7 @@ export const updateProject = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
     }
 
-    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    const project = await Database.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
@@ -150,7 +147,7 @@ export const updateProject = async (request: Request, response: Response) => {
       risk: newData.starting_balance
     };
 
-    await dataService.projects.updateProject(project.id, model);
+    await Database.projects.updateProject(project.id, model);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -163,19 +160,18 @@ export const updateProject = async (request: Request, response: Response) => {
 // DELETE /projects/:username/:project
 export const deleteProject = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { userUUID } = request.body;
     const { username, project: projectName } = request.params;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (user) {
       if (userUUID !== user.uuid) {
         return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
       }
 
-      const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+      const project = await Database.projects.getProjectByName(user.uuid, projectName);
       if (project) {
-        await dataService.projects.deleteProject(project.id);
+        await Database.projects.deleteProject(project.id);
       }
     }
 

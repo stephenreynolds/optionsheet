@@ -1,22 +1,21 @@
-import express, { NextFunction, Response } from "express";
+import express from "express";
 import * as fs from "fs";
 import * as path from "path";
 import swaggerUi from "swagger-ui-express";
 import app from "./app";
 import config from "./config";
-import { Database } from "./data/database";
 import logger from "./logger";
-import Request from "./request";
-import routes from "./routes";
 import * as swaggerDocument from "./swagger.json";
+import { Database } from "./data/database";
 
-// Connect to the database and inject a wrapper into every request.
-const database = new Database();
-
-app.use(async (req: Request, res: Response, next: NextFunction) => {
-  req.dataService = database;
-  next();
-}, routes);
+// Connect to the database.
+Database.connect({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD
+});
 
 // Swagger UI
 app.use("/swagger",

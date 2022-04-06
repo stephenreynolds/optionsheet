@@ -6,9 +6,10 @@ import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { AuthTokenDto, GetUserDto } from "./usersDtos";
+import { Database } from "../../data/database";
 
-export const getUserDetails = async (user, dataService): Promise<GetUserDto> => {
-  const roles = await dataService.users.getUserRoles(user.uuid);
+export const getUserDetails = async (user): Promise<GetUserDto> => {
+  const roles = await Database.users.getUserRoles(user.uuid);
   const isAdmin = roles.filter((role) => role.name === "admin").length > 0;
 
   return {
@@ -56,15 +57,13 @@ export const createUser = async (request: Request, response: Response) => {
       return;
     }
 
-    const dataService = request.dataService;
-
     // Check that username and email address are not in use.
-    let existingUser = await dataService.users.getUserByUsername(username);
+    let existingUser = await Database.users.getUserByUsername(username);
     if (existingUser) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that username already exists.");
       return;
     }
-    existingUser = await dataService.users.getUserByEmail(email);
+    existingUser = await Database.users.getUserByEmail(email);
     if (existingUser) {
       sendError(request, response, StatusCodes.BAD_REQUEST, "A user with that email address already exists.");
       return;
@@ -76,15 +75,15 @@ export const createUser = async (request: Request, response: Response) => {
       email,
       password_hash: await bcrypt.hash(password, 12)
     };
-    const { uuid } = await dataService.users.addUser(createModel);
+    const { uuid } = await Database.users.addUser(createModel);
 
     // Assign user role.
-    const role = await dataService.users.getRoleByName("user");
-    await dataService.users.addUserRole(uuid, role.id);
+    const role = await Database.users.getRoleByName("user");
+    await Database.users.addUserRole(uuid, role.id);
 
     // Create auth tokens.
-    const token = await dataService.users.createToken(uuid);
-    const { refresh_token: refreshToken } = await dataService.users.createRefreshToken(uuid);
+    const token = await Database.users.createToken(uuid);
+    const { refresh_token: refreshToken } = await Database.users.createRefreshToken(uuid);
 
     const res: AuthTokenDto = {
       token,
@@ -102,15 +101,14 @@ export const createUser = async (request: Request, response: Response) => {
 // GET /users/:username
 export const getUser = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username } = request.params;
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
 
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const res = await getUserDetails(user, dataService);
+    const res = await getUserDetails(user);
 
     response.send(res);
   }
@@ -124,14 +122,13 @@ export const getUser = async (request: Request, response: Response) => {
 export const getStarredProjects = async (request: Request, response: Response) => {
   try {
     const { username } = request.params;
-    const dataService = request.dataService;
 
-    const user = await dataService.users.getUserByUsername(username);
-    const projects = await dataService.users.getStarredProjects(user.uuid);
+    const user = await Database.users.getUserByUsername(username);
+    const projects = await Database.users.getStarredProjects(user.uuid);
 
     const res: GetProjectDto[] = await Promise.all(
       projects.map(async (project) => {
-        const tags = await dataService.projects.getProjectTags(project.id);
+        const tags = await Database.projects.getProjectTags(project.id);
         return {
           id: project.id,
           name: project.name,
@@ -157,15 +154,14 @@ export const getStarredProjects = async (request: Request, response: Response) =
 export const getPinnedProjects = async (request: Request, response: Response) => {
   try {
     const { username } = request.params;
-    const dataService = request.dataService;
 
-    const user = await dataService.users.getUserByUsername(username);
-    const projectIds = await dataService.users.getPinnedProjects(user.uuid);
+    const user = await Database.users.getUserByUsername(username);
+    const projectIds = await Database.users.getPinnedProjects(user.uuid);
 
     const res: GetProjectDto[] = await Promise.all(
       projectIds.map(async (id) => {
-        const project = await dataService.projects.getProjectById(id);
-        const tags = await dataService.projects.getProjectTags(project.id);
+        const project = await Database.projects.getProjectById(id);
+        const tags = await Database.projects.getProjectTags(project.id);
         return {
           id: project.id,
           name: project.name,

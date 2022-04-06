@@ -2,31 +2,18 @@ import jwt from "jsonwebtoken";
 import request from "supertest";
 import app from "../app";
 import config from "../config";
-import routes from "../routes";
 import { verifyJwtToken } from "./authentication";
-import mockDataService from "../data/mock/dataService";
-import { MockUserManager } from "../data/mock/userManager";
 import bcrypt from "bcrypt";
 
 let token;
 
 beforeAll(async () => {
-  app.use(mockDataService, routes);
   app.use("/test", verifyJwtToken, (req, res) => res.sendStatus(200));
   config.jwt.secret = "test";
 
-  jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
-  jest.spyOn(MockUserManager.prototype, "createToken").mockImplementation(() => {
-    return jwt.sign({}, config.jwt.secret, {
-      expiresIn: config.jwt.expiration
-    });
-  });
-  bcrypt.compare = jest.fn(() => true);
-
-  const tokenResponse = await request(app)
-    .post("/auth")
-    .send({ username: "username", password: "password" });
-  token = `Bearer ${tokenResponse.body.token}`;
+  token = `Bearer ${jwt.sign({}, config.jwt.secret, {
+    expiresIn: config.jwt.expiration
+  })}`;
 });
 
 afterAll(() => {

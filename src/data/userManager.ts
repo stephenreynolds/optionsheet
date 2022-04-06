@@ -4,9 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import config from "../config";
 import { logError } from "../error";
 import { DefaultProjectSettingsUpdateModel, UserCreateModel, UserUpdateModel } from "./models/user";
-import { IUserManager } from "./interfaces";
 
-export class UserManager implements IUserManager {
+export class UserManager {
   private readonly pool: Pool;
 
   constructor(pool) {
@@ -129,6 +128,23 @@ export class UserManager implements IUserManager {
     }
     catch (error) {
       logError(error, "Failed to get role by name");
+    }
+  }
+
+  public async getUserRoles(userUUID: string) {
+    try {
+      const res = await this.pool.query(`
+          SELECT role.id, role.name
+          FROM user_role
+                   INNER JOIN role
+                              ON user_role.role_id = role.id
+          WHERE user_id = $1
+      `, [userUUID]);
+
+      return res.rows;
+    }
+    catch (error) {
+      logError(error, "Failed to get user roles");
     }
   }
 

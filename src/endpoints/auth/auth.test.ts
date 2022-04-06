@@ -1,22 +1,21 @@
 import request from "supertest";
 import app from "../../app";
 import config from "../../config";
-import routes from "../../routes";
-import mockDataService from "../../data/mock/dataService";
-import { MockUserManager } from "../../data/mock/userManager";
 import bcrypt from "bcrypt";
+import { UserManager } from "../../data/userManager";
+import { Database } from "../../data/database";
 
 beforeAll(() => {
-  app.use(mockDataService, routes);
+  Database.users = new UserManager({});
   config.jwt.secret = "test";
 });
 
 describe("POST /auth", () => {
   describe("given valid credentials", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
-      jest.spyOn(MockUserManager.prototype, "createToken").mockImplementation(() => Promise.resolve(""));
-      jest.spyOn(MockUserManager.prototype, "createRefreshToken").mockImplementation(() => Promise.resolve({ refresh_token: "" }));
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "createToken").mockImplementation(() => Promise.resolve(""));
+      jest.spyOn(UserManager.prototype, "createRefreshToken").mockImplementation(() => Promise.resolve({ refresh_token: "" }));
       bcrypt.compare = jest.fn(() => true);
     });
 
@@ -46,7 +45,7 @@ describe("POST /auth", () => {
 
   describe("given an invalid password", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({
         password_hash: "test"
       }));
     });
@@ -71,7 +70,7 @@ describe("POST /auth", () => {
 
   describe("when no password is provided", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
     });
 
     afterAll(() => {
@@ -87,7 +86,7 @@ describe("POST /auth", () => {
 
   describe("when no user exists with given username", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
     });
 
     afterAll(() => {
@@ -103,7 +102,7 @@ describe("POST /auth", () => {
 
   describe("when no user exists with given email", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve(undefined));
+      jest.spyOn(UserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve(undefined));
     });
 
     afterAll(() => {
@@ -121,12 +120,12 @@ describe("POST /auth", () => {
 describe("POST /auth/refresh", () => {
   describe("given valid refresh token", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
+      jest.spyOn(UserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
         refresh_token: "test",
         refresh_token_expiry: Infinity
       }));
 
-      jest.spyOn(MockUserManager.prototype, "createTokenFromRefreshToken").mockImplementation(() => Promise.resolve(""));
+      jest.spyOn(UserManager.prototype, "createTokenFromRefreshToken").mockImplementation(() => Promise.resolve(""));
     });
 
     afterAll(() => {
@@ -158,7 +157,7 @@ describe("POST /auth/refresh", () => {
 
   describe("when refresh token is invalid", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
+      jest.spyOn(UserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
         refresh_token: undefined
       }));
     });
@@ -175,12 +174,12 @@ describe("POST /auth/refresh", () => {
 
   describe("when refresh token is expired", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
+      jest.spyOn(UserManager.prototype, "getRefreshToken").mockImplementation(() => Promise.resolve({
         refresh_token: "test",
         refresh_token_expiry: 0
       }));
 
-      jest.spyOn(MockUserManager.prototype, "createTokenFromRefreshToken").mockImplementation(() => Promise.resolve(""));
+      jest.spyOn(UserManager.prototype, "createTokenFromRefreshToken").mockImplementation(() => Promise.resolve(""));
     });
 
     afterAll(() => {
@@ -195,7 +194,7 @@ describe("POST /auth/refresh", () => {
 
   describe("when an unknown error occurs", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getRefreshToken").mockImplementation(() => {
+      jest.spyOn(UserManager.prototype, "getRefreshToken").mockImplementation(() => {
         throw Error();
       });
     });
@@ -214,7 +213,7 @@ describe("POST /auth/refresh", () => {
 describe("GET /auth/check-credentials", () => {
   describe("when username is available", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve(undefined));
     });
 
     afterAll(() => {
@@ -229,7 +228,7 @@ describe("GET /auth/check-credentials", () => {
 
   describe("when email is available", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve(undefined));
+      jest.spyOn(UserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve(undefined));
     });
 
     afterAll(() => {
@@ -244,7 +243,7 @@ describe("GET /auth/check-credentials", () => {
 
   describe("when username is not available", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => Promise.resolve({}));
     });
 
     afterAll(() => {
@@ -259,7 +258,7 @@ describe("GET /auth/check-credentials", () => {
 
   describe("when email is not available", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getUserByEmail").mockImplementation(() => Promise.resolve({}));
     });
 
     afterAll(() => {
@@ -274,7 +273,7 @@ describe("GET /auth/check-credentials", () => {
 
   describe("when an unknown error occurs", () => {
     beforeAll(() => {
-      jest.spyOn(MockUserManager.prototype, "getUserByUsername").mockImplementation(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUsername").mockImplementation(() => {
         throw Error();
       });
     });

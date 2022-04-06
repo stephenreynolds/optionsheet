@@ -1,9 +1,8 @@
 import { Pool } from "pg";
 import { logError } from "../error";
 import { ProjectCreateModel, ProjectUpdateModel } from "./models/project";
-import { IProjectManager } from "./interfaces";
 
-export class ProjectManager implements IProjectManager {
+export class ProjectManager {
   private readonly pool: Pool;
 
   constructor(pool) {

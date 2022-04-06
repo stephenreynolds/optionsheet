@@ -1,27 +1,20 @@
-import { Pool } from "pg";
+import { Pool, PoolConfig } from "pg";
 import { ProjectManager } from "./projectManager";
 import { TradeManager } from "./tradeManager";
 import { UserManager } from "./userManager";
-import { IDatabase } from "./interfaces";
 
-export class Database implements IDatabase {
-  private readonly pool: Pool;
+export class Database {
+  private static pool: Pool;
 
-  constructor() {
-    this.pool = new Pool({
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      database: process.env.DB_DATABASE,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD
-    });
+  public static connect(config: PoolConfig) {
+    Database.pool = new Pool(config);
 
-    this.users = new UserManager(this.pool);
-    this.projects = new ProjectManager(this.pool);
-    this.trades = new TradeManager(this.pool);
+    Database.users = new UserManager(Database.pool);
+    Database.projects = new ProjectManager(Database.pool);
+    Database.trades = new TradeManager(Database.pool);
   }
 
-  public users: UserManager;
-  public projects: ProjectManager;
-  public trades: TradeManager;
+  public static users: UserManager;
+  public static projects: ProjectManager;
+  public static trades: TradeManager;
 }

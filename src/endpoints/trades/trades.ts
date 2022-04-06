@@ -4,29 +4,29 @@ import { CreateTradeModel, TradeUpdateModel } from "../../data/models/trade";
 import { logError, sendError } from "../../error";
 import Request from "../../request";
 import { GetTradeDto } from "./tradeDtos";
+import { Database } from "../../data/database";
 
 // GET /projects/:username/:project/trades
 export const getTrades = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username, project: projectName } = request.params;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    const project = await Database.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
-    const trades = await dataService.trades.getTradesByProject(project.id);
+    const trades = await Database.trades.getTradesByProject(project.id);
 
     const res: GetTradeDto[] = await Promise.all(
       trades.map(async (trade) => {
-        const legs = await dataService.trades.getLegsByTradeId(trade.id);
-        const tags = await dataService.trades.getTradeTags(trade.id);
+        const legs = await Database.trades.getLegsByTradeId(trade.id);
+        const tags = await Database.trades.getTradeTags(trade.id);
         return {
           id: trade.id,
           symbol: trade.symbol,
@@ -65,15 +65,14 @@ export const getTrades = async (request: Request, response: Response) => {
 export const getTrade = async (request: Request, response: Response) => {
   try {
     const id = Number(request.params.id);
-    const dataService = request.dataService;
 
-    const trade = await dataService.trades.getTradeById(id);
+    const trade = await Database.trades.getTradeById(id);
     if (!trade) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
     }
 
-    const legs = await dataService.trades.getLegsByTradeId(trade.id);
-    const tags = await dataService.trades.getTradeTags(trade.id);
+    const legs = await Database.trades.getLegsByTradeId(trade.id);
+    const tags = await Database.trades.getTradeTags(trade.id);
 
     const res: GetTradeDto = {
       id: trade.id,
@@ -110,11 +109,10 @@ export const getTrade = async (request: Request, response: Response) => {
 // POST /projects/:username/:project
 export const addTrade = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { username, project: projectName } = request.params;
     const userUUID = request.body.userUUID;
 
-    const user = await dataService.users.getUserByUsername(username);
+    const user = await Database.users.getUserByUsername(username);
     if (!user) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
@@ -123,7 +121,7 @@ export const addTrade = async (request: Request, response: Response) => {
       return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
     }
 
-    const project = await dataService.projects.getProjectByName(user.uuid, projectName);
+    const project = await Database.projects.getProjectByName(user.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
@@ -142,7 +140,7 @@ export const addTrade = async (request: Request, response: Response) => {
       tags
     };
 
-    await dataService.trades.addTrade(project.id, model);
+    await Database.trades.addTrade(project.id, model);
 
     response.sendStatus(StatusCodes.CREATED);
   }
@@ -155,16 +153,15 @@ export const addTrade = async (request: Request, response: Response) => {
 // PATCH /trades/:id
 export const updateTradeById = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const id = Number(request.params.id);
 
-    const trade = await dataService.trades.getTradeById(id);
+    const trade = await Database.trades.getTradeById(id);
     if (!trade) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "That trade does not exist.");
     }
 
-    const project = await dataService.projects.getProjectById(trade.project_id);
-    const user = await dataService.users.getUserByUUID(project.user_uuid);
+    const project = await Database.projects.getProjectById(trade.project_id);
+    const user = await Database.users.getUserByUUID(project.user_uuid);
 
     const { userUUID, ...updateData } = request.body;
 
@@ -182,7 +179,7 @@ export const updateTradeById = async (request: Request, response: Response) => {
       tags: updateData.tags ?? undefined
     };
 
-    await dataService.trades.updateTrade(trade.id, model);
+    await Database.trades.updateTrade(trade.id, model);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -195,13 +192,12 @@ export const updateTradeById = async (request: Request, response: Response) => {
 // DELETE /trades/:id
 export const deleteTradeById = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const id = Number(request.params.id);
 
-    const trade = await dataService.trades.getTradeById(id);
+    const trade = await Database.trades.getTradeById(id);
     if (trade) {
-      const project = await dataService.projects.getProjectById(trade.project_id);
-      const user = await dataService.users.getUserByUUID(project.user_uuid);
+      const project = await Database.projects.getProjectById(trade.project_id);
+      const user = await Database.users.getUserByUUID(project.user_uuid);
 
       const userUUID = request.body.userUUID;
 
@@ -209,7 +205,7 @@ export const deleteTradeById = async (request: Request, response: Response) => {
         return sendError(request, response, StatusCodes.FORBIDDEN, "Forbidden.");
       }
 
-      await dataService.trades.deleteTradeById(trade.id);
+      await Database.trades.deleteTradeById(trade.id);
     }
 
     response.sendStatus(StatusCodes.NO_CONTENT);

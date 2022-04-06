@@ -1,9 +1,8 @@
 import { Pool } from "pg";
 import { logError } from "../error";
 import { CreateTradeModel, TradeUpdateModel } from "./models/trade";
-import { ITradeManager } from "./interfaces";
 
-export class TradeManager implements ITradeManager {
+export class TradeManager {
   private readonly pool: Pool;
 
   constructor(pool) {

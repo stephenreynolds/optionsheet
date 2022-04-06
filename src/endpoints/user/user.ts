@@ -10,6 +10,7 @@ import Request from "../../request";
 import { GetProjectDto } from "../projects/projectDtos";
 import { getUserDetails } from "../users/users";
 import { UserSettings } from "./userDtos";
+import { Database } from "../../data/database";
 
 const emailIsValid = (email: string) => {
   const emailRegex = /([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"(\[]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])/;
@@ -24,11 +25,10 @@ const passwordIsValid = (password: string) => {
 // GET /user
 export const get = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const { userUUID } = request.body;
-    const user = await dataService.users.getUserByUUID(userUUID);
+    const user = await Database.users.getUserByUUID(userUUID);
 
-    const res = await getUserDetails(user, dataService);
+    const res = await getUserDetails(user);
 
     response.send(res);
   }
@@ -41,9 +41,8 @@ export const get = async (request: Request, response: Response) => {
 // PATCH /user
 export const update = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const userUUID = request.body.userUUID;
-    const user = await dataService.users.getUserByUUID(userUUID);
+    const user = await Database.users.getUserByUUID(userUUID);
 
     let updateModel: UserUpdateModel = {};
 
@@ -51,7 +50,7 @@ export const update = async (request: Request, response: Response) => {
     const username = request.body.username;
     if (username) {
       // Check that no user already has that username.
-      const match = await dataService.users.getUserByUsername(username);
+      const match = await Database.users.getUserByUsername(username);
       if (match) {
         return sendError(request, response, StatusCodes.BAD_REQUEST, "That username is not available.");
       }
@@ -67,7 +66,7 @@ export const update = async (request: Request, response: Response) => {
       }
 
       // Check that no user already has that email.
-      const match = await dataService.users.getUserByEmail(email);
+      const match = await Database.users.getUserByEmail(email);
       if (match) {
         return sendError(request, response, StatusCodes.BAD_REQUEST, "That email address is not available.");
       }
@@ -105,8 +104,8 @@ export const update = async (request: Request, response: Response) => {
       updateModel = { ...updateModel, bio };
     }
 
-    const updatedUser = await dataService.users.updateUser(userUUID, updateModel);
-    const res = await getUserDetails(updatedUser, dataService);
+    const updatedUser = await Database.users.updateUser(userUUID, updateModel);
+    const res = await getUserDetails(updatedUser);
 
     response.send(res);
   }
@@ -119,10 +118,9 @@ export const update = async (request: Request, response: Response) => {
 // DELETE /user
 export const deleteUser = async (request: Request, response: Response) => {
   try {
-    const dataService = request.dataService;
     const userUUID = request.body.userUUID;
 
-    await dataService.users.deleteUser(userUUID);
+    await Database.users.deleteUser(userUUID);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -137,10 +135,9 @@ export const setAvatar = async (request: Request, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
     const file = request.file;
-    const dataService = request.dataService;
     const avatar_url = `uploads/images/${file.filename}`;
 
-    const { avatar_url: old_avatar_url } = await dataService.users.getUserByUUID(userUUID);
+    const { avatar_url: old_avatar_url } = await Database.users.getUserByUUID(userUUID);
 
     fs.unlink(path.resolve(__dirname, old_avatar_url), (error) => {
       if (error) {
@@ -148,7 +145,7 @@ export const setAvatar = async (request: Request, response: Response) => {
       }
     });
 
-    await dataService.users.updateUser(userUUID, { avatar_url });
+    await Database.users.updateUser(userUUID, { avatar_url });
 
     response.send({ avatar_url });
   }
@@ -162,14 +159,13 @@ export const setAvatar = async (request: Request, response: Response) => {
 export const getStarredProjects = async (request: Request, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
-    const dataService = request.dataService;
 
-    const user = await dataService.users.getUserByUUID(userUUID);
-    const projects = await dataService.users.getStarredProjects(userUUID);
+    const user = await Database.users.getUserByUUID(userUUID);
+    const projects = await Database.users.getStarredProjects(userUUID);
 
     const res: GetProjectDto[] = await Promise.all(
       projects.map(async (project) => {
-        const tags = await dataService.projects.getProjectTags(project.id);
+        const tags = await Database.projects.getProjectTags(project.id);
         return {
           id: project.id,
           name: project.name,
@@ -195,20 +191,19 @@ export const getStarredProjects = async (request: Request, response: Response) =
 export const isProjectStarred = async (request: Request, response: Response) => {
   try {
     const { owner: ownerUsername, project: projectName } = request.params;
-    const dataService = request.dataService;
 
-    const owner = await dataService.users.getUserByUsername(ownerUsername);
+    const owner = await Database.users.getUserByUsername(ownerUsername);
     if (!owner) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
+    const project = await Database.projects.getProjectByName(owner.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
     const userUUID = request.body.userUUID;
-    const starredProject = await dataService.users.getStarredProject(userUUID, project.id);
+    const starredProject = await Database.users.getStarredProject(userUUID, project.id);
     if (!starredProject) {
       return response.sendStatus(StatusCodes.NOT_FOUND);
     }
@@ -225,20 +220,19 @@ export const isProjectStarred = async (request: Request, response: Response) => 
 export const starProject = async (request: Request, response: Response) => {
   try {
     const { owner: ownerUsername, project: projectName } = request.params;
-    const dataService = request.dataService;
 
-    const owner = await dataService.users.getUserByUsername(ownerUsername);
+    const owner = await Database.users.getUserByUsername(ownerUsername);
     if (!owner) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not exist.");
     }
 
-    const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
+    const project = await Database.projects.getProjectByName(owner.uuid, projectName);
     if (!project) {
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
     const userUUID = request.body.userUUID;
-    await dataService.users.starProject(userUUID, project.id);
+    await Database.users.starProject(userUUID, project.id);
 
     response.sendStatus(StatusCodes.NO_CONTENT);
   }
@@ -252,15 +246,14 @@ export const starProject = async (request: Request, response: Response) => {
 export const unStarProject = async (request: Request, response: Response) => {
   try {
     const { owner: ownerUsername, project: projectName } = request.params;
-    const dataService = request.dataService;
 
-    const owner = await dataService.users.getUserByUsername(ownerUsername);
+    const owner = await Database.users.getUserByUsername(ownerUsername);
 
     if (owner) {
-      const project = await dataService.projects.getProjectByName(owner.uuid, projectName);
+      const project = await Database.projects.getProjectByName(owner.uuid, projectName);
       if (project) {
         const userUUID = request.body.userUUID;
-        await dataService.users.unStarProject(userUUID, project.id);
+        await Database.users.unStarProject(userUUID, project.id);
       }
     }
 
@@ -277,17 +270,16 @@ export const setPinnedProjects = async (request: Request, response: Response) =>
   try {
     const userUUID = request.body.userUUID;
     const projectIds = request.body.projectIds;
-    const dataService = request.dataService;
 
     // Check that each project exists.
     for (const id of projectIds) {
-      const project = await dataService.projects.getProjectById(id);
+      const project = await Database.projects.getProjectById(id);
       if (!project) {
         return sendError(request, response, StatusCodes.NOT_FOUND, "At least one of the projects does not exist.");
       }
     }
 
-    const res: number[] = await dataService.users.setPinnedProjects(userUUID, projectIds);
+    const res: number[] = await Database.users.setPinnedProjects(userUUID, projectIds);
 
     response.send(res);
   }
@@ -301,9 +293,8 @@ export const setPinnedProjects = async (request: Request, response: Response) =>
 export const getDefaultProjectSettings = async (request: Request, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
-    const dataService = request.dataService;
 
-    const userSettings: UserSettings = await dataService.users.getDefaultProjectSettings(userUUID);
+    const userSettings: UserSettings = await Database.users.getDefaultProjectSettings(userUUID);
 
     response.send(userSettings);
   }
@@ -317,14 +308,13 @@ export const getDefaultProjectSettings = async (request: Request, response: Resp
 export const updateDefaultProjectSettings = async (request: Request, response: Response) => {
   try {
     const userUUID = request.body.userUUID;
-    const dataService = request.dataService;
 
     const model: DefaultProjectSettingsUpdateModel = {
       default_starting_balance: request.body.default_starting_balance ?? undefined,
       default_risk: request.body.default_risk ?? undefined
     };
 
-    const res: UserSettings = await dataService.users.updateDefaultProjectSettings(userUUID, model);
+    const res: UserSettings = await Database.users.updateDefaultProjectSettings(userUUID, model);
 
     response.send(res);
   }

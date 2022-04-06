@@ -373,3 +373,42 @@ describe("POST /user/avatar", () => {
     });
   });
 });
+
+describe("GET /user/starred", () => {
+  describe("if successful", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({}));
+      jest.spyOn(UserManager.prototype, "getStarredProjects").mockImplementation(() => Promise.resolve([]));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred")
+        .set(authHeader);
+      expect(response.status).toEqual(200);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .get("/user/starred")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});

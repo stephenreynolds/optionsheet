@@ -64,9 +64,7 @@ const TitleBar = ({ username, project, trades }: Props) => {
         </PLPill>
       </div>
 
-      <div>
-        <StarButton username={username} projectName={project.name} stars={project.stars} />
-      </div>
+      <StarButton username={username} projectName={project.name} stars={project.stars} />
     </TitleBarDiv>
   );
 };

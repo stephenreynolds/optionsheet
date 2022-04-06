@@ -62,6 +62,7 @@ export const getProjectByName = async (request: Request, response: Response) => 
       return sendError(request, response, StatusCodes.NOT_FOUND, "User does not have a project with that name.");
     }
 
+    const pinnedProjectIds = await dataService.users.getPinnedProjects(user.uuid);
     const tags = await dataService.projects.getProjectTags(project.id);
 
     const res: GetProjectDto = {
@@ -74,6 +75,7 @@ export const getProjectByName = async (request: Request, response: Response) => 
       created_on: project.created_on,
       updated_on: project.updated_on,
       tags: tags.map((t) => t.name) ?? undefined,
+      pinned: _.some(pinnedProjectIds, (id) => id === project.id),
       stars: parseInt(project.stars)
     };
 

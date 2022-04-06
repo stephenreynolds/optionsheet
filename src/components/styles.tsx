@@ -74,13 +74,6 @@ export default createGlobalStyle`
       cursor: pointer;
     }
 
-    // &:focus, &:focus-visible {
-    //   outline: none !important;
-      //   background-color: ${props => props.theme.dark.button.hover.bg};
-      //   border: 1px solid ${props => props.theme.dark.button.border};
-    //   border-radius: 5px;
-    // }
-
     &:disabled {
       opacity: 0.5;
 

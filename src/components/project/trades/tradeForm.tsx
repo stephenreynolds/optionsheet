@@ -302,9 +302,7 @@ const TradeForm = ({ username, projectName, trades, trade, close, show, toggleVi
 
           {/* Add leg button */}
           {!(close || isShares) && (
-            <div>
-              <button onClick={(e) => onAddLegClick(e, legs, setLegs)} disabled={legs.length === 4}>Add leg</button>
-            </div>
+            <button onClick={(e) => onAddLegClick(e, legs, setLegs)} disabled={legs.length === 4}>Add leg</button>
           )}
 
           {/* Tags */}

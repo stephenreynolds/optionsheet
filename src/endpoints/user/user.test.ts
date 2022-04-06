@@ -717,3 +717,41 @@ describe("PUT /user/pinned", () => {
     });
   });
 });
+
+describe("GET /user/settings", () => {
+  describe("if successful", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getDefaultProjectSettings").mockImplementation(() => Promise.resolve({}));
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 200 status code", async () => {
+      const response = await request(app)
+        .get("/user/settings")
+        .set(authHeader);
+      expect(response.status).toEqual(200);
+    });
+  });
+
+  describe("when an unknown error occurs", () => {
+    beforeAll(() => {
+      jest.spyOn(UserManager.prototype, "getDefaultProjectSettings").mockImplementation(() => {
+        throw Error();
+      });
+    });
+
+    afterAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should respond with 500 status code", async () => {
+      const response = await request(app)
+        .get("/user/settings")
+        .set(authHeader);
+      expect(response.status).toEqual(500);
+    });
+  });
+});

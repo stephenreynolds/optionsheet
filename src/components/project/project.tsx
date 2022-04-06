@@ -30,21 +30,21 @@ const Project = () => {
   const [trades, setTrades] = useState<Trade[]>([]);
 
   useEffect(() => {
-    try {
+    Promise.all([
       getProjectByName(username, projectName)
-        .then((data) => setProject(data));
-
+        .then((data) => setProject(data)),
       getTrades(username, projectName)
-        .then((data) => setTrades(data));
-
-      setLoading(false);
-    }
-    catch (error) {
-      toast.error(error.message);
-    }
+        .then((data) => setTrades(data))
+    ])
+      .then(() => {
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
   }, [projectName, username]);
 
-  if (!project) {
+  if (loading) {
     return null;
   }
 
@@ -53,7 +53,8 @@ const Project = () => {
   return (
     <>
       <TitleBar username={username} project={project} trades={trades} />
-      <ProjectTabs userIsOwner={myProject} username={username} projectName={projectName} trades={trades} setTrades={setTrades} />
+      <ProjectTabs userIsOwner={myProject} username={username} projectName={projectName} trades={trades}
+                   setTrades={setTrades} />
 
       <Suspense fallback={<LoadingProgress />}>
         <Routes>

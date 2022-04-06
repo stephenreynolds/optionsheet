@@ -1,7 +1,5 @@
 import { IUserManager } from "../interfaces";
 import { DefaultProjectSettingsUpdateModel, UserCreateModel, UserUpdateModel } from "../models/user";
-import jwt from "jsonwebtoken";
-import config from "../../config";
 
 export class MockUserManager implements IUserManager {
   addRefreshToken(userUUID: string, token: string, expiry: Date): Promise<any> {
@@ -17,17 +15,15 @@ export class MockUserManager implements IUserManager {
   }
 
   createRefreshToken(userUUID: string): Promise<any> {
-    return Promise.resolve("");
+    return Promise.resolve({ refresh_token: "" });
   }
 
   createToken(userUUID: string): Promise<any> {
-    return jwt.sign({ uuid: "0" }, config.jwt.secret, {
-      expiresIn: config.jwt.expiration
-    });
+    return Promise.resolve(undefined);
   }
 
   createTokenFromRefreshToken(refreshToken: string): Promise<any> {
-    return Promise.resolve("");
+    return Promise.resolve(undefined);
   }
 
   deleteRefreshToken(token: string): Promise<void> {
@@ -71,10 +67,7 @@ export class MockUserManager implements IUserManager {
   }
 
   getUserByUsername(username: string): Promise<any> {
-    return Promise.resolve({
-      uuid: username === "username" ? "0" : "1",
-      password_hash: "$2a$12$8KoGjvw/AiJeeQ99qpPg5.ukdbEJuMTHTyaHi7JX1FDruID3CyVtq"
-    });
+    return Promise.resolve(undefined);
   }
 
   getUserMatches(term: string): Promise<any> {

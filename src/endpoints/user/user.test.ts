@@ -136,7 +136,6 @@ describe("PATCH /user", () => {
 
       afterAll(() => {
         jest.restoreAllMocks();
-        bcrypt.compare.restoreMocks();
       });
 
       it("should respond with 200 status code", async () => {

@@ -147,12 +147,90 @@ describe("PATCH /user", () => {
       });
     });
 
+    describe("if password is invalid", () => {
+      beforeAll(() => {
+        jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({
+          password_hash: ""
+        }));
+        jest.spyOn(users, "getUserDetails").mockImplementation(() => Promise.resolve({} as GetUserDto));
+        bcrypt.compare = jest.fn(() => Promise.resolve(false));
+      });
+
+      afterAll(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("should respond with 401 status code", async () => {
+        const response = await request(app)
+          .patch("/user")
+          .send({ current_password: "current", password: "Passw0rd!", confirm: "Passw0rd!" })
+          .set(authHeader);
+        expect(response.status).toEqual(401);
+      });
+    });
+
+    describe("if current password is not provided", () => {
+      beforeAll(() => {
+        jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({
+          password_hash: ""
+        }));
+        jest.spyOn(users, "getUserDetails").mockImplementation(() => Promise.resolve({} as GetUserDto));
+        bcrypt.compare = jest.fn(() => Promise.resolve(true));
+      });
+
+      afterAll(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("should respond with 400 status code", async () => {
+        const response = await request(app)
+          .patch("/user")
+          .send({ password: "Passw0rd!", confirm: "Passw0rd!" })
+          .set(authHeader);
+        expect(response.status).toEqual(400);
+      });
+    });
+
+    describe("if confirmation is not provided", () => {
+      beforeAll(() => {
+        jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({
+          password_hash: ""
+        }));
+        jest.spyOn(users, "getUserDetails").mockImplementation(() => Promise.resolve({} as GetUserDto));
+        bcrypt.compare = jest.fn(() => Promise.resolve(true));
+      });
+
+      afterAll(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("should respond with 400 status code", async () => {
+        const response = await request(app)
+          .patch("/user")
+          .send({ current_password: "current", password: "Passw0rd!" })
+          .set(authHeader);
+        expect(response.status).toEqual(400);
+      });
+    });
+
     describe("if password is too weak", () => {
+      beforeAll(() => {
+        jest.spyOn(UserManager.prototype, "getUserByUUID").mockImplementation(() => Promise.resolve({
+          password_hash: ""
+        }));
+        jest.spyOn(users, "getUserDetails").mockImplementation(() => Promise.resolve({} as GetUserDto));
+        bcrypt.compare = jest.fn(() => Promise.resolve(true));
+      });
+
+      afterAll(() => {
+        jest.restoreAllMocks();
+      });
+
       describe("if password does not contain lowercase letter", () => {
         it("should respond with 400 status code", async () => {
           const response = await request(app)
             .patch("/user")
-            .send({ password: "P@55W0RD" })
+            .send({ current_password: "current", password: "PASSW0RD!", confirm: "PASSW0RD!" })
             .set(authHeader);
           expect(response.status).toEqual(400);
         });
@@ -161,7 +239,7 @@ describe("PATCH /user", () => {
         it("should respond with 400 status code", async () => {
           const response = await request(app)
             .patch("/user")
-            .send({ password: "p@55w0rd" })
+            .send({ current_password: "current", password: "passw0rd!", confirm: "passw0rd!" })
             .set(authHeader);
           expect(response.status).toEqual(400);
         });
@@ -170,7 +248,7 @@ describe("PATCH /user", () => {
         it("should respond with 400 status code", async () => {
           const response = await request(app)
             .patch("/user")
-            .send({ password: "P@ssword" })
+            .send({ current_password: "current", password: "password!", confirm: "password!" })
             .set(authHeader);
           expect(response.status).toEqual(400);
         });
@@ -179,7 +257,7 @@ describe("PATCH /user", () => {
         it("should respond with 400 status code", async () => {
           const response = await request(app)
             .patch("/user")
-            .send({ password: "Passw0rd" })
+            .send({ current_password: "current", password: "passw0rd", confirm: "passw0rd" })
             .set(authHeader);
           expect(response.status).toEqual(400);
         });
@@ -188,7 +266,7 @@ describe("PATCH /user", () => {
         it("should respond with 400 status code", async () => {
           const response = await request(app)
             .patch("/user")
-            .send({ password: "P@4s!12" })
+            .send({ current_password: "current", password: "pas0rd!", confirm: "pas0rd!" })
             .set(authHeader);
           expect(response.status).toEqual(400);
         });

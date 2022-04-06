@@ -3,7 +3,6 @@ import request from "supertest";
 import app from "../app";
 import config from "../config";
 import { verifyJwtToken } from "./authentication";
-import bcrypt from "bcrypt";
 
 let token;
 
@@ -18,7 +17,6 @@ beforeAll(async () => {
 
 afterAll(() => {
   jest.restoreAllMocks();
-  bcrypt.compare.restoreMocks();
 });
 
 describe("verifyJwtToken", () => {

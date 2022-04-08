@@ -1,35 +1,55 @@
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import React  from "react";
-import { Provider as ReduxProvider } from "react-redux";
-import App from "./components/app";
-import BaseStyles, { theme } from "./components/styles";
-import { ThemeProvider } from "styled-components";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Provider as ReduxProvider, useDispatch, useSelector } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { ThemeProvider } from "styled-components";
+import { isLoggedIn } from "./common/api/auth";
+import Header from "./components/header";
+import { getAuthenticatedUser } from "./redux/actions/userActions";
+import { getUser } from "./redux/selectors/userSelectors";
 import store from "./redux/store";
+import AppRoutes from "./routes";
+import BaseStyles, { theme } from "./styles";
+
+const App = () => {
+  const user = useSelector((state) => getUser(state));
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isLoggedIn && !user) {
+      dispatch(getAuthenticatedUser());
+    }
+  }, [user]);
+
+  return (
+    <>
+      <Header />
+      <AppRoutes />
+    </>
+  );
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ReduxProvider store={store}>
-    <ThemeProvider theme={theme}>
-      <BaseStyles />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/*" element={<App />} />
-        </Routes>
-      </BrowserRouter>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={true}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <BaseStyles />
+        <App />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={true}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+      </ThemeProvider>
+    </BrowserRouter>
   </ReduxProvider>
 );

@@ -5,6 +5,6 @@
 
 ## OptionSheet Frontend
 
-A work-in-progress tool for logging and analyzing options portfolios.
+A web app for logging and analyzing options portfolios.
 
 Frontend built with React and styled-components. Backend built with Express and PostgreSQL.  
